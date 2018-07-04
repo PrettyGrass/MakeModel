@@ -1,0 +1,129 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+import CloudDisclose;
+
+//活动主题数据请求
+umessage ActivitisToticReq {
+
+}
+//活动主题数据返回
+umessage ActivitisToticAns {
+	ustring id;
+	ustring name;
+}
+
+//活动列表数据请求
+umessage ActivitisDataReq {
+	ustring topic_id;
+	uint rows;
+	ustring page_flag;
+}
+
+//活动列表数据返回
+umessage ActivitisDataAns {
+
+	  ustring id; //活动id
+    ustring title; //活动标题
+    ustring description; //活动描述（如果不需要展开则改字断为空）
+    ustring rule_description; //活动流程
+    ustring des; //活动描述缩略版
+    ustring note; //注意事项
+    ustring notice; //活动须知
+    ustring title_image; //标题图片路径
+    ustring publish_time; //发布时间
+    ustring place; //活动地址
+    ustring address; //活动详细地址
+    ustring location; //活动地址坐标
+    ustring sign_up_start_time; //报名开始时间
+    ustring sign_up_end_time; //报名结束时间
+    ustring start_time; //活动开始时间
+    ustring end_time; //活动结束时间
+    ustring range_start_time; //距离活动开始时间
+    ustring support_org; //主办单位
+    ustring person_num; //报名人数
+    ustring max_num; //最多可报名此活动的人数
+    ustring jon_num; //参加活动的人数
+	  ustring tag; //活动标签（1：最新,  2：热门）
+    ustring activity_type_id; //活动类型id
+    //活动规则分类（0：无限制，1：规则1）
+    //若为0，则活动无用户等级限制：积分规则类别，所需积分数，级别限制名不展示
+    ustring activity_rule_type;
+    ustring activity_rule_id; //活动规则id（0：无限制）
+    ustring level_limit; //等级限制
+    ustring rule_type; //积分规则类别（0：获得，1：消费）
+    ustring score; //所需积分数
+    ustring level_name; //级别限制名
+    ustring wx_or_code; //微信二维码图片url
+    ustring contact; //联系方式
+    ustring remark; //备注
+    uint state; //状态（1：即将开始 2：火热报名中 3：报名截止 4：进行中 5：已结束）
+    uint signup_statue;//报名状态(0:已报名，1:报名未开始，2：未报名（可以报名时），3：报名已截止，5：活动已结束
+    ustring page_flag; //分页标识
+    ustring sign_up_remain_time; //未报名未结束：报名剩余时间;报名已结束：活动报名已超的时间
+    uint is_collect; //是否收藏 0：否，1：是
+    ustring sign_up_start_date;
+    ustring sign_up_end_date;
+    ustring start_date;
+    ustring end_date;
+    ustring is_join; //活动是否需要报名
+}
+
+//活动详情数据请求
+umessage ActivitisDetailReq {
+	ustring id;
+}
+
+//活动嘉宾列表数据请求
+umessage ActivitisGuestReq {
+	ustring id;
+}
+
+//活动嘉宾数据返回
+umessage ActivitisGuestAns {
+	ustring id;
+    ustring name;
+    ustring face_image;
+    ustring description;
+}
+
+//活动收藏请求
+umessage ActivitisCollectReq {
+	ustring id;
+}
+
+//活动报名请求
+umessage ActivitisSignupReq {
+	ustring id;
+}
+
+umessage ActivitisSignupAns {
+	ulocal CloudDisclose.LoginUserInfo user_info;
+}
+
+//活动报名详情请求
+umessage ActivitisSignupInfoReq {
+	ustring id;
+}
+
+//活动报名详情数据返回
+umessage ActivitisSignupInfoAns {
+	ustring level_name;
+	ustring rule_type;
+	ustring score;
+	ustring title;
+    ustring title_image;
+    ustring start_time;
+    ustring end_time;
+    ustring start_date;
+	ustring end_date;
+	ustring state;
+	ustring sign_up_no; //报名编号
+	ustring is_verify; //是否验证（0：未验证 1：已验证）
+	ustring activity_rule_type;
+
+}
+
+//活动验证请求
+umessage ActivitisVerifyReq {
+	ustring id;
+}

@@ -1,0 +1,57 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+import CloudDisclose;
+
+// 反馈请求
+umessage FeedBackReq {
+	ustring content;// 反馈内容
+}
+
+// 登陆请求
+umessage LoginReq {
+	ustring mobile; // 手机号	
+	ustring password; // 密码
+	ustring xg_token; // 信鸽的Token值
+	uint source; // 用户来源(0:微信 1:Android 2:iOS 3:QQ 4.微信分享)
+	uint device; // 登陆设备（ 1：Android 2:iOS）
+	ustring openid; // QQ、微信登陆需要获取的用户唯一标识
+	ustring access_token; // QQ、微信登陆需要获取的token
+}
+
+// 登陆返回的应答,返回用户token以及最新的用户信息
+umessage LoginAns {
+	ustring token; // 用户Token
+	ulocal CloudDisclose.LoginUserInfo user_info; // 用户信息
+}
+
+// 版本更新
+umessage CheckUpdateReq {
+	ustring version; // 应用版本
+	ustring jar_version; // jar包版本
+	ustring js_version; // js包版本
+	ustring app_type; // 1.Android 2.IOS
+}
+
+// 版本更新应答
+umessage CheckUpdateAns {
+	ustring version;  // 新版本的版本号
+	ustring jar_version;  //jar包版本号
+	ustring js_version;  //js包版本号
+	ustring jar_url;   //jar包地址
+	ustring js_url;   //js包地址
+    ustring app_url;  // 新版本的下载地址
+    ustring content;  // 新版本的版本描述
+    ustring properties; // 升级类型  1：选择性升级 2：强制性升级 3.jar包升级 4.js包升级
+}
+
+//万象优图，获取appid,签名,bucket请求
+umessage GetQCloudSignReq{
+
+}
+
+//万象优图数据返回
+umessage GetQCloudSignAns{
+	ustring appId; //项目id
+	ustring bucket; //项目空间
+	ustring sign; //签名
+}

@@ -1,0 +1,138 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+//请求商品列表
+umessage FlowerMarketReq {
+	ustring page_flag;
+	ustring rows;
+	ustring banner_rows;
+}
+
+//商品列表数据返回
+umessage FlowerMarketAns {
+	ulist<GoodsInfo> goods_list;
+	ulist<FlowerBannerModel> ad_banner_list;
+	ulocal UserFlowerInfo user_info;
+	ustring page_flag;
+}
+
+umessage GoodsInfo {
+	ustring id;
+    ustring goods_name;
+    ustring default_image_url;
+    ustring default_num;
+    uint score;		//鲜花数, 数据类型改用整型 y0 2016.2.29
+    ustring tag;
+}
+
+umessage FlowerBannerModel {
+	ustring id;
+    ustring default_image_url;
+}
+
+umessage UserFlowerInfo {
+	ustring score;
+}
+
+//商品详情请求
+umessage PrizeDetailReq {
+	uustring id;
+}
+
+//商品详情数据返回
+umessage PrizeDetailAns {
+	ustring id;
+    ustring goods_name;
+    ustring default_image_url;
+    ustring default_num;
+    ustring stock;
+    ustring sell_count;
+    ustring tag;
+    ustring score;
+    ustring description;
+    ustring exc_rule_desc;
+    ustring statement;
+    ustring exc_limit_number;
+    ustring start_time;
+    ustring end_time;
+    ustring start_data;
+    ustring end_data;
+    ulist<String> image_list;
+    ustring exc_status;
+}
+
+//商品兑换
+umessage ExchangeReq {
+	ustring id;
+	ustring num;
+}
+
+//商品兑换返回
+umessage ExchangeAns {
+	ustring id;
+	uint status;
+}
+
+//商品兑换详情数据请求
+umessage ExchangeInfoReq {
+	ustring id;
+}
+
+//商品兑换详情数据返回
+umessage ExchangeInfoAns {
+	ustring id;
+	ustring order_sn;
+	ustring consignee;
+	ustring goods_id;
+	ustring type;
+	ustring ext_goods_id;
+	ustring goods_name;
+	ustring default_image_url;
+	ustring num;
+	ustring cost_score;
+	ustring phone_card_number;
+	ustring phone_card_key;
+	ustring captcha;
+	ustring address;
+	ustring mobile;
+	ustring is_sendout;  //是否已发货（0：否，1：是）选用
+	ustring sendout_time;
+	ustring status;      //订单状态（0：取消，1：正常）
+	ustring remark;
+	uint is_show_perfect; //完善信息按钮是否显示（0：否，1：是）  修改类型
+	ulist<ExtraInfo> goods_ext_info;
+}
+
+umessage ExtraInfo {
+	ustring key;
+    ustring val;
+}
+
+//完善信息请求
+umessage ReceiveInfoReq {
+	ustring id;
+	ustring consignee;
+	ustring address;
+	ustring mobile;
+}
+
+//获取鲜花积分规则
+umessage GetFlowerRuleReq {
+	ustring token; // 用户token
+	ustring type; //0：鲜花 1：威望
+}
+
+//获取鲜花积分规则返回
+umessage GetFlowerRuleAns {
+	ustring remark;
+	ustring num;
+}
+
+//获取用户鲜花数量
+umessage GetFlowerNumReq {
+	ustring token; // 用户token
+}
+
+//获取鲜花积分返回
+umessage GetFlowerNumAns {
+	ustring score;
+}

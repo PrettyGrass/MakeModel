@@ -1,0 +1,304 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+import CloudDisclose;
+
+// 请求发现数据
+umessage DiscoverReq {
+	uint banner_rows;   // banner显示个数
+	uint complaintRows; // 爆料显示个数
+	uint activity_rows; // 活动显示个数
+	uint wx_rows; // 微信讯息显示个数（默认3个）
+}
+
+// 发现请求应答
+umessage DiscoverAns {
+	ulist<Banner> banner_list; // 广告栏数据列表
+	ulist<DiscoverActivity> activity_list; // 活动数据列表
+	ulist<DiscoverComplaint> complaint_list; // 爆料数据列表
+	ulist<DiscoverWxMessage> wx_message_list; // 微信讯息列表
+	ulocal TicketInfo tk; //门票相关
+}
+
+//门票信息
+umessage TicketInfo{
+	ustring park_banner_list; //公园banner(目前就是一个url)
+	ulocal TicketOrderInfo tk_order_info;  //门票讯息
+}
+//订单详情
+umessage TicketOrderInfo{
+	ustring message; //门票领取提醒讯息
+	ustring tk_order_count; //未领取门票数量
+}
+
+// 微信讯息数据
+umessage DiscoverWxMessage {
+	ustring id; 
+    ustring title;   //标题
+    ustring url; // url地址
+    ustring icon_url; // 讯息图标url地址 
+    ustring create_time;//创建时间、具体到时分秒
+    ustring create_date;//创建时间、具体到天
+}
+
+// 请求微信讯息更多数据
+umessage WxMessageMoreReq {
+	uint rows;   // 显示条目数
+	ustring page_flag; // 分页标识
+	
+}
+
+// 发现请求应答
+umessage WxMessageMoreAns {
+	ulist<DiscoverWxMessage> list; // 微信讯息列表
+	ustring page_flag; // 分页标识
+}
+
+
+
+// 轮播栏数据
+umessage Banner {
+	ustring id; 
+    ustring type;   //类别 0：爆料，1：活动，2：奖品（积分商品），3：游戏
+    ustring image_url; // 图片url
+    ustring description; // 描述
+    ustring obj_id;  
+}
+
+// 发现-活动数据
+umessage DiscoverActivity {
+	ustring id; 
+    ustring title;
+    ustring title_image; // 图片url
+}
+
+// 发现-爆料数据
+umessage DiscoverComplaint {
+	ustring id;
+    ustring hot_count;
+    ustring content;
+    ustring type_name;
+    ulist<ComplaintImage> image_list;
+}
+
+// 发现-爆料-item数据
+umessage ComplaintImage {
+	ustring element_id;
+    ustring complaint_id;
+    ustring path;
+    ustring target;          //0:显示默认图片 1：显示path的
+    ustring element_type;    //1:未结案 2：已结案
+}
+
+// 请求公园地图数据列表 [map/getParkMapList] (请求方式：POST)
+umessage ParkMapListReq {
+	ustring type_ids;	//公园类型id（1:市政公园，2：社区公园；1,2为全部）
+}
+
+// 公园地图数据列表应答
+umessage ParkMapListAns {
+	ustring id;
+	ustring name;	//公园名称
+	ustring address;	//公园地址
+	ustring description;	//公园描述
+	ustring baidux;	//公园百度地图经度
+	ustring baiduy;	//公园百度地图纬度	
+}
+
+// 请求绿道列表 [map/getGreenRoadList] (请求方式：POST)
+umessage GreenRoadListReq {
+}
+
+// 绿道列表应答
+umessage GreenRoadListAns {
+	ustring id;
+	ustring name;	//绿道名称
+	ustring icon;	//绿道图标
+}
+
+// 请求绿道地图数据列表 [map/getGreenRoadMapDataList] (请求方式：POST)
+umessage GreenRoadMapDataListReq {
+	ustring id;	//绿道id
+}
+
+// 绿道地图数据列表应答
+umessage GreenRoadMapDataListAns {
+	ustring id;
+	ustring desc_img_url;	//绿道地图详情描述
+	ulist<MapData> mapdata;	//绿道百度地图坐标列表
+}
+
+// 绿道百度地图坐标列表
+umessage MapData {
+	ustring lng;//百度地图经度
+	ustring lat; //百度地图纬度
+}
+
+// 请求作业通告列表 [compublicity/getNotice]
+umessage NoticeReq {
+	ustring page_flag; //分页标识
+	uint rows; //数据条数
+}
+
+// 作业通告列表应答
+umessage NoticeAns {
+	ustring page_flag; //分页标识
+	ulist<NoticeData> list; //作业通告列表数据
+}
+
+// 作业通告列表
+umessage NoticeData {
+	ustring id;
+	ustring title; //标题
+	ustring create_date; //日期
+}
+
+// 请求作业通告评论添加[publicity/addNoticeComment]
+umessage AddNoticeCommentReq {
+	ustring token; //TOKEN
+	ustring id; //通告id
+	ustring content; //评论内容
+	ustring anonymous; //是否匿名（0：否，1：是）
+}
+
+// 作业通告评论应答
+umessage AddNoticeCommentAns {
+
+}
+
+// 请求通告评论列表 [compublicity/getNoticeComment]
+umessage NoticeCommentReq {
+	ustring id;
+	ustring page_flag; //分页标识
+	uint rows; //数据条数
+}
+
+// 通告列评论表应答
+umessage NoticeCommentAns {
+	ustring page_flag; //分页标识
+	ustring comment_sum; //评论总数
+	ulist<NoticeCommentData> list; //作业通告列表数据
+}
+
+// 通告评论列表
+umessage NoticeCommentData {
+	ustring id;
+	ustring content; //内容
+	ustring create_time; //评论时间
+	ustring anonymous; //是否匿名
+	ulocal CloudDisclose.LoginUserInfo user_info; // 用户信息
+	ustring reply; //uu回复内容
+}
+
+// 请求通告详情 [compublicity/noticeDetail]
+umessage NoticeDetailReq {
+	ustring id; //通告id
+}
+
+// 通告详情应答
+umessage NoticeDetailAns {
+	ustring title;//通告标题
+	ustring content; //内容
+	ustring create_date; //通告发布日期
+}
+
+// 请求建议答疑列表 [comadvice/getAdviceList]
+umessage AdviceListReq {
+	ustring token; //TOKEN
+	ustring page_flag; //分页标识
+	uint rows; //数据条数
+}
+
+// 建议答疑列表应答
+umessage AdviceListAns {
+	ustring page_flag; //分页标识
+	ulist<AdviceData> list; //建议答疑列表数据
+}
+
+// 建议答疑列表
+umessage AdviceData {
+	ustring id; 
+	ustring content; //建议答疑内容
+	ustring anonymous; //是否匿名（0；否，1:是）
+	ustring create_time; //答疑时间
+	ulist<ImageList> image_list; //建议答疑图片列表
+	ulocal CloudDisclose.LoginUserInfo user_info; // 用户信息
+	ulocal AdviceReply reply;
+}
+
+// 建议答疑uu回复
+umessage AdviceReply {
+	ustring content; //uu回复内容
+	ulist<ImageList> image_list; // 图片列表
+}
+
+// 请求建议答疑详情 [comadvice/adviceDetail]
+umessage AdviceDetailReq {
+	ustring advice_id; //建议答疑的ID
+}
+
+// 建议答疑详情应答
+umessage AdviceDetailAns {
+	ustring id;
+	ustring content; //建议内容
+	ustring is_show; //是否评审（0：未评审 1：已评审）
+	ustring anonymous; //是否匿名,1为匿名,0为不匿名
+	ustring create_time; //创建时间
+	ulocal AdviceReply reply; //回复内容
+	ulist<ImageList> image_list; // 图片列表
+	ulocal CloudDisclose.LoginUserInfo user_info; // 用户信息
+}
+
+// 建议答疑图片列表
+umessage ImageList {
+	ustring path; // 图片地址
+}
+
+// 请求建议答疑评论列表 [comadvice/adviceCommentList]
+umessage AdviceCommentListReq {
+	ustring token; //TOKEN
+	ustring advice_id; //建议答疑ID
+	ustring page_flag; //分页标识
+	uint rows; //数据条数
+}
+
+// 建议答疑评论列表应答
+umessage AdviceCommentListAns {
+	ustring page_flag; //分页标识
+	ustring comment_sum; //评论总数
+	ulist<CommentList> comment_list; //评论列表
+}
+
+// 建议答疑评论列表数据
+umessage CommentList {
+	ustring id;
+	ustring content; //评论内容
+	ustring anonymous; //是否匿名,1为匿名,0为不匿名
+	ustring create_time; //创建时间
+	ustring reply; //评论回复
+	ulocal CloudDisclose.LoginUserInfo user_info; // 用户信息
+}
+
+// 请求提交建议 [advice/doAdvice]
+umessage DoAdviceReq {
+	ustring token; //TOKEN
+	ustring content; //建议内容
+	ustring anonymous; //是否匿名,1为匿名,0为不匿名
+}
+
+// 提交建议应答
+umessage DoAdviceAns {
+	ustring id;
+}
+
+// 请求提交建议答疑评论 [advice/doComment]
+umessage DoAdviceCommentReq {
+	ustring token; //TOKEN
+	ustring advice_id; //建议答疑ID
+	ustring content; //建议答疑评论内容
+	ustring anonymous; //是否匿名,1为匿名,0为不匿名
+}
+
+// 提交建议答疑评论应答
+umessage DoAdviceCommentAns {
+	
+}

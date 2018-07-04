@@ -1,0 +1,178 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+// 请求智能问答数据
+umessage AnswerReq {
+	ustring protocolId;
+    ustring robotHashCode;
+    ustring platformConnType;
+    ustring userId;  //一个唯一值
+    ustring talkerId;
+    ustring receiverId;
+    ustring appKey;
+    ustring sendTime;
+    ustring type;
+    ustring query;
+    ustring msgID;
+    ustring isQuestionQuery;
+}
+
+// 智能问答请求应答
+umessage AnswerAns { 
+	ustring aiResult;
+    uint answerTypeId;
+    uint protocolId;
+    uint result;
+    ustring sendTime;
+    ulocal AnswerNodeBean singleNode;
+    ulocal AnswerVagueNodeBean vagueNode;
+}
+
+umessage AnswerNodeBean {
+	ustring cmd;
+    ustring answerMsg;
+    uint isRichText;
+    ulist<AnswerNodeChildBean> list;
+    ustring question;
+    ustring standardQuestion;
+    ustring standardQuestionId;
+}
+
+umessage AnswerNodeChildBean {
+	ustring cmd;
+    ustring description;
+    ustring picUrl;
+    ustring itemId;
+    ustring title;
+    ustring url;
+}
+
+umessage AnswerVagueNodeBean {
+	ustring endVagueMsg;
+    ulist<AnswerVagueItemBean> itemList;
+    ustring promptVagueMsg;
+    ulist<String> vagueList;
+}
+	
+umessage AnswerVagueItemBean {
+	uint id;
+    uint num;
+    ustring question;
+    ustring score;
+    uint type;
+}
+
+// 请求常用问题主题数据
+umessage CommonTopicReq {
+	
+}
+
+// 常用问题数据
+umessage CommonTopicAns {
+	ustring id;
+	ustring name;
+}
+
+// 请求常用问题数据
+umessage CommonQuestionsReq {
+	ustring type_id;
+}
+
+umessage CommonQuestionsAns {
+	ustring content;
+}
+
+//腾讯地图附近数据请求
+umessage NearbyMapReq {
+	
+}
+
+umessage NearbyMapAns {
+	uint status;
+    ustring message;
+    uint count;//返回多少条数据
+    ulist<MapItemDataBean> data;
+}
+
+umessage MapItemDataBean {
+	ustring id;
+    ustring title;
+    ustring address;
+    ustring category;
+    uint _distance;
+    uint type;
+    ulocal LatLingBean location;
+}
+
+umessage LatLingBean {
+	ustring lat;
+	ustring lng;
+}
+
+//通过地址返回经纬度
+umessage LatByAddressReq {
+
+}
+
+umessage LatByAddressAns {
+	uint status;
+    ustring message;
+    ulocal MapLatItemBean result;
+}
+
+umessage MapLatItemBean {
+	ustring title;
+	ulocal LatLingBean location;
+}
+
+//天气数据请求
+umessage WeatherDataReq {
+
+}
+
+umessage WeatherDataAns {
+	uint errNum;
+    ustring errMsg;
+    ulocal WeatherDataDetailBean retData;
+}
+
+umessage WeatherDataDetailBean {
+	ustring city;
+    ustring citycode; //城市编码
+    ustring date;
+    ustring time;
+    ustring weather; //天气情况
+    ustring temp;//当前温度
+    ustring l_tmp;//最低温度
+    ustring h_tmp; //最高温度
+    ustring WD;  //风向
+    ustring WS; //风力
+    ustring sunrise; //日出时间
+    ustring sunset; //日落时间
+}
+
+// 用户提问请求
+umessage UserAskReq {
+    ustring question; // 提问的内容
+    ustring user_id; // 上次提问的问题标识
+}
+
+// 智能客服返回数据
+umessage YoyoQuesAns {
+    ulocal YoyoAnswerData ans;
+}
+
+umessage YoyoAnswerData{
+    uint type; // 返回的类型: 1、周边搜索 2、路线规划 3、纯文本消息 4、图文消息 5、天气查询 6、进一步查询（输入编号得到进一步解答）7、未知类型（客户端）。默认为-1，未知类型
+    ustring markMsg; //进一步问答
+    ustring keyWord; //地图相关的关键字
+    ustring message; //显示内容
+    ustring description; //图文的图片描述信息
+    ustring url; // 跳转的url
+    ustring imgUrl; //图片的地址
+    
+
+}
+
+
+
+

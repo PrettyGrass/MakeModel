@@ -1,0 +1,226 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+//获取公园列表数据以及公告列表请求
+umessage TkParksListReq{
+	ustring park_page_flag;  //公园数据分页标志，默认0
+	ustring park_rows;    //公园分页条数，默认3
+	ustring notice_page_flag; //公告数据分页标志，默认0
+	ustring notice_rows; //公告分页条数，默认3
+}
+
+//公园列表数据以及公告列表返回
+umessage TkParksListAns{
+	ulocal ParkList park; 
+	ulocal NoticeList notice;
+}
+
+umessage ParkList{
+	ulist<ParkDetailAns> list; //公园列表
+	ustring page_flag; //分页标识
+}
+
+umessage NoticeList{
+	ulist<TkNoticeDetailAns> list; //公告列表
+	ustring page_flag; //分页标识
+}
+
+
+
+//公园详情数据请求
+umessage ParkDetailReq{
+	ustring id; //公园id
+}
+
+//公园详情数据返回
+umessage ParkDetailAns{
+	ustring id; //公园id
+	ustring park_name; //公园名
+	ustring park_alias; //公园别名
+	ustring name_logo_url; //公园名称logo url
+	ustring background_image_url; //公园背景图片
+	ustring description; //公园描述
+	ustring ticket_policy; //门票政策
+	ustring discount_note; //优惠说明
+	ustring attention; //注意事项
+	ustring contact; //联系方式
+	ulist<ParkBanner> park_banner_list; //公园banner列表
+}
+
+umessage ParkBanner{
+	ustring title; //公园banner标题
+	ustring image_url; //Banner图片url地址
+}
+
+//公告列表请求
+umessage NoticeListReq{
+	ustring page_flag; //分页标识
+	ustring rows; //分页行数
+}
+
+//公告列表数据返回
+umessage NoticeListAns{
+	ulist<TkNoticeDetailAns> list; //公告列表
+	ustring page_flag; //分页
+}
+
+
+//门票列表数据请求
+umessage TicketListReq{
+	ustring park_id; //公园id
+	ustring page_flag; //门票类型分页标志
+	ustring rows; //门票类型列表每页显示的条数
+}
+
+//门票列表数据返回
+umessage TicketListAns{
+	ulist<TicketDetail> list; //票种列表
+	ustring page_flag; //分页
+}
+
+umessage TicketDetail{
+	ustring type_name; //门票（类型）名
+	ulist<TicketData> ticket_list; //门票(分类)列表
+}
+
+umessage TicketData{
+	ustring id; //门票id
+	ustring ticket_name; //门票名
+	ustring price_fee; //门票单张定价金额（单位：分）
+	ustring real_fee;  //门票单张实际金额（单位：分）
+	ustring is_default; //是否为默认选中（0：否，1：是）
+	ustring discount_fee; //门票单张优惠金额（0表示无优惠）
+}
+
+//公园门票下单请求
+umessage ParkTicketOrderReq{
+	ustring ticket_id; //门票id
+	ustring num; //门票数量
+}
+
+//公园门票下单返回
+umessage ParkTicketOrderAns{
+	uint state; //订单返回状态（0：成功，1：库存不足，2：未达到最少购票限制，3：超过最大购票限制）
+	ustring msg;  //提示信息
+}
+
+//获取个人订单列表
+umessage PersonalOrderListReq{
+	ustring status; //订单状态（0：未付款3：未取票，6：已取票，7：退票)默认为0
+	ustring page_flag; //分页标识
+	ustring rows;	//分页条数
+}
+
+umessage PersonalOrderListAns{
+	ulist<OrderDetail> list;
+	ustring page_flag;
+}
+
+//订单详情
+umessage OrderDetail{
+	ustring id; //订单id
+	ustring qr_url; //订单qr_url
+	ustring check_code; //订单check_code
+    ustring type_name; //门票（类型）名
+    ustring ticket_name; //门票（分类）名
+    ustring ticket_num; //门票数量
+    ustring price_fee; //门票单张定价金额
+    ustring real_fee; //门票单张实际金额
+    ustring all_price_fee; //门票定价总金额
+    ustring all_real_fee; //门票实际总金额
+    ustring all_discount_fee; //门票优惠金额（单位：分，0表示无优惠）
+    //订单状态
+    //0：未付款（未超时），1：未付款（已超时），2：未付款（取消），
+    //3：未取票（未取票），4：未取票（出票失败），5：未取票（退票失败）
+    //6：已取票，7：退票（退票中）8：退票（已退票）
+    ustring status; 
+    ustring create_time; //下单时间戳
+    ustring create_date_time; //下单日期
+    ustring take_ticket_note;   //取票说明（未取票和已取票的详情中使用）
+    ustring failure_time; //失效时间秒数（针对未付款）
+}
+
+//取消订单请求
+umessage CancleOrderReq{
+	ustring id; //订单id
+}
+
+//取消订单返回
+umessage CancleOrderAns{
+	ustring id; //订单id
+	ustring status; //订单状态
+}
+
+//申请退票请求
+umessage RefundTicketReq{
+	ustring id; //订单id
+}
+
+//取票请求
+umessage TakeTicketReq{
+	ustring id; //订单id
+}
+
+//获取公告详情请求
+umessage TkNoticeDetailReq{
+	ustring id; //公告id
+}
+
+//公告详情返回
+umessage TkNoticeDetailAns{
+	ustring id; //公告id
+	ustring title; //公告标题
+	ustring content; //公告内容
+	ustring publish_time; //公告发布时间戳
+	ustring publish_date; //公告发布日期
+}
+
+//获取门票信息请求
+umessage TicketInfoReq{
+	ustring park_id; //公园id
+	ustring type_id; //门票类型id(赞无用)
+}
+
+//门票信息返回
+umessage TicketInfoAns{
+	ustring type_name; //门票（类型）名
+	ustring ticket_selected_id; //选中的门票id
+	ustring ticket_selected_name; //选中的门票名
+	ulist<TicketInfo> ticket_list; //门票(分类)列表
+}
+
+//门票详细信息
+umessage TicketInfo{
+	ustring id; //门票id
+	ustring ticket_name; //门票名
+	ustring price_fee; //门票单张定价金额（单位：分）
+	ustring real_fee; //门票单张实际金额（单位：分）
+	ustring id_default; //是否为默认选中（0：否，1：是）
+	ustring discount_fee; //门票单张优惠金额（0表示无优惠）
+}
+
+//获取门票金额等详细信息请求
+umessage TicketFeeInfoReq{
+	ustring id; //门票id
+	ustring ticket_num; //门票数量
+}
+
+//获取门票金额等详细信息返回
+umessage TicketFeeInfoAns{
+	ustring id; //门票id
+	ustring price_fee; //门票单张定价金额（单位：分）
+	ustring real_fee; //门票单张实际金额（单位：分）
+	ustring all_price_fee; //所有门票定价金额
+	ustring all_real_fee; //所有门票实际金额
+	ustring ticket_num; //门票数量
+	ustring all_discount_fee; //门票总优惠金额（0表示无优惠）
+}
+
+//取票详情请求，返回类型为<OrderDetail>
+umessage TakeTicketDetailReq{
+	ustring id;
+}
+
+//退票详情请求，返回类型为<OrderDetail>
+umessage RefundTicketDetailReq{
+	ustring id; //订单id
+}

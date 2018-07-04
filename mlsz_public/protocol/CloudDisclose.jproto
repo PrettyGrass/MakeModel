@@ -1,0 +1,357 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+import CloudDiscover;
+
+// 请求爆料详情数据
+umessage DiscloseDetailReq {
+	ustring id;   // 爆料详情ID
+}
+
+// 爆料详情请求应答
+umessage DiscloseDetailAns {
+    ulocal DetailInfo info;
+    ulocal DetillAuthor author;
+    ustring type_name;
+    ustring is_attention; // 修改字段类型
+    uint is_top; // 置顶
+	ulocal ShareInfo share; //分享信息
+}
+
+// 详情页面基本信息
+umessage DetailInfo {
+    ustring id;
+    ustring user_id;
+    ustring area_id;
+    ustring complaint_no;
+    ustring title;
+    ustring content;
+    ustring attention_count;
+    ustring comment_count;
+    ustring statue;
+    ustring praise_count;
+    ustring hot_count;
+    ustring source;
+    ustring type;
+    ustring class_app; // 自定义
+    ustring create_time;
+    ustring modify_time;
+    ustring create_by;
+    ustring address;
+    ustring location;
+    ustring location_x;
+    ustring location_y;
+    ustring handle_level;
+    ustring speed_level;
+    ustring hot_leve;
+    ustring charge_depart;
+    ustring result_feedback;
+    ustring satisfaction_comment;
+    ustring is_show_comment;
+    ustring acceptno;
+    ustring dockeno;
+    ustring anonymous;
+    ustring is_hot;
+    ustring sort;
+    ustring is_delete;
+    uint is_display_ev; // 修改字段类型
+
+    ulist<CloudDiscover.ComplaintImage> image_list;
+}
+
+// 详情页面-评论发表者信息
+umessage DetillAuthor {
+    uint user_id;
+    ustring face_image;
+    ustring nickname;
+    ustring level_name;
+}
+
+// 分享信息
+umessage ShareInfo {
+    ustring icon_url;
+    ustring complaint_url; //爆料连接
+	ustring share_title; //分享标题
+    ustring share_text; //分享内容
+}
+
+// 热门、附近、最新数据请求
+umessage DisclosePageDataReq {
+    ustring type;  // 请求数据类型 1.hot 热门  2. nearby 附近 3.latest 最新
+    ustring area_id;  // 区域ID (后台返回的，不是客户端写死的)
+    uint rows;     // 每条请求返回的条数
+    ustring page_flag; // 分页请求时上传的上次请求带下来的flag，如果第一次请求就不传
+    ustring location_x; // 位置信息
+    ustring location_y; // 位置信息
+}
+
+// 热门、附近、最新数据返回数据
+umessage DisclosePageDataAns {
+    ulist<ExplodeInfo> complaint_list;
+
+    ulocal DiscloseBannerData banner_info;
+}
+
+// 详情数据
+umessage ExplodeInfo {
+    ustring id;
+    ustring statue;
+    ustring hot_count;
+    ustring comment_count;
+    ustring title;
+    ustring time;
+    ustring content;
+    ustring area_id;
+    ustring area_name;
+    ustring type_name;
+    ustring location_x;
+    ustring location_y;
+    uint distance;
+    ulist<CloudDiscover.ComplaintImage> image_list;
+
+    ustring page_flag;
+
+    ustring iconUrl;
+}
+
+// 美丽深圳图片轮播栏
+umessage DiscloseBannerData {
+    ustring area_id;
+
+    ustring banner_url;
+
+    ustring description;
+
+    ustring area_name;
+	
+	ustring remark;
+}
+
+// 请求城市区域信息 (Get 请求)
+umessage CityAreaReq {
+}
+
+// 请求城市区域信息应答
+umessage CityAreaAns {
+    ulocal CityBean city;  // 城市信息
+    ulist<AreaBean> area;  // 区域列表
+}
+
+// 城市信息
+umessage CityBean {
+    ustring id;
+    ustring name;
+}
+
+// 区域信息
+umessage AreaBean {
+    ustring id;
+    uint Pid;
+    ustring name;
+}
+
+// 发布爆料分类列表请求 (Get 请求)
+umessage PublishTopicReq {
+}
+
+// 发布爆料分类列表请求应答
+umessage PublishTopicsAns {
+    ulist<PublishTopic> data;
+}
+
+// 发布爆料分类
+umessage PublishTopic {
+    ustring id;
+    ustring type_name;
+    ustring pid;
+    ustring class_id;
+    ulist<PublishTopic> children;
+}
+
+
+// 评论列表请求数据
+umessage CommentListReq {
+	ustring id;   // 爆料者ID
+	uint type; //评论类别、1：热门 2：最近（默认最近）
+	uint rows; //每页返回条数
+	ustring page_flag; //分页标识
+}
+
+//评论列表数据应答
+umessage CommentListAns {
+	 ulist<CommentListInfo> data;
+}
+
+//评论列表数据
+umessage CommentListInfo {
+    ustring comment_id;
+    ustring content;
+    ustring create_time;
+    ustring seq;
+    ustring complaint_id;
+    ustring type;
+    ustring praise_count;
+    ustring flag;
+    ustring page_flag;
+    ustring anonymous;
+    uint is_praise;
+    uint is_reply;
+    ustring reply_user;
+    ustring reply_content;
+    ulocal LoginUserInfo user_info;
+}
+//用户信息
+umessage LoginUserInfo{
+    uint user_id;
+    ustring nickname;
+    ustring face_image;
+    ustring level_name;
+    ustring mobile;
+    ustring score;
+    ustring sex;
+    ustring region;
+    ustring em_value;
+}
+
+//爆料案件进度请求参数
+umessage ComplaintStatueReq{
+    ustring id;   // 爆料者ID
+}
+//爆料案件进度数据应答
+umessage ComplaintStatueAns{
+	uint statue;
+	ustring class_app;
+	ulocal ComplaintStatueCurrentInfo current_info;
+	ulist<ComplaintStatueDetail> detail;
+	ustring all_cost_time;
+	ustring dockeno;
+	uint is_field_record; // 修改类型
+	ulist<String> field_record_image;
+	ustring result_feedback;
+	ustring is_show_timeout;
+	uint all_cost_time_stamp; // 修改
+}
+
+//案件进度详情数据
+umessage ComplaintStatueCurrentInfo{
+	ustring status_id;
+	ustring complaint_id;
+	ustring problem_no;
+	ustring handler;
+	ustring mobile;
+	ustring statue_statue;
+	ustring count_time;
+	ustring statue_create_time;
+	ustring statue_close_time;
+	ustring limit_time;
+	ustring remark;
+	ustring statue;
+	ustring link;
+	ustring is_finshed;
+	uint is_timeout;  // 修改类型
+	ustring if_show;
+	uint count_time_stamp;
+	ustring limit_time_stamp;
+}
+//案件进度详情列表
+umessage ComplaintStatueDetail{
+
+	ustring status_id;
+	ustring complaint_id;
+	ustring problem_no;
+	ustring handler;
+	ustring mobile;
+	ustring statue_statue;
+	ustring statue_create_time;
+	ustring statue_close_time;
+	ustring limit_time;
+	ustring remark;
+	ustring if_show;
+	ustring is_timeout;
+	ustring out_time;
+	ustring cost_time;
+	ustring link;
+}
+
+// 爆料案件关注请求参数
+umessage AttentionStatueReq{
+        ustring id;   // 爆料者ID
+}
+
+// 爆料案件关注数据应答
+umessage AttentionStatueAns{
+	uint statue;   // 1:关注成功！0：取消关注成功！
+}
+
+//顶贴请求参数
+umessage DoStickReq{
+	ustring id;   // 爆料者ID
+}
+
+// 顶贴请求数据应答
+umessage DoStickAns{
+	uint count;   // 置顶数
+	uint statue;   // 置顶状态(1：已置顶，0：未置顶)
+	ulist<OperInfo> oper_info;
+}
+
+//操作信息
+umessage OperInfo{
+	ustring type;   // 0:鲜花 1：威望
+	ustring oper;   // 操作
+	ustring num; // 增加的数量
+}
+
+//用户点赞参数请求
+umessage DoVoteReq{
+	ustring comment_id;   // 评论id
+}
+//用户点赞参数请求
+umessage DoVoteAns{
+	ustring count;   // 点赞数
+}
+
+//案件举报请求参数
+umessage DoReportReq{
+	ustring type;
+	ustring description;
+}
+
+//用户评论请求参数
+umessage DoCommentReq{
+	ustring id;
+	ustring content;
+	uint anonymous;
+}
+
+//用户评论返回数据
+umessage DoCommentAns{
+	ulist<OperInfo> oper_info;
+}
+
+//结案评价请求参数
+umessage DoHavePublishReq{
+	ustring id;
+	ustring content;
+	uint speed_level;
+	uint handle_level;
+}
+
+//结案评价返回数据
+umessage DoHavePublishAns{
+	ustring speed_level;
+	ustring handle_level;
+	ustring satisfaction_comment;
+	ulist<OperInfo> oper_info;
+}
+
+// 新版本发布爆料分类
+umessage PublishTopicNewReq {
+    ustring content; // 爆料内容
+    ustring location; // 坐标地址
+    ustring anonymous; // 是否匿名,0是非匿名,1是匿名
+    ustring address; // 地址
+		ustring mobile; // 手机号
+    ustring type; // 爆料类型
+		ustring images; // 上传图片地址采用","分割
+	ustring source; //来源 2：Android 3：iOS
+}

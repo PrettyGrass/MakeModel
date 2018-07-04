@@ -1,0 +1,182 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+import CloudDisclose;
+
+// 我的爆料、我的关注请求数据的参数
+umessage MyTipOffReq {
+	uint type;   // 爆料、关注类别，0：未结案，1：已结案
+	uint rows; // 每页请求的条数
+	ustring page_flag; //分页标识
+	
+}
+// 我的爆料请求应答
+umessage MyTipOffAns {
+	ulist<TipOffInfo> data;
+
+}
+//返回爆料的数据
+umessage TipOffInfo {
+	ustring id;
+	ustring area_id;
+	ustring statue;
+	ustring hot_count;
+	ustring comment_count;
+	ustring attention_count;
+	ustring title;
+	ustring satisfaction_comment;
+	ustring time;
+	ustring content;
+	ustring small_image;
+	ustring is_evaluate;
+	uint is_appraise;
+	ustring statue_desc;
+	ustring area_name;
+	ustring page_flag;
+}
+
+
+// 我的评论请求数据的参数
+umessage MyCommentReq {
+	uint rows; // 每页请求的条数
+	ustring page_flag; //分页标识
+	
+}
+
+// 我的评论请求应答数据
+umessage MyCommentAns {
+	ulist<CommentInfo>  data;
+
+}
+//返回评论的数据
+umessage CommentInfo {
+	ustring comment_id;
+	ustring complaint_id;
+	ustring content;
+	ustring praise_count;
+	ustring create_time;
+	ustring complaint_content;
+	ustring page_flag;
+	uint is_praise;
+
+}
+
+// 删除我的评论请求数据的参数
+umessage DeleteMyCommentReq {
+	ustring comment_id;//爆料者的id	
+}
+
+//已参与活动请求
+umessage MyActivitiesAttendReq {
+	ustring page_flag;
+	uint rows;
+}
+
+//已参与活动请求
+umessage MyActivitiesCollectionReq {
+	ustring page_flag;
+	uint rows;
+}
+
+//我的花篮数据请求
+umessage MyFlowerDataReq {
+	ustring type;
+	ustring page_flag;
+	ustring rows;
+}
+
+//我的花篮数据返回
+umessage MyFlowerDataAns {
+	ustring id;
+	ustring rule_type;
+	ustring way;
+	ustring obj_id;
+	ustring score;
+	ustring content;
+	ustring page_flag;
+	uint type;//链接类型（0：无 1:爆料 2：活动 3:商品）
+}
+
+//完善用户资料
+umessage CompleteUserInfoReq{
+	ustring nickname; //昵称
+	ustring face_image; //头像url
+}
+
+//修改用户数据请求
+umessage ChangeUserInfoReq {
+	ustring nickname;
+	ustring sex;
+	ustring area_id;
+	ustring face_image;
+}
+
+umessage GetRegisterCodeReq {
+	ustring mobile;
+}
+
+//请求注册
+umessage UserRegisterReq {
+	ustring mobile;
+	ustring verify;
+	ustring password;
+	ustring session_id;
+	uint source;
+	uint device;
+}
+
+umessage GetCheckCodeReq {
+	ustring mobile;
+}
+
+// 验证手机号
+umessage CheckMobileNumberReq {
+	ustring mobile;
+	ustring verify;
+	ustring session_id;
+}
+
+// 所有跟用户信息相关的请求都是返回用户最新的所有数据(查询、修改)
+umessage UserDataAns {
+	ustring token; // 用户token
+	ulocal CloudDisclose.LoginUserInfo user_info; // 用户信息
+}
+
+/// 等级详情请求[member/memberLevelDetail]
+umessage LevelDescReq{
+	ustring token; // 用户token
+}
+
+/// 等级详情应答
+umessage LevelDescAns{
+	ustring em_value;	///	用户威望值
+	ustring next_level_emvalue;	///	下一等级威望值
+	ustring level_name;	///	当前等级名称
+	ulist<UserGroupInfo>user_group_info;	///	所有等级信息
+	ulist<UserRuleRnfo>user_rule_info;	///	获取威望值的所有操作
+}
+
+/// 所有等级信息
+umessage UserGroupInfo {
+	ustring group_name;	///	等级名称
+	ustring emvalue_lower;	///	等级对应的威望值（下限）
+	ustring emvalue_higher;	///	等级对应的威望值（上限）
+}
+
+/// 获取威望值的所有操作
+umessage UserRuleRnfo {
+	ustring num; ///	添加的数量
+	ustring remark;	///	获取威望的操作
+}
+
+umessage GetFindPwdRegisterCodeReq {
+	ustring mobile;
+}
+
+umessage UserDataReq {
+	ustring xg_token;
+}
+
+
+
+
+

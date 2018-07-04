@@ -1,0 +1,32 @@
+package cn.com.hcfdata.mlsz.protocol;
+
+// 展示例子A
+umessage ModelA {
+	uint int_a_value; // int 类型
+	ustring string_a_value;// string 类型
+	ulist<ModelB> list_a_value; // list 类型
+	ulocal ModelB test;
+	ufile file; // 文件类型
+}
+
+// 展示例子B
+umessage ModelB {
+	uint int_b_value; // int 类型
+	ustring string_b_value;// string 类型
+}
+
+
+umessage Login {
+	ustring user_name; // 用户名
+	ustring user_pwd; // 密码
+}
+
+umessage LoginAns {
+	ustring user_info;  // 用户信息
+}
+
+umessage Pinglun{
+	ulist<ping> sss;
+}
+
+
