@@ -1,0 +1,9 @@
+{
+	"innerType": {
+      "string": "String",
+      "int": "Int",
+      "float": "Float",
+      "double": "Double",
+      "long": "Long"
+    }
+}

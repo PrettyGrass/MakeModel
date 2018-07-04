@@ -1,0 +1,22 @@
+{
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "default": "默认值",
+      "remark": "注释"
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "default": "默认值",
+      "remark": "标题注释"
+    },
+    {
+      "name": "titledd",
+      "type": "string",
+      "default": "默认值",
+      "remark": "标题注释"
+    }
+  ]
+}
