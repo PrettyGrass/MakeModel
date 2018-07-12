@@ -34,14 +34,39 @@ class Swift():
     def createModels(self, models):
 
         for model in models:
-            self.createModelFile(model)
-            self.createModels(model.innerClass)
+            lines = self.createModelFile(model, True)
+            self.writeFile(model, lines)
 
-    def createModelFile(self, model):
+    def createModelFile(self, model, checkSub=False, inner=False):
+
+        inFileClass = []
+        inClassClass = []
+        inSingle = []
+        if checkSub:
+            for sub in model.innerClass:
+                path = '%s.%s' % (model.name, sub.name)
+                if path in self.selfConf.inFile:
+                    inFileClass.append(sub)
+                elif path in self.selfConf.inClass:
+                    inClassClass.append(sub)
+                else:
+                    inSingle.append(sub)
+
+        for sub in inSingle:
+            lines = self.createModelFile(sub)
+            self.writeFile(sub, lines)
+
         lines = []
-        lines.extend(self.createHeader(model, model.name))
-        lines.extend(self.createClass(model, model.name))
 
+        if inner == False:
+            lines.extend(self.createHeader(model, model.name))
+
+        lines.extend(self.createClassRemark(model, model.name))
+        lines.extend(self.createClass(model, model.name, inFileClass, inClassClass))
+
+        return lines
+
+    def writeFile(self, model, lines):
         outFile = os.path.join(self.outPath, model.name + '.swift')
         util.writeLinesFile(lines, outFile)
 
@@ -55,22 +80,34 @@ class Swift():
             //  Copyright © 2018年 QuTui Science and Technology Co., Ltd. All rights reserved.
             //
             
-            
-            /**
-            
-            
+            '''
+        lines.append(h.replace('    ', ''))
+
+        return lines
+
+    def createClassRemark(self, modelJson, name, lvl=0):
+        lines = []
+        h = '''/**
+
             */'''
         lines.append(h.replace('    ', ''))
 
         return lines
 
-    def createClass(self, model, name):
+    def createClass(self, model, name, inFile, inClass, lvl=0):
         lines = []
         lines.append('class ' + name + ' {')
         for prop in model.props:
-            lines.extend(self.createProp(prop, 1))
+            lines.extend(self.createProp(prop, lvl + 1))
+
+        if len(inClass):
+            for sub in inClass:
+                lines.extend(self.createModelFile(sub, inner=True))
 
         lines.append('}')
+        if len(inFile):
+            for sub in inFile:
+                lines.extend(self.createModelFile(sub, inner=True))
         return lines
 
     def createProp(self, prop, lvl):
