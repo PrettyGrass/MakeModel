@@ -20,6 +20,8 @@ class Swift():
         self.conf = Conf()
         self.selfConf = SwiftConf()
         self.models = models
+        self.inClass = []  # 用于暂存内部类
+        self.currentClass = None
 
     def build(self):
         print 'build swift'
@@ -27,6 +29,7 @@ class Swift():
 
     def clear(self):
         print 'clear swift'
+        os.system('rm \"%s/*\"' % self.outPath)
 
     def init(self):
         print 'init swift'
@@ -34,18 +37,21 @@ class Swift():
     def createModels(self, models):
 
         for model in models:
-
+            self.inClass = []
+            self.currentClass = model
+            # 分析类的创建位置
             inFileClass = []
             inClassClass = []
             inSingle = []
             for sub in model.innerClass:
                 path = '%s.%s' % (model.name, sub.name)
-                if path in self.selfConf.inFile:
+                if path in self.conf.inFile:
                     inFileClass.append(sub)
-                elif path in self.selfConf.inClass:
-                    inClassClass.append(sub)
-                else:
+                elif path in self.conf.singleFile:
                     inSingle.append(sub)
+                else:
+                    inClassClass.append(sub)
+                    self.inClass.append(sub.name)
 
             for sub in inSingle:
                 lines = self.createModelFile(sub)
@@ -68,8 +74,10 @@ class Swift():
         return lines
 
     def writeFile(self, model, lines):
-        outFile = os.path.join(self.outPath, model.name + '.swift')
+        swiftName = model.name + '.swift'
+        outFile = os.path.join(self.outPath, swiftName)
         util.writeLinesFile(lines, outFile)
+        print '创建:', swiftName
         os.system('cd %s; swiftlint autocorrect\n' % self.outPath)
 
     def createHeader(self, modelJson, name):
@@ -78,11 +86,12 @@ class Swift():
             //  main.swift
             //  ____
             //
-            //  Created by ylin on 2018/6/27.
+            //  Created by %s on %s.
             //  Copyright © 2018年 QuTui Science and Technology Co., Ltd. All rights reserved.
             //
+            //  MARK: %s
             
-            '''
+            ''' % (self.conf.author, self.conf.date, self.conf.mark)
         lines.append(h.replace('    ', ''))
 
         return lines
@@ -156,7 +165,11 @@ class Swift():
                 subType = self.selfConf.baseType[subType]
             type = '[%s]' % subType
 
+        # 处理使用内部类的情况
+        if type in self.inClass:
+            type = type.replace(type, '%s.%s' % (self.currentClass.name, type))
+
         aVer = util.space(lvl) + 'var ' + prop.name + ': ' + type + '?'
-        aVer += (u"  //< %s" % (prop.name))
+        aVer += ("  //< %s" % (prop.name))
         lines.append(aVer)
         return lines

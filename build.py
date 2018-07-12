@@ -52,12 +52,19 @@ class ParseModel():
             modelJson = modelJson[0]
 
         for key, val in modelJson.items():
+
+            keyP = (keyPath + '.%s' % key)
+            # 忽略
+            if keyP in self.conf.ignore:
+                print '忽略:', keyP
+                continue
+
             prop = PropInfo()
             prop.name = key
 
             type = util.getValueTypeString(val)
             subTypes = []
-            keyP = (keyPath + '.%s' % key)
+
             if type == 'dict':
                 # 对象 1, 获取映射类型, 获取失败使用key变大驼峰
                 innerClass = ClassInfo()
@@ -91,7 +98,7 @@ class ParseModel():
         currentClass.props.extend(props)
 
     def getMapPath(self, keyPath, key):
-        name = self.conf.map.get(keyPath, '')
+        name = self.conf.propMap.get(keyPath, '')
         if len(name) == 0:
             name = cm2us.underlinesToCamel(key)
         return name
