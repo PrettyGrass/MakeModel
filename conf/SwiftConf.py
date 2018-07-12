@@ -17,4 +17,13 @@ class SwiftConf():
         baseType['double'] = 'Double'
         baseType['long'] = 'Long'
 
-        self.importModule = ['ObjectMapper']
+        self.importModule = []
+        self.useHandyJSON = True
+        self.useObjectMapper = False
+        if self.useHandyJSON:
+            self.importModule.append('HandyJSON')
+        if self.useObjectMapper:
+            self.importModule.append('ObjectMapper')
+
+
+

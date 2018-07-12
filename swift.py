@@ -113,7 +113,14 @@ class Swift():
 
     def createClass(self, model, name, inFile, inClass, lvl=0):
         lines = []
-        lines.append('%sclass %s: Mappable {' % (util.space(lvl), name))
+        extend = 'Any'
+        if self.selfConf.useHandyJSON:
+            extend = 'HandyJSON'
+
+        if self.selfConf.useObjectMapper:
+            extend = extend + ', Mappable'
+
+        lines.append('%spublic class %s: %s {' % (util.space(lvl), name, extend))
 
         for prop in model.props:
             lines.extend(self.createProp(prop, lvl + 1))
@@ -137,18 +144,25 @@ class Swift():
         lines = []
 
         # init
-        lines.append('%srequired init?(map: Map) {' % (util.space(lvl)))
-        lines.append('%s' % (util.space(lvl)))
-        lines.append('%s}' % (util.space(lvl)))
-        lines.append('%s' % (util.space(lvl)))
+        if self.selfConf.useHandyJSON:
+            lines.append('%srequired public init() {' % (util.space(lvl)))
+            lines.append('%s' % (util.space(lvl)))
+            lines.append('%s}' % (util.space(lvl)))
 
-        lines.append('%sfunc mapping(map: Map) {' % (util.space(lvl)))
+        if self.selfConf.useObjectMapper:
+            lines.append('%srequired public init?(map: Map) {' % (util.space(lvl)))
+            lines.append('%s' % (util.space(lvl)))
+            lines.append('%s}' % (util.space(lvl)))
+            lines.append('%s' % (util.space(lvl)))
 
-        for prop in model.props:
-            lines.append('%s%s    <- map["%s"]' % (util.space(lvl + 1), prop.name, prop.name))
+            lines.append('%spublic func mapping(map: Map) {' % (util.space(lvl)))
 
-        lines.append('%s' % (util.space(lvl)))
-        lines.append('%s}' % (util.space(lvl)))
+            for prop in model.props:
+                lines.append('%s%s    <- map["%s"]' % (util.space(lvl + 1), prop.name, prop.name))
+
+            lines.append('%s' % (util.space(lvl)))
+            lines.append('%s}' % (util.space(lvl)))
+
         lines.append('%s' % (util.space(lvl)))
 
         return lines
