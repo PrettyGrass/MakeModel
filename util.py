@@ -84,7 +84,6 @@ def space(lel, type='tab'):
 
 def getValueType(value):
     valueType = type(value)
-    print valueType
     return valueType
 
 

@@ -34,15 +34,10 @@ class Swift():
     def createModels(self, models):
 
         for model in models:
-            lines = self.createModelFile(model, True)
-            self.writeFile(model, lines)
 
-    def createModelFile(self, model, checkSub=False, inner=False):
-
-        inFileClass = []
-        inClassClass = []
-        inSingle = []
-        if checkSub:
+            inFileClass = []
+            inClassClass = []
+            inSingle = []
             for sub in model.innerClass:
                 path = '%s.%s' % (model.name, sub.name)
                 if path in self.selfConf.inFile:
@@ -52,23 +47,30 @@ class Swift():
                 else:
                     inSingle.append(sub)
 
-        for sub in inSingle:
-            lines = self.createModelFile(sub)
-            self.writeFile(sub, lines)
+            for sub in inSingle:
+                lines = self.createModelFile(sub)
+                self.writeFile(sub, lines)
+
+            lines = self.createModelFile(model, inFileClass=inFileClass, inClassClass=inClassClass)
+            self.writeFile(model, lines)
+
+    def createModelFile(self, model, inFileClass=None, inClassClass=None, inner=False, lvl=0):
 
         lines = []
 
         if inner == False:
             lines.extend(self.createHeader(model, model.name))
+            lines.extend(self.createImport(model, model.name))
 
-        lines.extend(self.createClassRemark(model, model.name))
-        lines.extend(self.createClass(model, model.name, inFileClass, inClassClass))
+        lines.extend(self.createClassRemark(model, model.name, lvl))
+        lines.extend(self.createClass(model, model.name, inFileClass, inClassClass, lvl))
 
         return lines
 
     def writeFile(self, model, lines):
         outFile = os.path.join(self.outPath, model.name + '.swift')
         util.writeLinesFile(lines, outFile)
+        os.system('cd %s; swiftlint autocorrect\n' % self.outPath)
 
     def createHeader(self, modelJson, name):
         lines = []
@@ -85,29 +87,61 @@ class Swift():
 
         return lines
 
+    def createImport(self, modelJson, name):
+        lines = []
+        for imp in self.selfConf.importModule:
+            lines.append('import %s' % (imp))
+
+        lines.append('')
+        return lines
+
     def createClassRemark(self, modelJson, name, lvl=0):
         lines = []
-        h = '''/**
-
-            */'''
-        lines.append(h.replace('    ', ''))
-
+        lines.append('%s/**' % (util.space(lvl)))
+        lines.append('%s' % (util.space(lvl)))
+        lines.append('%s*/' % (util.space(lvl)))
         return lines
 
     def createClass(self, model, name, inFile, inClass, lvl=0):
         lines = []
-        lines.append('class ' + name + ' {')
+        lines.append('%sclass %s: Mappable {' % (util.space(lvl), name))
+
         for prop in model.props:
             lines.extend(self.createProp(prop, lvl + 1))
+        lines.append('')
 
-        if len(inClass):
+        lines.extend(self.createFunc(model, lvl + 1))
+
+        if inClass and len(inClass):
             for sub in inClass:
-                lines.extend(self.createModelFile(sub, inner=True))
+                lines.extend(self.createModelFile(sub, inner=True, lvl=1))
 
-        lines.append('}')
-        if len(inFile):
+        lines.append('%s}' % (util.space(lvl)))
+        lines.append('')
+        lines.append('')
+        if inFile and len(inFile):
             for sub in inFile:
                 lines.extend(self.createModelFile(sub, inner=True))
+        return lines
+
+    def createFunc(self, model, lvl):
+        lines = []
+
+        # init
+        lines.append('%srequired init?(map: Map) {' % (util.space(lvl)))
+        lines.append('%s' % (util.space(lvl)))
+        lines.append('%s}' % (util.space(lvl)))
+        lines.append('%s' % (util.space(lvl)))
+
+        lines.append('%sfunc mapping(map: Map) {' % (util.space(lvl)))
+
+        for prop in model.props:
+            lines.append('%s%s    <- map["%s"]' % (util.space(lvl + 1), prop.name, prop.name))
+
+        lines.append('%s' % (util.space(lvl)))
+        lines.append('%s}' % (util.space(lvl)))
+        lines.append('%s' % (util.space(lvl)))
+
         return lines
 
     def createProp(self, prop, lvl):
@@ -117,7 +151,10 @@ class Swift():
             type = self.selfConf.baseType[prop.type]
 
         if prop.type == 'list':
-            type = '[%s]' % prop.subTypes[0]
+            subType = prop.subTypes[0]
+            if self.selfConf.baseType.has_key(subType):
+                subType = self.selfConf.baseType[subType]
+            type = '[%s]' % subType
 
         aVer = util.space(lvl) + 'var ' + prop.name + ': ' + type + '?'
         aVer += (u"  //< %s" % (prop.name))
