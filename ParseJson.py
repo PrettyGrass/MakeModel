@@ -6,7 +6,6 @@
 import os, oc, java, util, re, sys
 from ClassInfo import *
 sys.path.append('./conf')
-import cm2us
 from conf import Conf
 
 
@@ -98,5 +97,5 @@ class ParseJson():
     def getMapPath(self, keyPath, key):
         name = self.conf.propMap.get(keyPath, '')
         if len(name) == 0:
-            name = cm2us.underlinesToCamel(key)
+            name = util.underlinesToCamel(key)
         return name

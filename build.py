@@ -8,8 +8,6 @@ from swift import *
 from ParseJson import ParseJson
 
 sys.path.append('./conf')
-sys.path.append('./script')
-import cm2us
 from conf import Conf
 
 

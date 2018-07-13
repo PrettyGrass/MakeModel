@@ -6,7 +6,6 @@ import os, json, sys, re
 import util
 
 sys.path.append('./conf')
-sys.path.append('./script')
 from conf import Conf
 from SwiftConf import SwiftConf
 
