@@ -33,6 +33,7 @@ class Swift():
 
     def init(self):
         print 'init swift'
+        self.clear()
 
     def createModels(self, models):
 
