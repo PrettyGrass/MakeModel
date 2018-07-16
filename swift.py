@@ -115,7 +115,7 @@ class Swift():
         lines = []
         extend = 'Any'
         if self.selfConf.useHandyJSON:
-            extend = 'HandyJSON'
+            extend = extend + ',HandyJSON'
 
         if self.selfConf.useObjectMapper:
             extend = extend + ', Mappable'
