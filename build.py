@@ -5,7 +5,7 @@
 import os, oc, java, util, re, sys
 from ClassInfo import *
 from swift import *
-from ParseJson import ParseJson
+from ParseModelJson import ParseModelJson
 
 sys.path.append('./conf')
 from conf import Conf
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     wkPath = os.path.abspath(wkPath)
     print 'wk:', wkPath
 
-    pm = ParseJson(wkPath)
+    pm = ParseModelJson(wkPath)
     ms = pm.getModels()
     
     swift = Swift(wkPath, ms)

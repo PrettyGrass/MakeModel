@@ -9,7 +9,7 @@ sys.path.append('./conf')
 from conf import Conf
 
 
-class ParseJson():
+class ParseModelJson():
     def __init__(self, wkPath):
         self.wkPath = wkPath
         self.modelPath = os.path.join(wkPath, 'Model')
