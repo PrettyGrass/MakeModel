@@ -27,6 +27,7 @@ class ParseModelJson():
 
         return models
 
+    # 递归解析数据结构
     def parseFile(self, file, name):
         clazz = ClassInfo()
         clazz.name = name

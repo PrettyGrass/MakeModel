@@ -3,8 +3,9 @@
 # ylin 2018.6.26
 
 
-import os, oc, java, util, re, sys
-from ClassInfo import *
+import os, oc, java, util, re, sys, json
+from APIModel import *
+
 sys.path.append('./conf')
 from conf import Conf
 
@@ -12,90 +13,145 @@ from conf import Conf
 class ParseApiJson():
     def __init__(self, wkPath):
         self.wkPath = wkPath
-        self.modelPath = os.path.join(wkPath, 'Model')
+        self.modelPath = os.path.join(wkPath, 'Api')
         self.conf = Conf()
 
-    def getModels(self):
-        models = []
-        print '模型路径', self.modelPath
+    def apiGroups(self):
+        apiGroups = []
+        print 'PostMan API文件路径', self.modelPath
         path = os.listdir(self.modelPath)
         for p in path:
             file = os.path.join(self.modelPath, p)
             if os.path.isfile(file) and p[-4:] == 'json':
                 name = re.split('\.', p, 1)[0]
-                models.append(self.parseFile(file, name))
+                apiGroups.extend(self.parseApiGroups(file, name))
 
-        return models
+        return apiGroups
 
-    def parseFile(self, file, name):
-        clazz = ClassInfo()
-        clazz.name = name
+    def parseApiGroups(self, file, name):
+        apiGroups = []
 
-        paths = re.split('\.', self.conf.dataPath)
         content = util.readJsonFile(file)
-        for index in range(len(paths)):
-            path = paths[index]
-            content = content.get(path)
-        keyPath = name
-        self.createModelProps(content, clazz, clazz, keyPath)
+        items = content.get('item', [])
+        for index in range(len(items)):
+            apiGroup = APIGroupInfo()
+            apiGroups.append(apiGroup)
+            item = items[index]
+            apiGroup.name = item.get('name', '')
+            apiGroup.description = item.get('description', '')
 
-        return clazz
+            apis = item.get('item', [])
+            apiGroup.apis.extend(self.parseApis(apis))
 
-    def createModelProps(self, modelJson, rootClass, currentClass, keyPath):
-        props = []
-        if isinstance(modelJson, list):
-            if len(modelJson) == 0:
-                modelJson.append(dict())
-            modelJson = modelJson[0]
+        return apiGroups
 
-        for key, val in modelJson.items():
+    def parseApis(self, apisJson):
+        apis = []
+        for index in range(len(apisJson)):
+            item = apisJson[index]
+            api = APIInfo()
+            apis.append(api)
+            api.name = item.get('name')
 
-            keyP = (keyPath + '.%s' % key)
-            # 忽略
-            if keyP in self.conf.ignore:
-                print '忽略:', keyP
+            # 解析请求
+            request = item.get('request')
+            url = request.get('url')
+
+            if None == url:
+                print '--无效的请求:--', api.name, request
                 continue
 
-            prop = PropInfo()
-            prop.name = key
+            api.method = request.get('method')
+            api.host = '.'.join(url.get('host'))
+            api.protocol = url.get('protocol', 'https')
 
-            type = util.getValueTypeString(val)
-            subTypes = []
+            # get参数
+            api.params.extend(self.parseGetParams(url.get('query', [])))
 
-            if type == 'dict':
-                # 对象 1, 获取映射类型, 获取失败使用key变大驼峰
-                innerClass = ClassInfo()
-                innerClass.name = self.getMapPath(keyP, key)
-                self.createModelProps(val, rootClass, innerClass, keyP)
-                rootClass.innerClass.append(innerClass)
-                type = innerClass.name
-            elif type == 'list':
-                # 列表类型
-                if len(val) == 0:
-                    val.append(dict())
-                itemVal = val[0]
-                if util.getValueTypeString(itemVal) == 'dict':
-                    # 数组下面的对象
-                    innerClass = ClassInfo()
-                    innerClass.name = self.getMapPath(keyP, key)
-                    self.createModelProps(val, rootClass, innerClass, keyP)
-                    rootClass.innerClass.append(innerClass)
-                    subTypes.append(innerClass.name)
+            # post参数
+            api.params.extend(self.parsePostParams(request.get('body')))
 
-                elif util.getValueTypeString(itemVal) == 'list':
-                    # 集合下面是集合 此种情况暂时未遇见
-                    assert '奇葩的数据结构, 去杀了api'
-                else:
-                    # 集合下面是非对象类型
-                    subTypes.append(util.getValueTypeString(itemVal))
+            # rest参数
+            paths = url.get('path')
+            api.params.extend(self.parseRestfulParams(paths))
+            api.path = '/'.join(paths)
 
-            prop.subTypes = subTypes
-            prop.type = type
-            props.append(prop)
-        currentClass.props.extend(props)
+            # 解析响应
+            responses = item.get('response')
+            api.responses = responses
 
-    def getMapPath(self, keyPath, key):
-        name = self.conf.propMap.get(keyPath, '')
-        if len(name) == 0:
-            name = util.underlinesToCamel(key)
-        return name
+            p = ''
+            for n in api.params:
+                p += ' %s:%s' % (n.type, n.name)
+
+            print api.name, api.protocol, api.host, api.path, p
+
+        return apis
+
+    # 解析restful参数
+    def parseRestfulParams(self, paths):
+        pInfos = []
+        # 解析restful参数
+        for index in range(len(paths)):
+            path = paths[index]
+
+            # 判定restful参数 长度大于20位的
+            if len(path) > 20:
+                name = 'id'
+                if index > 0:
+                    name = paths[index - 1] + name[:1].upper() + name[1:]
+
+                # 生成新的restful路径
+                paths[index] = ':'+name
+                restParams = ParamsInfo()
+                pInfos.append(restParams)
+                restParams.type = 'restful'
+                restParams.name = name
+
+        return pInfos
+
+    # 解析get参数
+    def parseGetParams(self, querys):
+        pInfos = []
+        # get参数
+        for query in querys:
+            getParams = ParamsInfo()
+
+            getParams.type = 'get'
+            pInfos.append(getParams)
+            getParams.name = query.get('key')
+
+        return pInfos
+
+    # 解析post参数
+    def parsePostParams(self, body):
+        pInfos = []
+        if body == None:
+            return pInfos
+
+        mode = body.get('mode')
+
+        if mode == 'raw':
+            paramsJson = body.get(mode)
+            params = json.loads(paramsJson)
+
+            # TODO 目前只处理了单层json数据, 嵌套的没有处理
+            for key, val in params.items():
+                pInfo = ParamsInfo()
+                pInfos.append(pInfo)
+
+                pInfo.type = 'post'
+                pInfo.name = key
+                pInfo.paramType = util.getValueTypeString(val)
+
+        elif mode != None and len(mode) > 0:
+            params = body.get(mode)
+            for p in params:
+                pInfo = ParamsInfo()
+                pInfos.append(pInfo)
+
+                pInfo.type = 'post'
+                pInfo.name = p.get('key')
+                pInfo.paramType = util.getValueTypeString(p.get('value', ''))
+
+        return pInfos
