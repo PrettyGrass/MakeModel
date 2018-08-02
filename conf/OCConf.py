@@ -3,27 +3,23 @@
 # ylin 2018.6.26
 
 
-class SwiftConf():
+class OCConf():
     def __init__(self):
         self.author = '作者'
         self.dataPath = 'data'
+        self.apiBaseClass = 'ApiRequest'
 
         baseType = dict()
         self.baseType = baseType
 
-        baseType['string'] = 'String'
-        baseType['int'] = 'Int'
-        baseType['float'] = 'Float'
-        baseType['double'] = 'Double'
-        baseType['long'] = 'Long'
+        baseType['string'] = 'NSString *'
+        baseType['int'] = 'NSInteger'
+        baseType['float'] = 'float'
+        baseType['double'] = 'double'
+        baseType['long'] = 'long'
 
         self.importModule = []
-        self.useHandyJSON = True
-        self.useObjectMapper = False
-        if self.useHandyJSON:
-            self.importModule.append('HandyJSON')
-        if self.useObjectMapper:
-            self.importModule.append('ObjectMapper')
+        self.importModule.append('ObjectMapper')
 
 
 

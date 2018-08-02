@@ -2,9 +2,9 @@
 # -*- coding: UTF-8 -*-
 # ylin 2018.6.26
 
-import os, oc, java, util, re, sys
+import os, OC, java, util, re, sys
 from ClassInfo import *
-from swift import *
+from OCApi import *
 from ParseApiJson import *
 
 sys.path.append('./conf')
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     pm = ParseApiJson(wkPath)
     ms = pm.apiGroups()
 
-    print 'api组:', len(ms), ms
-    # swift = Swift(wkPath, ms)
-    # swift.init()
-    # swift.build()
+    print 'api组:', len(ms)
+    ocApi = OCApi(wkPath, ms)
+    ocApi.init()
+    ocApi.build()

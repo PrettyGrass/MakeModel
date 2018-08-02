@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 # ylin 2018.6.26
 
-import os, oc, java, util, re, sys
+import os, OC, java, util, re, sys
 from ClassInfo import *
 from swift import *
 from ParseModelJson import ParseModelJson

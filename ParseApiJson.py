@@ -3,13 +3,14 @@
 # ylin 2018.6.26
 
 
-import os, oc, java, util, re, sys, json
+import os, OC, java, util, re, sys, json
 from APIModel import *
 
 sys.path.append('./conf')
 from conf import Conf
 
 
+# 解析api数据
 class ParseApiJson():
     def __init__(self, wkPath):
         self.wkPath = wkPath
@@ -37,13 +38,28 @@ class ParseApiJson():
             apiGroup = APIGroupInfo()
             apiGroups.append(apiGroup)
             item = items[index]
-            apiGroup.name = item.get('name', '')
+            fullName = item.get('name', '')
             apiGroup.description = item.get('description', '')
 
+            # [\u4e00-\u9fa5]{1,}
+            # [A-Za-z]{1,}
+            apiGroup.name = fullName
+            apiGroup.enName = util.firstUpper(self.diffENName(fullName))
+
+            print 'api组:', apiGroup.name, apiGroup.enName
             apis = item.get('item', [])
             apiGroup.apis.extend(self.parseApis(apis))
 
         return apiGroups
+
+    # 分离英文名
+    def diffENName(self, fullName):
+        innerNames = []
+        def innerMath(math):
+            innerNames.append(math.group())
+            return math.group()
+        re.sub(r'[A-Za-z0-9]{1,}', innerMath, fullName)
+        return ''.join(innerNames)
 
     def parseApis(self, apisJson):
         apis = []
@@ -71,10 +87,11 @@ class ParseApiJson():
             # post参数
             api.params.extend(self.parsePostParams(request.get('body')))
 
-            # rest参数
+            # restful参数
             paths = url.get('path')
             api.params.extend(self.parseRestfulParams(paths))
             api.path = '/'.join(paths)
+            api.paths = paths
 
             # 解析响应
             responses = item.get('response')
@@ -84,7 +101,7 @@ class ParseApiJson():
             for n in api.params:
                 p += ' %s:%s' % (n.type, n.name)
 
-            print api.name, api.protocol, api.host, api.path, p
+            print '     ', api.name, api.protocol, api.host, api.path, api.method, p
 
         return apis
 
@@ -99,10 +116,10 @@ class ParseApiJson():
             if len(path) > 20:
                 name = 'id'
                 if index > 0:
-                    name = paths[index - 1] + name[:1].upper() + name[1:]
+                    name = paths[index - 1] + util.firstUpper(name)
 
                 # 生成新的restful路径
-                paths[index] = ':'+name
+                paths[index] = ':' + name
                 restParams = ParamsInfo()
                 pInfos.append(restParams)
                 restParams.type = 'restful'

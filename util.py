@@ -111,6 +111,22 @@ def isListType(value):
     return getValueType(value) == types.ListType
 
 
+# 首字母大写
+def firstUpper(x):
+
+    if x == None or len(x) == 0:
+        return x
+    return x[:1].upper() + x[1:]
+
+# 驼峰转下划线
+def isNumberBegin(x):
+
+    if x == None or len(x) == 0:
+        return False
+    return x[:1].isdigit()
+
+
+
 # 驼峰转下划线
 def camelToUnderlines(x):
     prefix = re.split('([a-zA-Z])', x, 1)[0]
