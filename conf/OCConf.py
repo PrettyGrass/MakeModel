@@ -7,7 +7,11 @@ class OCConf():
     def __init__(self):
         self.author = '作者'
         self.dataPath = 'data'
-        self.apiBaseClass = 'ApiRequest'
+
+        self.apiBaseClass = 'NSObject'
+        self.apiBaseClassPreFix = 'QTT'
+        self.apiImport = ['<Foundation/Foundation.h>', '"DTHttpService.h"']
+        self.apiFuncReturnType = 'DTOperationID'
 
         baseType = dict()
         self.baseType = baseType
@@ -20,6 +24,3 @@ class OCConf():
 
         self.importModule = []
         self.importModule.append('ObjectMapper')
-
-
-

@@ -38,6 +38,7 @@ class OCApi():
 
     def createApis(self, apiGroups):
 
+        apiImport = []
         for group in apiGroups:
 
             if group.enName == None or group.enName == '' or len(group.apis) == 0:
@@ -45,15 +46,22 @@ class OCApi():
 
             # 头文件
             print 'api', group.name
+            headerName = group.getFileName(self.selfConf.apiBaseClassPreFix) + '.h'
             lines = self.createHeaderFile(group)
-            self.writeFile(group.getFileName() + '.h', lines)
+            self.writeFile(headerName, lines)
 
             # # 实现文件
             lines = self.createImplFile(group)
-            self.writeFile(group.getFileName() + '.m', lines)
+            self.writeFile(group.getFileName(self.selfConf.apiBaseClassPreFix) + '.m', lines)
 
             self.createdHeaderFunctions = []
             self.createdImplFunctions = []
+
+            apiImport.append('/// "%s"' % (group.name))
+            apiImport.append('#import "%s"' % (headerName))
+            apiImport.append('')
+
+        self.writeFile('%sAPI.h' % (self.selfConf.apiBaseClassPreFix), apiImport)
 
     def createHeaderFile(self, group):
 
@@ -103,13 +111,14 @@ class OCApi():
 
     def createHeaderImport(self, group):
         lines = []
-        lines.append('#import "%s.h"' % (self.selfConf.apiBaseClass))
+        for index in range(len(self.selfConf.apiImport)):
+            lines.append('#import %s' % (self.selfConf.apiImport[index]))
         lines.append('')
         return lines
 
     def createImplImport(self, group):
         lines = []
-        lines.append('#import "%s.h"' % (group.getFileName()))
+        lines.append('#import "%s.h"' % (group.getFileName(self.selfConf.apiBaseClassPreFix)))
         lines.append('')
         return lines
 
@@ -125,41 +134,47 @@ class OCApi():
 
     def createInterface(self, group):
         lines = []
-        lines.append('@interface %s : %s' % (group.getFileName(), self.selfConf.apiBaseClass))
+        lines.append('@interface %s : %s' % (group.getFileName(self.selfConf.apiBaseClassPreFix), self.selfConf.apiBaseClass))
 
         lines.append('')
         for api in group.apis:
-            func = self.createFunc(api, True)
+            func = self.createFuncSign(api, True)
             funcStr = ''.join(func)
             if funcStr in self.createdHeaderFunctions:
                 continue
-
             self.createdHeaderFunctions.append(funcStr)
-            lines.extend(func)
+
+            lines.extend(self.createFunc(api, True))
         lines.append('@end')
         return lines
 
     def createImpl(self, group):
         lines = []
-        lines.append('@implementation %s' % (group.getFileName()))
+        lines.append('@implementation %s' % (group.getFileName(self.selfConf.apiBaseClassPreFix)))
 
         lines.append('')
         for api in group.apis:
 
-            func = self.createFunc(api, False)
+            func = self.createFuncSign(api, False)
             funcStr = ''.join(func)
             if funcStr in self.createdImplFunctions:
                 continue
 
             self.createdImplFunctions.append(funcStr)
 
-            lines.extend(func)
+            lines.extend(self.createFunc(api, False))
             lines.extend(self.createFuncImpl(api))
 
         lines.append('@end')
         return lines
 
     def createFunc(self, api, needEnd=False):
+        lines = []
+        lines.append('/// %s' % (api.name))
+        lines.extend(self.createFuncSign(api, needEnd))
+        return lines
+
+    def createFuncSign(self, api, needEnd=False):
 
         if len(api.paths) == 0:
             return []
@@ -182,11 +197,18 @@ class OCApi():
 
         if api.method.lower() == 'delete':
             funcName += util.firstUpper(api.method.lower())
+        if api.method.lower() == 'put':
+            funcName += util.firstUpper(api.method.lower())
 
         params = ''
         for index in range(len(api.params)):
             p = api.params[index]
             params = '%s%s:(NSString *)%s ' % (params, p.name, p.name)
+
+        callbacks = ['success', 'failure', 'complete']
+        for index in range(len(callbacks)):
+            callback = callbacks[index]
+            params = '%s%s:(void(^)(DTOperation *oper))%s ' % (params, callback, callback)
 
         funcName += util.firstUpper(params)
 
@@ -194,9 +216,7 @@ class OCApi():
             funcName += ';'
 
         lines = []
-
-        lines.append('/// %s' % (api.name))
-        lines.append('- (void)%s' % (funcName))
+        lines.append('+ (%s)%s' % (self.selfConf.apiFuncReturnType, funcName))
 
         if needEnd:
             lines.append('')
@@ -211,7 +231,21 @@ class OCApi():
         lines = []
         lines.append('{')
 
-        # lines.append('@interface %s : %s' % (api.enName, self.selfConf.apiBaseClass))
+        lines.append('''
+        DTHttpService *service = [DTHttpService shareInstanse];
+        DTOperation *oper = [service buildOperationWithSuccess:success
+                                                       failure:failure
+                                                      complete:complete
+                                                  responeClass:%s];''' % ('nil'))
+
+        lines.append('DTRequestParams *params = oper.params;')
+        lines.append('params.path = @"%s";' % (api.path) )
+        lines.append('params.httpMethod = @"get";')
+        for index in range(len(api.params)):
+            p = api.params[index]
+            lines.append('[params addHttpParam:%s forKey:@"%s"];' % (p.name, p.name))
+
+        lines.append('return [service start:oper];')
 
         lines.append('}')
         lines.append('')
