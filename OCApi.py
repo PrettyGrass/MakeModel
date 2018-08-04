@@ -240,7 +240,7 @@ class OCApi():
 
         lines.append('DTRequestParams *params = oper.params;')
         lines.append('params.path = @"%s";' % (api.path) )
-        lines.append('params.httpMethod = @"get";')
+        lines.append('params.httpMethod = @"%s";' % (api.method))
         for index in range(len(api.params)):
             p = api.params[index]
             lines.append('[params addHttpParam:%s forKey:@"%s"];' % (p.name, p.name))
