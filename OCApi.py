@@ -37,8 +37,7 @@ class OCApi():
         self.clear()
 
     def createApis(self, apiGroups):
-
-        apiImport = []
+        apiImport = self.createHeader("接口头文件, 业务中使用, 直接引入该文件即可")
         for group in apiGroups:
 
             if group.enName == None or group.enName == '' or len(group.apis) == 0:
@@ -46,8 +45,9 @@ class OCApi():
 
             # 头文件
             print 'api', group.name
+            funcTable = []
             headerName = group.getFileName(self.selfConf.apiBaseClassPreFix) + '.h'
-            lines = self.createHeaderFile(group)
+            lines = self.createHeaderFile(group, funcTable)
             self.writeFile(headerName, lines)
 
             # # 实现文件
@@ -57,21 +57,28 @@ class OCApi():
             self.createdHeaderFunctions = []
             self.createdImplFunctions = []
 
-            apiImport.append('/// "%s"' % (group.name))
+            apiImport.append('/**')
+            apiImport.append(' %s' % (group.name))
+            apiImport.append('')
+            for func in funcTable:
+                apiImport.append(' %s' % (func))
+
+            apiImport.append(' */')
+
             apiImport.append('#import "%s"' % (headerName))
             apiImport.append('')
 
-        self.writeFile('%sAPI.h' % (self.selfConf.apiBaseClassPreFix), apiImport)
+        self.writeFile('%sHttpAPI.h' % (self.selfConf.apiBaseClassPreFix), apiImport)
 
-    def createHeaderFile(self, group):
+    def createHeaderFile(self, group, funcTable):
 
         lines = []
 
-        lines.extend(self.createHeader(group))
+        lines.extend(self.createHeader(group.name))
         lines.extend(self.createHeaderImport(group))
 
         lines.extend(self.createClassRemark(group, 0))
-        lines.extend(self.createInterface(group))
+        lines.extend(self.createInterface(group, funcTable))
 
         return lines
 
@@ -79,7 +86,7 @@ class OCApi():
 
         lines = []
 
-        lines.extend(self.createHeader(group))
+        lines.extend(self.createHeader(group.name))
         lines.extend(self.createImplImport(group))
 
         lines.extend(self.createClassRemark(group, 0))
@@ -93,7 +100,7 @@ class OCApi():
         print '创建:', fileName
         os.system('clang-format -i %s\n' % outFile)
 
-    def createHeader(self, group):
+    def createHeader(self, name, group=None):
         lines = []
         h = '''//
             //  __firename__
@@ -105,7 +112,7 @@ class OCApi():
             //  MARK: %s
 
             ''' % (self.conf.author, self.conf.date, self.conf.mark)
-        h = h.replace('__firename__', group.name)
+        h = h.replace('__firename__', name)
         lines.append(h.replace('    ', ''))
         return lines
 
@@ -132,9 +139,10 @@ class OCApi():
         lines.append('%s*/' % (util.space(lvl)))
         return lines
 
-    def createInterface(self, group):
+    def createInterface(self, group, funcTable):
         lines = []
-        lines.append('@interface %s : %s' % (group.getFileName(self.selfConf.apiBaseClassPreFix), self.selfConf.apiBaseClass))
+        lines.append(
+            '@interface %s : %s' % (group.getFileName(self.selfConf.apiBaseClassPreFix), self.selfConf.apiBaseClass))
 
         lines.append('')
         for api in group.apis:
@@ -143,6 +151,7 @@ class OCApi():
             if funcStr in self.createdHeaderFunctions:
                 continue
             self.createdHeaderFunctions.append(funcStr)
+            funcTable.append('%s ---- %s' % (api.path, api.name))
 
             lines.extend(self.createFunc(api, True))
         lines.append('@end')
@@ -236,10 +245,10 @@ class OCApi():
         DTOperation *oper = [service buildOperationWithSuccess:success
                                                        failure:failure
                                                       complete:complete
-                                                  responeClass:%s];''' % ('nil'))
+                                                     dataClass:%s];''' % ('nil'))
 
         lines.append('DTRequestParams *params = oper.params;')
-        lines.append('params.path = @"%s";' % (api.path) )
+        lines.append('params.path = @"%s";' % (api.path))
         lines.append('params.httpMethod = @"%s";' % (api.method))
         for index in range(len(api.params)):
             p = api.params[index]
