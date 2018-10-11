@@ -2,10 +2,13 @@
 # -*- coding: UTF-8 -*-
 # ylin 2018.6.26
 
+from conf import Conf
 
-class OCConf():
+
+class OCConf(Conf):
     def __init__(self):
-        self.author = '作者'
+        Conf.__init__(self)
+
         self.dataPath = 'data'
 
         self.apiBaseClass = 'NSObject'
@@ -13,14 +16,12 @@ class OCConf():
         self.apiImport = ['<Foundation/Foundation.h>', '"DTHttpService.h"']
         self.apiFuncReturnType = 'DTOperationID'
 
-        baseType = dict()
-        self.baseType = baseType
-
-        baseType['string'] = 'NSString *'
-        baseType['int'] = 'NSInteger'
-        baseType['float'] = 'float'
-        baseType['double'] = 'double'
-        baseType['long'] = 'long'
+        self.baseType = dict()
+        self.baseType['string'] = 'NSString *'
+        self.baseType['int'] = 'NSInteger'
+        self.baseType['float'] = 'float'
+        self.baseType['double'] = 'double'
+        self.baseType['long'] = 'long'
 
         self.importModule = []
         self.importModule.append('ObjectMapper')

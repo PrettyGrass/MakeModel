@@ -4,7 +4,6 @@
 
 import os
 import util
-from conf import Conf
 from conf import OCConf
 
 
@@ -14,7 +13,6 @@ class OCApi():
         outPath = os.path.join(wkPath, 'Api', 'oc')
         self.wkPath = wkPath
         self.outPath = outPath
-        self.conf = Conf()
         self.selfConf = OCConf()
         self.apiGroups = apiGroups
         self.currentClass = None
@@ -109,7 +107,7 @@ class OCApi():
             //
             //  MARK: %s
 
-            ''' % (self.conf.author, self.conf.date, self.conf.mark)
+            ''' % (self.selfConf.author, self.selfConf.date, self.selfConf.mark)
         h = h.replace('__firename__', name)
         lines.append(h.replace('    ', ''))
         return lines

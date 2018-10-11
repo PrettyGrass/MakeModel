@@ -2,20 +2,21 @@
 # -*- coding: UTF-8 -*-
 # ylin 2018.6.26
 
+from conf import Conf
 
-class SwiftConf():
+
+class SwiftConf(Conf):
     def __init__(self):
-        self.author = '作者'
+        Conf.__init__(self)
         self.dataPath = 'data'
 
-        baseType = dict()
-        self.baseType = baseType
+        self.baseType = dict()
 
-        baseType['string'] = 'String'
-        baseType['int'] = 'Int'
-        baseType['float'] = 'Float'
-        baseType['double'] = 'Double'
-        baseType['long'] = 'Long'
+        self.baseType['string'] = 'String'
+        self.baseType['int'] = 'Int'
+        self.baseType['float'] = 'Float'
+        self.baseType['double'] = 'Double'
+        self.baseType['long'] = 'Long'
 
         self.importModule = []
         self.useHandyJSON = True
@@ -24,6 +25,3 @@ class SwiftConf():
             self.importModule.append('HandyJSON')
         if self.useObjectMapper:
             self.importModule.append('ObjectMapper')
-
-
-

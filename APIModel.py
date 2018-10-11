@@ -8,7 +8,7 @@ from ClassInfo import *
 
 
 # 接口信息
-class APIInfo():
+class APIInfo:
     def __init__(self):
         self.name = ''
         self.enName = ''
@@ -25,7 +25,7 @@ class APIInfo():
 
 
 # 接口组
-class APIGroupInfo():
+class APIGroupInfo:
     def __init__(self):
         self.clazz = ClassInfo()
         self.name = ''
@@ -38,7 +38,7 @@ class APIGroupInfo():
 
 
 # 输入参数
-class ParamsInfo():
+class ParamsInfo:
     def __init__(self):
         self.type = ''  # get post restful
         self.name = ''

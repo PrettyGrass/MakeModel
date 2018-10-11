@@ -5,17 +5,15 @@
 import os, json, sys, re
 import util
 
-from conf import Conf
 from conf import OCConf
+from MakeClassFile import MakeClassFile
 
 
-class OC():
-    def __init__(self, wkPath, models):
-
-        outPath = os.path.join(wkPath, 'Product', 'oc')
-        self.wkPath = wkPath
-        self.outPath = outPath
-        self.conf = Conf()
+class OC(MakeClassFile):
+    def __init__(self, wkpath, models):
+        MakeClassFile.__init__(self)
+        self.wkPath = wkpath
+        self.outPath = os.path.join(wkpath, 'Product', 'oc')
         self.selfConf = OCConf()
         self.models = models
         self.currentClass = None
@@ -43,9 +41,9 @@ class OC():
             inSingle = []
             for sub in model.innerClass:
                 path = '%s.%s' % (model.name, sub.name)
-                if path in self.conf.inFile:
+                if path in self.selfConf.inFile:
                     inFileClass.append(sub)
-                elif path in self.conf.singleFile:
+                elif path in self.selfConf.singleFile:
                     inSingle.append(sub)
                 else:
                     inClassClass.append(sub)
@@ -89,7 +87,7 @@ class OC():
             //
             //  MARK: %s
 
-            ''' % (self.conf.author, self.conf.date, self.conf.mark)
+            ''' % (self.selfConf.author, self.selfConf.date, self.selfConf.mark)
         lines.append(h.replace('    ', ''))
 
         return lines
