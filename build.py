@@ -2,14 +2,9 @@
 # -*- coding: UTF-8 -*-
 # ylin 2018.6.26
 
-import os, OC, java, util, re, sys
-from ClassInfo import *
+
 from swift import *
 from ParseModelJson import ParseModelJson
-
-sys.path.append('./conf')
-from conf import Conf
-
 
 
 if __name__ == '__main__':

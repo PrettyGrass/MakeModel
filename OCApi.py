@@ -2,12 +2,10 @@
 # -*- coding: UTF-8 -*-
 # ylin 2018.6.26
 
-import os, json, sys, re
+import os
 import util
-
-sys.path.append('./conf')
 from conf import Conf
-from OCConf import OCConf
+from conf import OCConf
 
 
 class OCApi():

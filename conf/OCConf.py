@@ -9,7 +9,7 @@ class OCConf():
         self.dataPath = 'data'
 
         self.apiBaseClass = 'NSObject'
-        self.apiBaseClassPreFix = 'QTT'
+        self.apiBaseClassPreFix = 'ST'
         self.apiImport = ['<Foundation/Foundation.h>', '"DTHttpService.h"']
         self.apiFuncReturnType = 'DTOperationID'
 

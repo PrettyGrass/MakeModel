@@ -4,7 +4,8 @@
 
 import time
 
-class Conf():
+
+class Conf:
     def __init__(self):
         self.author = 'ylin'
         self.date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -21,10 +22,10 @@ class Conf():
         propMap['ConfigApiModel.coin_page'] = 'CoinInfoPage'
 
         # api返回嵌套模型写成独立文件
-        self.singleFile = [] #['ConfigApiModel.App']
+        self.singleFile = []  # ['ConfigApiModel.App']
         # api返回嵌套模型写在同一个文件内, java不支持, oc , swift支持
-        self.inFile = [] # ['ConfigApiModel.Channel', 'ConfigApiModel.CoinPage', 'ConfigApiModel.Feed']
+        self.inFile = []  # ['ConfigApiModel.Channel', 'ConfigApiModel.CoinPage', 'ConfigApiModel.Feed']
         # 不在上面集合内的, 写成内部类
 
         # 忽略字段
-        self.ignore = [] #['ConfigApiModel.share_tpl.app.xxx']
+        self.ignore = []  # ['ConfigApiModel.share_tpl.app.xxx']

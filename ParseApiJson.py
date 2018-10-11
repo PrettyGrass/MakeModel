@@ -6,7 +6,6 @@
 import os, OC, java, util, re, sys, json
 from APIModel import *
 
-sys.path.append('./conf')
 from conf import Conf
 
 

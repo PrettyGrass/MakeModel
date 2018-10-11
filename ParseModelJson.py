@@ -5,7 +5,6 @@
 
 import os, OC, java, util, re, sys
 from ClassInfo import *
-sys.path.append('./conf')
 from conf import Conf
 
 

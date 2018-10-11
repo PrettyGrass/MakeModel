@@ -7,7 +7,7 @@ import util
 
 sys.path.append('./conf')
 from conf import Conf
-from OCConf import OCConf
+from conf import OCConf
 
 
 class OC():

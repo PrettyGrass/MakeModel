@@ -5,9 +5,8 @@
 import os, json, sys, re
 import util
 
-sys.path.append('./conf')
 from conf import Conf
-from SwiftConf import SwiftConf
+from conf import SwiftConf
 
 
 class Swift():

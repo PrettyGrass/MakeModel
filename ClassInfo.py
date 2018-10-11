@@ -2,28 +2,34 @@
 # -*- coding: UTF-8 -*-
 # ylin 2018.6.26
 
-class ClassInfo():
+
+class BaseInfo:
     def __init__(self):
-        self.name = ''
-        self.method = []
-        self.props = []
-        self.imports = []
-        self.innerClass = []
+        pass
 
 
-class MethodInfo():
+class ClassInfo(BaseInfo):
     def __init__(self):
-        # 作用域,
-        self.type = 0
-        self.retType = 'void'
-        self.name = ''
-        self.params = []
+        BaseInfo.__init__(self)
+        self.name = ''          # 类名
+        self.method = []        # 方法列表
+        self.props = []         # 属性
+        self.imports = []       # 引入关系
+        self.innerClass = []    # 内部类, 部分语言不支持
 
 
-class PropInfo():
+class MethodInfo(BaseInfo):
     def __init__(self):
-        # 作用域, 内存管理方式
-        self.type = ''
-        self.subTypes = [] # 数组, 字典对象使用 list[object] dict(object1: object2)
-        self.name = ''
+        BaseInfo.__init__(self)
+        self.type = 0           # 实例方法 类方法
+        self.retType = 'void'   # 返回值类型
+        self.name = ''          # 函数名
+        self.params = []        # 参数表
 
+
+class PropInfo(BaseInfo):
+    def __init__(self):
+        BaseInfo.__init__(self)
+        self.type = ''          # 类型
+        self.subTypes = []      # 子类型,数组, 字典对象使用 list[object] dict(object1: object2)
+        self.name = ''          # 名字

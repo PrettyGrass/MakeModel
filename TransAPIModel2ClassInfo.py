@@ -3,11 +3,8 @@
 # ylin 2018.6.26
 
 
-import os, OC, java, util, re, sys, json
-from APIModel import *
 from ClassInfo import *
 
-sys.path.append('./conf')
 from conf import Conf
 
 
@@ -21,7 +18,6 @@ class TransAPIModel2ClassInfo():
         for index in range(len(self.apiGroups)):
             apiGroup = self.apiGroups[index]
 
-
     def transSingleGroup(self, apiGroup):
         apiClazz = None
         for index in range(len(apiGroup.apis)):
@@ -29,4 +25,3 @@ class TransAPIModel2ClassInfo():
             apiClazz = ClassInfo()
 
         return apiClazz
-
