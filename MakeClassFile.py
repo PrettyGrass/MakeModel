@@ -34,6 +34,10 @@ class MakeClassFile():
         pass
 
     # 创建接口
+    def createInterfaceFunc(self, lines, method):
+        pass
+
+    # 创建接口
     def createInterfaceEnd(self, lines):
         pass
 

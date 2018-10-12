@@ -12,7 +12,7 @@ class ClassInfo(BaseInfo):
     def __init__(self):
         BaseInfo.__init__(self)
         self.name = ''              # 类名
-        self.method = []            # 方法列表
+        self.methods = []           # 方法列表
         self.props = []             # 属性
         self.imports = []           # 引入关系 (内部类没有)
         self.innerClass = []        # 内部类, 部分语言不支持
