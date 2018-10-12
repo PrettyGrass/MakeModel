@@ -3,36 +3,64 @@
 # ylin 2018.6.26
 
 
-class MakeClassFile:
+class MakeClassFile():
     # 构造方法
     def __init__(self, clazz, model):
         self.clazz = clazz
         self.model = model
 
     # 开始
-    def start(self):
-        assert '各端需要实现自己的类生成方法'
+    def run(self):
+        print '需要自己实现对应的生成过程'
 
     # 创建头部注释
-    def createHeaderRemark(self, indent=0):
+    def createBeginRemark(self, lines):
+        pass
+
+    # 创建头部注释
+    def createEndRemark(self, lines):
         pass
 
     # 创建类注释
-    def createClassRemark(self, indent=0):
+    def createClassRemark(self, lines):
         pass
 
     # 创建接口
-    def createInterface(self, indent=0):
+    def createInterfaceBegin(self, lines):
+        pass
+
+    # 创建接口
+    def createInterfaceBody(self, lines):
+        pass
+
+    # 创建接口
+    def createInterfaceEnd(self, lines):
         pass
 
     # 创建实现
-    def createImpl(self, indent=0):
+    def createImplBegin(self, lines):
+        pass
+
+    # 创建实现
+    def createImplBody(self, lines):
+        pass
+
+    # 创建实现
+    def createImplEnd(self, lines):
         pass
 
     # 创建属性
-    def createProp(self=0):
+    def createProp(self, lines, prop):
         pass
 
     # 创建方法
-    def createFunc(self=0):
+    def createFuncBegin(self, lines, func):
+        pass
+
+    # 创建方法
+    def createFuncBody(self, lines, func):
+        pass
+
+    # 创建方法
+    def createFuncEnd(self, lines, func):
         pass
