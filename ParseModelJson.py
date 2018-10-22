@@ -6,7 +6,7 @@
 import os, OC, java, util, re, sys
 from ClassInfo import *
 from conf import Conf
-
+from DataModel import *
 
 class ParseModelJson():
     def __init__(self, wkPath):
