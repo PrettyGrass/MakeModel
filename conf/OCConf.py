@@ -22,6 +22,7 @@ class OCConf(Conf):
         self.baseType['float'] = 'float'
         self.baseType['double'] = 'double'
         self.baseType['long'] = 'long'
+        self.baseType['void'] = 'void'
 
         self.importModule = []
         self.importModule.append('ObjectMapper')
