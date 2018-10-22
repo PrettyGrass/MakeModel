@@ -12,6 +12,12 @@ class ModelInfo:
     def __init__(self):
         self.name = ''      # 模型名
         self.fields = []    # FieldInfo
+        self.subModels = [] # 子模型
+
+    def getRefClassType(self, ref):
+        for model in self.subModels:
+            if ref == model.ref:
+                return model
 
 # 字段
 class FieldInfo:
@@ -20,3 +26,5 @@ class FieldInfo:
         self.name = ''
         self.type = ''
         self.subType = ''
+        self.remark = ''
+        self.testValue = ''

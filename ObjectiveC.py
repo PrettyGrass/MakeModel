@@ -25,7 +25,8 @@ class ObjectiveC(MakeClassFile):
         innerClasses.extend(self.clazz.innerClass)
         innerClasses.extend(self.clazz.inFileClass)
         importClass = [c.name for c in innerClasses]
-        self.clazz.imports.append('@class %s;' % (', '.join(importClass)))
+        if len(importClass):
+            self.clazz.imports.append('@class %s;' % (', '.join(importClass)))
 
         lines = []
         self.createBeginRemark(lines)
@@ -317,42 +318,71 @@ class TransDataModel2OCClass:
     def __init__(self, ms):
         self.dataModels = ms
         self.conf = OCConf()
+        self.refMapper = {}
 
     def trans(self):
         return self.transClass(self.dataModels)
 
     def transClass(self, ms):
+        classes = []
         for index in range(len(ms)):
-            dataModel = ms[index]
+            model = ms[index]
+            dataModel = ClassInfo()
+            dataModel.name = '%s%sModdel' % (self.conf.apiBaseClassPreFix, model.name)
             dataModel.superClazz = 'NSObject'
+            dataModel.imports.append('#import <Foundation/Foundation.h>')
+            classes.append(dataModel)
+            self.refMapper[model.name] = dataModel
+
+            if len(model.subModels) > 0:
+                dataModel.inFileClass.extend(self.transClass(model.subModels))
 
             # 查找集合类型的自定义数据类型嵌套 只支持一层嵌套
             method = MethodInfo()
             method.bodyLines.append('NSMutableDictionary *mapper = [NSMutableDictionary dictionary];')
+
+            # 根据字段创建属性
+            for field in model.fields:
+                prop = PropInfo()
+                dataModel.props.append(prop)
+                prop.name = field.name
+                if self.getType(field.type):
+                    prop.type = self.getType(field.type)
+                else:
+                    prop.type = field.type
+
+                if self.getType(field.subType):
+                    prop.subTypes.append(self.getType(field.subType))
+
+                elif field.subType:
+                    prop.subTypes.append(field.subType)
+
             for prop in dataModel.props:
-                subTypes = ''.join(prop.subTypes)
-                if len(subTypes) > 0:
+                subType = ''.join(prop.subTypes)
+
+                if len(subType) > 0:
                     method.remark = '集合类型解析映射'
                     method.retType = 'nullable NSDictionary<NSString *, id> '
                     method.name = 'modelContainerPropertyGenericClass'
 
-                    type = self.conf.getPropType(subTypes).replace(' ', '').replace('*', '')
+                    type = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
                     method.bodyLines.append('[mapper setObject:@"%s" forKey:@"%s"];' % (
                         type, prop.name))
+
             method.bodyLines.append('return mapper;')
+
             if len(method.name):
                 dataModel.methods.append(method)
 
-            if not dataModel.hostClass:
-                dataModel.imports.append('#import <Foundation/Foundation.h>')
+        return classes
 
-            if len(dataModel.innerClass) > 0:
-                self.transClass(dataModel.innerClass)
+    def getType(self, ref):
+        if ref == 'Lang':
+            pass
+        if self.refMapper.has_key(ref):
+            return self.refMapper.get(ref).name
 
-            if len(dataModel.inFileClass) > 0:
-                self.transClass(dataModel.inFileClass)
-
-        return ms
+        return None
 
     def makrClazzList(self, clazzs, outPath):
         for clazz in clazzs:

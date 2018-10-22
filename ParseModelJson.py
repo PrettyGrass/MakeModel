@@ -28,7 +28,7 @@ class ParseModelJson():
 
     # 递归解析数据结构
     def parseFile(self, file, name):
-        clazz = ClassInfo()
+        clazz = ModelInfo()
         clazz.name = name
         paths = re.split('\.', self.conf.dataPath)
         content = util.readJsonFile(file)
@@ -42,6 +42,7 @@ class ParseModelJson():
 
     def createModelProps(self, modelJson, rootClass, currentClass, keyPath):
         props = []
+        fields = []
         if isinstance(modelJson, list):
             if len(modelJson) == 0:
                 modelJson.append(dict())
@@ -55,19 +56,22 @@ class ParseModelJson():
                 print '忽略:', keyP
                 continue
 
-            prop = PropInfo()
+            prop = FieldInfo()
             prop.name = key
 
             type = util.getValueTypeString(val)
-            subTypes = []
+            refType = None
+            subType = ''
 
             if type == 'dict':
                 # 对象 1, 获取映射类型, 获取失败使用key变大驼峰
-                innerClass = ClassInfo()
+                innerClass = ModelInfo()
                 innerClass.name = self.getMapPath(keyP, key)
                 self.createModelProps(val, rootClass, innerClass, keyP)
-                rootClass.innerClass.append(innerClass)
+                rootClass.subModels.append(innerClass)
                 type = innerClass.name
+                refType = innerClass.name
+
             elif type == 'list':
                 # 列表类型
                 if len(val) == 0:
@@ -75,23 +79,24 @@ class ParseModelJson():
                 itemVal = val[0]
                 if util.getValueTypeString(itemVal) == 'dict':
                     # 数组下面的对象
-                    innerClass = ClassInfo()
+                    innerClass = ModelInfo()
                     innerClass.name = self.getMapPath(keyP, key)
                     self.createModelProps(val, rootClass, innerClass, keyP)
-                    rootClass.innerClass.append(innerClass)
-                    subTypes.append(innerClass.name)
+                    rootClass.subModels.append(innerClass)
+                    subType = innerClass.name
 
                 elif util.getValueTypeString(itemVal) == 'list':
                     # 集合下面是集合 此种情况暂时未遇见
                     assert '奇葩的数据结构, 去杀了api'
                 else:
                     # 集合下面是非对象类型
-                    subTypes.append(util.getValueTypeString(itemVal))
+                    subType = util.getValueTypeString(itemVal)
 
-            prop.subTypes = subTypes
+            prop.subType = subType
             prop.type = type
+            prop.ref = refType
             props.append(prop)
-        currentClass.props.extend(props)
+        currentClass.fields.extend(props)
 
     def getMapPath(self, keyPath, key):
         name = self.conf.propMap.get(keyPath, '')
