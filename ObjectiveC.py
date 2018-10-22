@@ -250,7 +250,7 @@ class TransAPIModel2OCClass:
                 continue
 
             if api.responses and len(api.responses) > 0:
-                print 'responses:', api.responses
+                print '用于生成模型的 responses:', api.responses
 
             method = MethodInfo()
             method.retType = 'int'

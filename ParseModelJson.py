@@ -8,6 +8,7 @@ from ClassInfo import *
 from conf import Conf
 from DataModel import *
 
+
 class ParseModelJson():
     def __init__(self, wkPath):
         self.wkPath = wkPath
@@ -35,6 +36,7 @@ class ParseModelJson():
         for index in range(len(paths)):
             path = paths[index]
             content = content.get(path)
+
         keyPath = name
         self.createModelProps(content, clazz, clazz, keyPath)
 

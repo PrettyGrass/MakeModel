@@ -18,8 +18,8 @@ class Conf:
         self.propMap = propMap
 
         # 嵌套对象的类名映射
-        propMap['ConfigApiModel.weexPaths'] = 'WeexPage'
-        propMap['ConfigApiModel.coin_page'] = 'CoinInfoPage'
+        propMap['ConfigApiModel.vip_page'] = 'CoinInfoPage'
+        propMap['ConfigApiModel.ui'] = 'CoinInfoPage'
 
         # api返回嵌套模型写成独立文件
         self.singleFile = []  # ['ConfigApiModel.App']
