@@ -30,7 +30,6 @@ class ParseModelJson():
     def parseFile(self, file, name):
         clazz = ClassInfo()
         clazz.name = name
-
         paths = re.split('\.', self.conf.dataPath)
         content = util.readJsonFile(file)
         for index in range(len(paths)):

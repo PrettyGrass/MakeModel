@@ -23,6 +23,29 @@ class APIInfo:
 
         self.classMethod = MethodInfo()
 
+    def getMethodName(self):
+        funcName = ''
+        use = False
+        if self.method.lower() not in ['get', 'post']:
+            funcName = self.method.lower()
+            use = True
+
+        for index in range(len(self.paths)):
+            p = self.paths[index]
+            if index == 0 and util.isNumberBegin(p):
+                # 开头是数字忽略
+                continue
+            if use:
+                p = util.firstUpper(p)
+
+            if p.find(':') == -1:
+                # .不能做方法名
+                p = p.replace('.', '_')
+                funcName += p
+                use = True
+
+        return funcName
+
 
 # 接口组
 class APIGroupInfo:

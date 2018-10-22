@@ -5,7 +5,7 @@
 
 from swift import *
 from ParseModelJson import ParseModelJson
-
+from ObjectiveC import *
 
 if __name__ == '__main__':
     wkPath = os.path.dirname('.')  # 当前的目录
@@ -15,6 +15,9 @@ if __name__ == '__main__':
     pm = ParseModelJson(wkPath)
     ms = pm.getModels()
     
-    swift = Swift(wkPath, ms)
-    swift.init()
-    swift.build()
+    # swift = Swift(wkPath, ms)
+    # swift.init()
+    # swift.build()
+    trans = TransDataModel2OCClass(ms)
+    trans.makrClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'ocmodel'))
+
