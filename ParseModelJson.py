@@ -6,7 +6,7 @@
 import os, OC, java, util, re, sys
 from ClassInfo import *
 from conf import Conf
-
+from DataModel import *
 
 class ParseModelJson():
     def __init__(self, wkPath):
@@ -30,7 +30,6 @@ class ParseModelJson():
     def parseFile(self, file, name):
         clazz = ClassInfo()
         clazz.name = name
-
         paths = re.split('\.', self.conf.dataPath)
         content = util.readJsonFile(file)
         for index in range(len(paths)):

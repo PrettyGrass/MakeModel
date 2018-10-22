@@ -2,9 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6f0277f-fb1e-4f89-b650-8044765f610b" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/DataModel.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/TransAPIModel2ClassInfo.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/APIModel.py" afterPath="$PROJECT_DIR$/APIModel.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Api/qutui.postman_collection.json" afterPath="$PROJECT_DIR$/Api/qutui.postman_collection.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ClassInfo.py" afterPath="$PROJECT_DIR$/ClassInfo.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MakeClassFile.py" afterPath="$PROJECT_DIR$/MakeClassFile.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Model/ConfigApiModel.json" afterPath="$PROJECT_DIR$/Model/ConfigApiModel.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ObjectiveC.py" afterPath="$PROJECT_DIR$/ObjectiveC.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ParseModelJson.py" afterPath="$PROJECT_DIR$/ParseModelJson.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.py" afterPath="$PROJECT_DIR$/build.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/buildAPI.py" afterPath="$PROJECT_DIR$/buildAPI.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conf/OCConf.py" afterPath="$PROJECT_DIR$/conf/OCConf.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,10 +25,10 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/MakeModel$oc_.coverage" NAME="oc 类生成测试 Coverage Results" MODIFIED="1539341296886" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MakeModel$oc_.coverage" NAME="oc 类生成测试 Coverage Results" MODIFIED="1540174768025" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/MakeModel$debug.coverage" NAME="debug Coverage Results" MODIFIED="1533128082921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/MakeModel$build_api.coverage" NAME="build api Coverage Results" MODIFIED="1539270956391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/MakeModel$build_model.coverage" NAME="build model Coverage Results" MODIFIED="1539323266884" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MakeModel$build_api.coverage" NAME="build api Coverage Results" MODIFIED="1540205863356" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/MakeModel$build_model.coverage" NAME="build model Coverage Results" MODIFIED="1540208881144" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -34,14 +45,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ObjectiveC.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/ObjectiveC.py">
+      <file leaf-file-name="ParseModelJson.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ParseModelJson.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
-              <caret line="19" column="18" lean-forward="true" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
-              <folding>
-                <element signature="e#65#104#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="466">
+              <caret line="72" column="33" lean-forward="false" selection-start-line="72" selection-start-column="32" selection-end-line="72" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OCConf.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/conf/OCConf.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="158">
+              <caret line="26" column="38" lean-forward="false" selection-start-line="26" selection-start-column="38" selection-end-line="26" selection-end-column="38" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -57,21 +76,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>用户收藏该主题</find>
-      <find>同步账户信息</find>
-      <find>同步用户信息</find>
-      <find>affiliateUserAccountAffUserId</find>
-      <find>getFileName</find>
-      <find>getFileName()</find>
-      <find>createHeader</find>
-      <find>createHeader(</find>
-      <find>createInterface</find>
-      <find>createHeaderFile</find>
-      <find>funct</find>
-      <find>funcTable</find>
-      <find>ParamsInfo</find>
-      <find>sys.path.append('./conf')</find>
-      <find>sys.path.append('/conf')</find>
       <find>/conf')</find>
       <find>\/conf')</find>
       <find>\/conf'</find>
@@ -82,11 +86,26 @@
       <find>.conf</find>
       <find>innerClass</find>
       <find>.method</find>
-      <find>.method</find>
       <find>.method.a</find>
       <find>.method.p</find>
       <find>.method.</find>
       <find>, indent=0</find>
+      <find>impo</find>
+      <find>imports</find>
+      <find>apiImport</find>
+      <find>params</find>
+      <find>createInterfaceFunc</find>
+      <find>restf</find>
+      <find>responses</find>
+      <find>NSArray</find>
+      <find>web_fx_domain</find>
+      <find>_getType</find>
+      <find>classImports</find>
+      <find>VipPage</find>
+      <find>mas</find>
+      <find>getType</find>
+      <find>voice_banner_ad</find>
+      <find>props</find>
     </findStrings>
     <replaceStrings>
       <replace>getFileName(self.selfConf.apiBaseClassPreFix)</replace>
@@ -108,11 +127,9 @@
         <option value="$PROJECT_DIR$/conf/conf.json" />
         <option value="$PROJECT_DIR$/Product/swift/TestModel.swift" />
         <option value="$PROJECT_DIR$/Model/TestModel.json" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/ApiInfo.py" />
         <option value="$PROJECT_DIR$/oc.py" />
         <option value="$PROJECT_DIR$/Api/oc/Menu.h" />
-        <option value="$PROJECT_DIR$/Api/qutui.postman_collection.json" />
         <option value="$PROJECT_DIR$/util.py" />
         <option value="$PROJECT_DIR$/Api/oc/ActivityAPI.h" />
         <option value="$PROJECT_DIR$/Api/oc/ActivityAPI.m" />
@@ -120,23 +137,32 @@
         <option value="$PROJECT_DIR$/Api/oc/QTTArticleAPI.m" />
         <option value="$PROJECT_DIR$/Product/swift/ConfigApiModel.swift" />
         <option value="$PROJECT_DIR$/conf/conf.py" />
-        <option value="$PROJECT_DIR$/buildAPI.py" />
-        <option value="$PROJECT_DIR$/build.py" />
         <option value="$PROJECT_DIR$/conf/init.py" />
         <option value="$PROJECT_DIR$/ParseApiJson.py" />
-        <option value="$PROJECT_DIR$/ParseModelJson.py" />
         <option value="$PROJECT_DIR$/swift.py" />
-        <option value="$PROJECT_DIR$/TransAPIModel2ClassInfo.py" />
-        <option value="$PROJECT_DIR$/APIModel.py" />
-        <option value="$PROJECT_DIR$/conf/OCConf.py" />
         <option value="$PROJECT_DIR$/OCApi.py" />
         <option value="$PROJECT_DIR$/conf/SwiftConf.py" />
         <option value="$PROJECT_DIR$/OC.py" />
         <option value="$PROJECT_DIR$/conf/__init__.py" />
         <option value="$PROJECT_DIR$/Objective-C.py" />
-        <option value="$PROJECT_DIR$/ClassInfo.py" />
+        <option value="$PROJECT_DIR$/TransAPIModel2ClassInfo.py" />
         <option value="$PROJECT_DIR$/MakeClassFile.py" />
+        <option value="$PROJECT_DIR$/Api/ocapi/STActivityAPI.m" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/Api/ocmodel/ConfigApiModel.h" />
+        <option value="$PROJECT_DIR$/buildAPI.py" />
+        <option value="$PROJECT_DIR$/Product/ocmodel/ConfigApiModel.h" />
+        <option value="$PROJECT_DIR$/Product/ocapi/QTConfigAPI.m" />
+        <option value="$PROJECT_DIR$/APIModel.py" />
+        <option value="$PROJECT_DIR$/ClassInfo.py" />
+        <option value="$PROJECT_DIR$/build.py" />
+        <option value="$PROJECT_DIR$/Product/ocmodel/ConfigApiModel.m" />
         <option value="$PROJECT_DIR$/ObjectiveC.py" />
+        <option value="$PROJECT_DIR$/Model/ConfigApiModel.json" />
+        <option value="$PROJECT_DIR$/Api/qutui.postman_collection.json" />
+        <option value="$PROJECT_DIR$/DataModel.py" />
+        <option value="$PROJECT_DIR$/ParseModelJson.py" />
+        <option value="$PROJECT_DIR$/conf/OCConf.py" />
       </list>
     </option>
   </component>
@@ -147,9 +173,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1920" />
-    <option name="width" value="1920" />
-    <option name="height" value="1080" />
+    <option name="y" value="23" />
+    <option name="width" value="1440" />
+    <option name="height" value="827" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -169,6 +195,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -177,6 +205,16 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MakeModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="MakeModel" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -191,31 +229,29 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="bin" />
+              <option name="myItemId" value="conf" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/conf" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/bin" />
       <recent name="$PROJECT_DIR$/Api" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/Model" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/conf" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -230,7 +266,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.oc 类生成测试">
+  <component name="RunManager" selected="Python.build model">
     <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -484,40 +520,28 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1920" y="0" width="1920" height="1080" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="827" extended-state="6" />
+    <editor active="true" />
     <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18168813" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2165992" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26895565" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32692307" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17784877" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26895565" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32971507" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24920128" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21761134" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21761134" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24892704" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22773279" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22975709" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297568" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3228745" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32771084" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17784877" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26895565" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32971507" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24920128" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21761134" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297568" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -528,6 +552,18 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/buildAPI.py</url>
+          <line>27</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/ParseModelJson.py</url>
+          <line>92</line>
+          <option name="timeStamp" value="55" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -535,72 +571,15 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="25" />
+      <option name="time" value="56" />
     </breakpoint-manager>
-    <watches-manager />
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="ms[0].remark" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Api/oc/AffiliateAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/AffiliateAPI.h" />
-    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2/types.pyi">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="90" column="4" lean-forward="false" selection-start-line="90" selection-start-column="4" selection-end-line="90" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Api/oc/CheckoutAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/ActivityAPI.h" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/ActivityAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/CheckoutAPI.h" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTAdAPI.h" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTAPI.h" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTAffiliateAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTAdAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTAdAPI.h" />
-    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/python_stubs/-2125986627/__builtin__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="4528" column="8" lean-forward="false" selection-start-line="4528" selection-start-column="8" selection-end-line="4528" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/types.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="13" column="19" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTCouponAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTAPI.h" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTArticleAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTHttpAPI.h" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTActivityAPI.h" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/QTTActivityAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Feeds.java" />
-    <entry file="file://$PROJECT_DIR$/Api/qutui.postman_collection.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1290">
-          <caret line="86" column="32" lean-forward="false" selection-start-line="86" selection-start-column="32" selection-end-line="86" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Api/oc/STAdAPI.h" />
-    <entry file="file://$PROJECT_DIR$/conf/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/模型文件.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mlsz_public/protocol/CloudActivities.jproto">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -609,17 +588,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Api/oc/STActivityAPI.m" />
-    <entry file="file://$PROJECT_DIR$/Api/oc/STActivityAPI.h" />
-    <entry file="file://$PROJECT_DIR$/OCApi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="6" column="23" lean-forward="false" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
-          <folding>
-            <element signature="e#64#73#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mlsz_public/_protocol.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -631,7 +599,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="155">
           <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -642,71 +609,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Model/ConfigApiModel.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="65" column="28" lean-forward="true" selection-start-line="65" selection-start-column="28" selection-end-line="65" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/swift.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="14" column="39" lean-forward="false" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/OC.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27">
-          <caret line="107" column="20" lean-forward="true" selection-start-line="107" selection-start-column="20" selection-end-line="107" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Product/swift/ConfigApiModel.swift">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2092">
-          <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/conf/conf.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="31" lean-forward="false" selection-start-line="13" selection-start-column="31" selection-end-line="13" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/conf/OCConf.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="8" lean-forward="false" selection-start-line="9" selection-start-column="8" selection-end-line="9" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="23" lean-forward="false" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ParseModelJson.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="17" column="11" lean-forward="false" selection-start-line="17" selection-start-column="11" selection-end-line="17" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conf/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -714,76 +616,188 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/buildAPI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ParseApiJson.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-774">
-          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/java.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
+        <state relative-caret-position="119">
           <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2/types.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="89" column="4" lean-forward="false" selection-start-line="89" selection-start-column="4" selection-end-line="89" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+        <state relative-caret-position="327">
+          <caret line="20" column="18" lean-forward="false" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="18" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TransAPIModel2ClassInfo.py">
+    <entry file="file://$PROJECT_DIR$/模型文件.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="23" />
+        <state relative-caret-position="119">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APIModel.py">
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STGoodsAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STH5webAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STFeedbackAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STCouponAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STCheckoutcopyAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STUserAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STAdAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/oc/STActivityAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STActivityAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/ocapi/STActivityAPI.m" />
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="18" lean-forward="false" selection-start-line="27" selection-start-column="6" selection-end-line="27" selection-end-column="18" />
-          <folding />
+        <state relative-caret-position="85">
+          <caret line="5" column="4" lean-forward="true" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MakeClassFile.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="36" column="47" lean-forward="false" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
-          <folding>
-            <marker date="1539341068531" expanded="true" signature="136:191" ph="..." />
-          </folding>
+        <state relative-caret-position="204">
+          <caret line="12" column="18" lean-forward="false" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conf/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="21" lean-forward="false" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Api/ocmodel/ConfigApiModel.m" />
+    <entry file="file://$PROJECT_DIR$/Product/swift/ConfigApiModel.swift">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1292">
+          <caret line="76" column="49" lean-forward="true" selection-start-line="76" selection-start-column="49" selection-end-line="76" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Api/ocmodel/ConfigApiModel.h" />
+    <entry file="file://$PROJECT_DIR$/OC.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="34" column="28" lean-forward="true" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Product/ocapi/QTTopicAPI.m" />
+    <entry file="file://$PROJECT_DIR$/Product/ocapi/QTMenuAPI.m" />
+    <entry file="file://$PROJECT_DIR$/Product/ocapi/QTCheckoutAPI.m" />
+    <entry file="file://$PROJECT_DIR$/Product/ocapi/QTCheckoutAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Product/ocapi/QTBannerAPI.m" />
+    <entry file="file://$PROJECT_DIR$/build.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="31" lean-forward="false" selection-start-line="21" selection-start-column="31" selection-end-line="21" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ClassInfo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="20" lean-forward="false" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="20" />
+        <state relative-caret-position="513">
+          <caret line="37" column="22" lean-forward="false" selection-start-line="37" selection-start-column="13" selection-end-line="37" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Product/ocmodel/ConfigApiModel.m" />
+    <entry file="file://$PROJECT_DIR$/Product/ocapi/QTConfigAPI.m" />
+    <entry file="file://$PROJECT_DIR$/Product/ocapi/QTBannerAPI.h" />
+    <entry file="file://$PROJECT_DIR$/Api/qutui.postman_collection.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1179">
+          <caret line="1216" column="32" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="1256" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/buildAPI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" column="33" lean-forward="false" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="33" />
+          <folding>
+            <element signature="e#64#83#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Product/ocapi/QTConfigAPI.h" />
+    <entry file="file://$PROJECT_DIR$/TransAPIModel2ClassInfo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="13" column="29" lean-forward="true" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OCApi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="139" column="21" lean-forward="true" selection-start-line="139" selection-start-column="21" selection-end-line="139" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/swift.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="134">
+          <caret line="14" column="24" lean-forward="false" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ParseApiJson.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="19" column="21" lean-forward="false" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Product/ocmodel/ConfigApiModel.h" />
     <entry file="file://$PROJECT_DIR$/ObjectiveC.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="19" column="18" lean-forward="true" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
-          <folding>
-            <element signature="e#65#104#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="199">
+          <caret line="326" column="45" lean-forward="true" selection-start-line="326" selection-start-column="45" selection-end-line="326" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APIModel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1084">
+          <caret line="67" column="22" lean-forward="false" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Model/ConfigApiModel.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2218">
+          <caret line="151" column="60" lean-forward="false" selection-start-line="151" selection-start-column="60" selection-end-line="151" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ParseModelJson.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="466">
+          <caret line="72" column="33" lean-forward="false" selection-start-line="72" selection-start-column="32" selection-end-line="72" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DataModel.py" />
+    <entry file="file://$PROJECT_DIR$/conf/OCConf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="26" column="38" lean-forward="false" selection-start-line="26" selection-start-column="38" selection-end-line="26" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
