@@ -27,17 +27,22 @@ class ParseModelJson():
 
         return models
 
-    # 递归解析数据结构
     def parseFile(self, file, name):
-        clazz = ModelInfo()
-        clazz.name = name
-        paths = re.split('\.', self.conf.dataPath)
         content = util.readJsonFile(file)
+        return self.parseContent(content, name)
+
+    # 递归解析数据结构
+    def parseContent(self, content, name, paths=None):
+        keyPath = name
+        clazz = ModelInfo()
+        clazz.name = self.getMapPath(keyPath, name)
+        if paths == None:
+            paths = re.split('\.', self.conf.dataPath)
+
         for index in range(len(paths)):
             path = paths[index]
             content = content.get(path)
 
-        keyPath = name
         self.createModelProps(content, clazz, clazz, keyPath)
 
         return clazz

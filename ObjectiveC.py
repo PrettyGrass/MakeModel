@@ -204,6 +204,7 @@ class TransAPIModel2OCClass:
     def __init__(self, apiGroups):
         self.apiGroups = apiGroups
         self.conf = OCConf()
+        self.allModelMapper = None
 
     def trans(self):
         clazzs = []
@@ -250,7 +251,7 @@ class TransAPIModel2OCClass:
                 continue
 
             if api.responses and len(api.responses) > 0:
-                print '用于生成模型的 responses:', api.responses
+                print '用于生成模型的 responses:', api.getMethodName()
 
             method = MethodInfo()
             method.retType = 'int'
@@ -305,11 +306,19 @@ class TransAPIModel2OCClass:
                     method.bodyLines.append('[params addHttpParam:%s forKey:@"%s"];' % (param.name, param.name))
 
             method.bodyLines.append('params.httpMethod = @"%s";' % (api.method))
+
+            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodName().lower()):
+                respClass = self.allModelMapper.get(api.getMethodName().lower())
+                method.bodyLines.append(
+                    '[oper.dataClasses setObject:NSClassFromString(@"%s") forKey:@"%s"];' % (
+                    respClass.name, self.conf.dataPath))
+
             if len(append) == 0:
                 method.bodyLines.append('params.path = @"%s";' % (path))
             else:
                 method.bodyLines.append('params.path = [NSString stringWithFormat:@"%s" %s];' % (path, append))
             method.bodyLines.append('return [service start:oper];')
+
         return apiClazz
 
 
@@ -377,8 +386,7 @@ class TransDataModel2OCClass:
         return classes
 
     def getType(self, ref):
-        if ref == 'Lang':
-            pass
+
         if self.refMapper.has_key(ref):
             return self.refMapper.get(ref).name
 
