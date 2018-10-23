@@ -20,6 +20,7 @@ class ObjectiveC(MakeClassFile):
 
     # 开始
     def run(self):
+
         # 内部类
         innerClasses = []
         innerClasses.extend(self.clazz.innerClass)
@@ -28,11 +29,41 @@ class ObjectiveC(MakeClassFile):
         if len(importClass):
             self.clazz.imports.append('@class %s;' % (', '.join(importClass)))
 
+        # 抽象接口
+        hasInterface = self.clazz.hasInterface()
+        interfaceFile = self.clazz.name + 'Protocol'
+        implInterface = []
+        if hasInterface:
+            interfaceLines = []
+            self.createBeginRemark(interfaceLines)
+            self.createInterfaceImport(interfaceLines)
+            self.createClassRemark(interfaceLines)
+            self.createInterfaceBegin(interfaceLines, isProtocol=True)
+            self.createProtocolInterfaceBody(interfaceLines)
+            self.createInterfaceEnd(interfaceLines)
+
+            # 内部类接口
+            for innerClass in innerClasses:
+                inner = ObjectiveC(innerClass, None, None)
+                inner.createClassRemark(interfaceLines)
+                inner.createInterfaceBegin(interfaceLines, isProtocol=True)
+                inner.createProtocolInterfaceBody(interfaceLines)
+                inner.createInterfaceEnd(interfaceLines)
+
+            self.createEndRemark(interfaceLines)
+            outFile = os.path.join(self.outPath, interfaceFile + '.h')
+            util.writeLinesFile(interfaceLines, outFile)
+            os.system('clang-format -i %s\n' % outFile)
+            print '写入协议文件:', outFile
+
+            self.clazz.imports.append('#import "%s.h"' % (interfaceFile))
+            implInterface.append(interfaceFile)
+
         lines = []
         self.createBeginRemark(lines)
         self.createInterfaceImport(lines)
         self.createClassRemark(lines)
-        self.createInterfaceBegin(lines)
+        self.createInterfaceBegin(lines, implProtocol=implInterface)
         self.createInterfaceBody(lines)
         self.createInterfaceEnd(lines)
 
@@ -104,8 +135,18 @@ class ObjectiveC(MakeClassFile):
         \n*/''' % (self.clazz.remark))
 
     # 创建接口
-    def createInterfaceBegin(self, lines):
-        lines.append('@interface %s : %s' % (self.clazz.name, self.clazz.superClazz))
+    def createInterfaceBegin(self, lines, isProtocol=False, implProtocol=None):
+        if not implProtocol:
+            implProtocol = []
+
+        implProtocol = ','.join(implProtocol)
+        if len(implProtocol) > 0:
+            implProtocol = '<%s>' % implProtocol
+
+        if isProtocol:
+            lines.append('@protocol %s <NSObject>' % (self.clazz.name))
+        else:
+            lines.append('@interface %s : %s%s' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建接口
     def createInterfaceBody(self, lines):
@@ -113,7 +154,18 @@ class ObjectiveC(MakeClassFile):
             self.createProp(lines, prop)
 
         for method in self.clazz.methods:
+            if (method.inner or method.abs):
+                continue
             self.createInterfaceFunc(lines, method, True)
+
+    # 创建接口
+    def createProtocolInterfaceBody(self, lines):
+        for prop in self.clazz.props:
+            self.createProp(lines, prop)
+
+        for method in self.clazz.methods:
+            if (method.inner or method.abs):
+                self.createInterfaceFunc(lines, method, True)
 
     # 创建接口
     def createInterfaceFunc(self, lines, method, needEnd=False):
@@ -256,6 +308,8 @@ class TransAPIModel2OCClass:
             method = MethodInfo()
             method.retType = 'int'
             method.type = 1
+            method.abs = True
+            method.inner = True
             method.remark = api.name
             method.name = api.getMethodName()
             apiClazz.methods.append(method)
@@ -311,7 +365,7 @@ class TransAPIModel2OCClass:
                 respClass = self.allModelMapper.get(api.getMethodName().lower())
                 method.bodyLines.append(
                     '[oper.dataClasses setObject:NSClassFromString(@"%s") forKey:@"%s"];' % (
-                    respClass.name, self.conf.dataPath))
+                        respClass.name, self.conf.dataPath))
 
             if len(append) == 0:
                 method.bodyLines.append('params.path = @"%s";' % (path))
