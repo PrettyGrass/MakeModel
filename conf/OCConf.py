@@ -12,7 +12,7 @@ class OCConf(Conf):
         self.dataPath = 'data'
 
         self.apiBaseClass = 'NSObject'
-        self.apiBaseClassPreFix = 'QT'
+        self.apiBaseClassPreFix = 'DP'
         self.apiImport = ['#import <Foundation/Foundation.h>', '#import "DTHttpService.h"',
                           '#import "DTSampleOperation.h"']
         self.apiInnerImport = []
@@ -29,6 +29,8 @@ class OCConf(Conf):
 
         self.importModule = []
         self.importModule.append('ObjectMapper')
+
+        self.protectProp = ['copy', 'hash', 'description']
 
     # 获取属性修饰
     def getPropMask(self, type):

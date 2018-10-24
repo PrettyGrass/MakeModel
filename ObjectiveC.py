@@ -144,7 +144,7 @@ class ObjectiveC(MakeClassFile):
             implProtocol = '<%s>' % implProtocol
 
         if isProtocol:
-            lines.append('@protocol %s <NSObject>' % (self.clazz.name))
+            lines.append('@protocol %sProtocol <NSObject>' % (self.clazz.name))
         else:
             lines.append('@interface %s : %s%s' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
@@ -164,7 +164,7 @@ class ObjectiveC(MakeClassFile):
             self.createProp(lines, prop)
 
         for method in self.clazz.methods:
-            if (method.inner or method.abs):
+            if (method.abs):
                 self.createInterfaceFunc(lines, method, True)
 
     # 创建接口
@@ -297,6 +297,19 @@ class TransAPIModel2OCClass:
             DTRequestParams *params = oper.params;
             '''
 
+        # inject
+        method = MethodInfo()
+        method.retType = 'void'
+        method.type = 1
+        method.inner = True
+        method.abs = False
+        method.remark = ''
+        method.name = 'load'
+        method.bodyLines.append(
+            '[[TyphoonDefineMapper shared] regWithProvider:self service:@protocol(%sProtocol)];' % apiClazz.name)
+        apiClazz.methods.append(method)
+        apiClazz.innerImports.append('#import <TyphoonExtra/TyphoonExtra.h>')
+
         for index in range(len(apiGroup.apis)):
             api = apiGroup.apis[index]
             if len(api.paths) == 0:
@@ -307,7 +320,7 @@ class TransAPIModel2OCClass:
 
             method = MethodInfo()
             method.retType = 'int'
-            method.type = 1
+            method.type = 0
             method.abs = True
             method.inner = True
             method.remark = api.name
@@ -391,7 +404,7 @@ class TransDataModel2OCClass:
         for index in range(len(ms)):
             model = ms[index]
             dataModel = ClassInfo()
-            dataModel.name = '%s%sModdel' % (self.conf.apiBaseClassPreFix, model.name)
+            dataModel.name = '%s%sModel' % (self.conf.apiBaseClassPreFix, model.name)
             dataModel.superClazz = 'NSObject'
             dataModel.imports.append('#import <Foundation/Foundation.h>')
             classes.append(dataModel)
@@ -406,6 +419,11 @@ class TransDataModel2OCClass:
 
             # 根据字段创建属性
             for field in model.fields:
+
+                if field.name in self.conf.protectProp:
+                    print '字段受保护:%s.%s' % (model.name, field.name)
+                    continue
+
                 prop = PropInfo()
                 dataModel.props.append(prop)
                 prop.name = field.name
