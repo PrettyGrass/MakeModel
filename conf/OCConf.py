@@ -30,7 +30,14 @@ class OCConf(Conf):
         self.importModule = []
         self.importModule.append('ObjectMapper')
 
-        self.protectProp = ['copy', 'hash', 'description']
+        self.protectProp = ['copy', 'hash', 'description', 'id']
+
+        # 转义字段
+        self.transferProp = dict()
+        self.transferProp['copy'] = 'ccopy'
+        self.transferProp['hash'] = 'hashVal'
+        self.transferProp['description'] = 'desc'
+        self.transferProp['id'] = 'Id'
 
     # 获取属性修饰
     def getPropMask(self, type):

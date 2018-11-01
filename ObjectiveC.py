@@ -460,20 +460,26 @@ class TransDataModel2OCClass:
             if len(model.subModels) > 0:
                 dataModel.inFileClass.extend(self.transClass(model.subModels))
 
-            # 查找集合类型的自定义数据类型嵌套 只支持一层嵌套
-            method = MethodInfo()
-            method.bodyLines.append('NSMutableDictionary *mapper = [NSMutableDictionary dictionary];')
-
+            transferProps = []
             # 根据字段创建属性
             for field in model.fields:
 
-                if field.name in self.conf.protectProp:
-                    print '字段受保护:%s.%s' % (model.name, field.name)
+                # 字段转义
+                fname = field.name
+                if self.conf.transferProp.has_key(fname):
+                    print '字段需转义:%s.%s' % (model.name, fname)
+
+                    tname = self.conf.transferProp.get(fname)
+                    transferProps.append('@"%s": @"%s"' % (tname, fname))
+                    fname = tname
+
+                # 重复字段
+                if dataModel.hasProp(fname):
                     continue
 
                 prop = PropInfo()
                 dataModel.props.append(prop)
-                prop.name = field.name
+                prop.name = fname
                 if self.getType(field.type):
                     prop.type = self.getType(field.type)
                 else:
@@ -485,23 +491,62 @@ class TransDataModel2OCClass:
                 elif field.subType:
                     prop.subTypes.append(field.subType)
 
+            # 转义属性
+            transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
+            transferDiffProps = []
+            if len(transferProps) > 0 and transm:
+                for p in transferProps:
+                    if transm.bodyLines[0].find(p) < 0:
+                        transferDiffProps.append(p)
+            else:
+                transferDiffProps = transferProps
+
+            if len(transferDiffProps) > 0:
+                mask = '@"__mask__": @"__mask__"'
+                transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
+                if not transm:
+                    transm = MethodInfo()
+                    transm.remark = '转义属性'
+                    transm.retType = 'nullable NSDictionary<NSString *, id> '
+                    transm.name = 'modelCustomPropertyMapper'
+                    transm.inner = True
+                    transm.type = 1
+                    transm.bodyLines.append('NSDictionary *mapper = @{%s};' % (mask))
+                    transm.bodyLines.append('return mapper;')
+                    dataModel.methods.append(transm)
+
+                transm.bodyLines[0] = transm.bodyLines[0].replace('};', (',%s};' % ',\n'.join(transferDiffProps)))
+                transm.bodyLines[0] = transm.bodyLines[0].replace('%s,' % mask, '')
+
             # 属性
+            # 查找集合类型的自定义数据类型嵌套 只支持一层嵌套
+            method = dataModel.hasMethod('modelContainerPropertyGenericClass', 1)
+            if not method:
+                method = MethodInfo()
+                method.bodyLines.append('NSMutableDictionary *mapper = [NSMutableDictionary dictionary];')
+                method.bodyLines.append('return mapper;')
+                method.remark = '集合类型解析映射'
+                method.retType = 'nullable NSDictionary<NSString *, id> '
+                method.name = 'modelContainerPropertyGenericClass'
+                method.inner = True
+                method.type = 1
+
             for prop in dataModel.props:
                 subType = ''.join(prop.subTypes)
-
+                # 集合一类的有子类型的才需要映射
                 if len(subType) > 0:
-                    method.remark = '集合类型解析映射'
-                    method.retType = 'nullable NSDictionary<NSString *, id> '
-                    method.name = 'modelContainerPropertyGenericClass'
-                    method.inner = True
                     ptype = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
-                    method.bodyLines.append('[mapper setObject:@"%s" forKey:@"%s"];' % (
-                        ptype, prop.name))
+                    line = '[mapper setObject:@"%s" forKey:@"%s"];' % (
+                        ptype, prop.name)
 
-            method.bodyLines.append('return mapper;')
+                    # 去重复行, 映射不需要重复
+                    if line in method.bodyLines:
+                        method.bodyLines.remove(line)
 
-            if len(method.name):
-                dataModel.methods.append(method)
+                    method.bodyLines.insert(1, line)
+                    # 没有添加过该方法则添加
+                    if not dataModel.hasMethod('modelContainerPropertyGenericClass', 1):
+                        dataModel.methods.append(method)
 
         return classes
 
