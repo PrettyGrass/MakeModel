@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "1e928a4e-fc0d-b74d-223d-baa810f7692d",
+		"name": "doupai",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "topic(主题)",
+			"item": [
+				{
+					"name": "获取分类标签",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var time=Math.round(new Date().getTime()/1000);",
+									"var apiKey='lu388X4QUFC0vSsknyh09BT8';",
+									"postman.setEnvironmentVariable(\"token\", CryptoJS.MD5(apiKey + time).toString()+','+time);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-doupai-sdk-version",
+								"value": "android_8.1.3_1.0_7.1"
+							},
+							{
+								"key": "x-doupai-api-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/1.0/tag/category",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"1.0",
+								"tag",
+								"category"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "5b67c41a5cde330001b65729"
+								}
+							]
+						},
+						"description": "\n"
+					},
+					"response": [
+						{
+							"name": "获取分类标签",
+							"_postman_previewlanguage": "json",
+							"cookie": [],
+							"body":"{\n\"error\":0,\n\"data\":[\n{\n\"type\":\"topic\",\n\"isIntro\":0,\n\"name\":\"推广\"}\n]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "config",
+			"item": [
+				{
+					"name": "获取客户端配置",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var time=Math.round(new Date().getTime()/1000);",
+									"var apiKey='lu388X4QUFC0vSsknyh09BT8';",
+									"postman.setEnvironmentVariable(\"token\", CryptoJS.MD5(apiKey + time).toString()+','+time);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-doupai-sdk-version",
+								"value": "android_8.1.3_1.0_7.1.0"
+							},
+							{
+								"key": "x-doupai-api-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/1.0/config",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"1.0",
+								"config"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "config",
+							"body": "{\"error\":0,\"data\":{\"supplier_center_url\":\"https://test-app-shop.qutui360.com/#/supplier\",\"subdataT1\":{\"subdata1\":\"https://test-app-shop.qutui360.com/#/supplier\"}}}"
+						},
+						{
+							"name": "config",
+							"body": "{\"error\":0,\"data\":{\"supplier_center_url1\":\"https://test-app-shop.qutui360.com/#/supplier\",\"subdataT2\":{\"subdata2\":\"https://test-app-shop.qutui360.com/#/supplier\"}}}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -279,23 +279,30 @@ class TransAPIModel2OCClass:
     # 获取所有api的数据模型并创建
     def allModels(self, apiGroups):
         modelMapper = {}
+        refMappers = {}
         for index in range(len(apiGroups)):
             apiGroup = apiGroups[index]
             for index in range(len(apiGroup.apis)):
                 api = apiGroup.apis[index]
-                if len(api.paths) == 0:
+                if len(api.paths) == 0 or not api.responses or len(api.responses) == 0:
                     continue
-                if api.responses and len(api.responses) > 0:
+                for response in api.responses:
+
                     pm = ParseModelJson(self.wkPath)
                     ms = []
-                    jsonObj = json.loads(api.responses[0].get('body'))
+                    jsonObj = json.loads(response.get('body'))
                     responseKey = util.firstUpper(api.getMethodName())
                     ms.append(pm.parseContent(jsonObj, responseKey))
-                    trans = TransDataModel2OCClass(ms)
+                    trans = TransDataModel2OCClass(ms, refMappers)
                     cls = trans.trans()
-                    print 'API数据模型:', api.getMethodName(), cls
-                    modelMapper[responseKey.lower()] = cls[0]
-                    trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'ocmodel'))
+                    if len(cls) > 0:
+                        print 'API数据模型:', api.getMethodName(), cls
+                        modelMapper[responseKey.lower()] = cls[0]
+                        # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'ocmodel'))
+
+        # 数据模型关系建立完成之后创建文件
+        for model in modelMapper.values():
+            trans.makeClazzList([model], os.path.join(self.wkPath, 'Product', 'ocmodel'))
 
         return modelMapper
 
@@ -420,10 +427,11 @@ class TransAPIModel2OCClass:
 
 # 模型 对象转成类对象
 class TransDataModel2OCClass:
-    def __init__(self, ms):
+    def __init__(self, ms, globalRefMapper):
         self.dataModels = ms
         self.conf = OCConf()
         self.refMapper = {}
+        self.globalRefMapper = globalRefMapper
 
     def trans(self):
         return self.transClass(self.dataModels)
@@ -433,12 +441,21 @@ class TransDataModel2OCClass:
         classes = []
         for index in range(len(ms)):
             model = ms[index]
-            dataModel = ClassInfo()
-            dataModel.name = '%s%sModel' % (self.conf.apiBaseClassPreFix, model.name)
-            dataModel.superClazz = 'NSObject'
-            dataModel.imports.append('#import <Foundation/Foundation.h>')
-            classes.append(dataModel)
-            self.refMapper[model.name] = dataModel
+            name = '%s%sModel' % (self.conf.apiBaseClassPreFix, model.name)
+
+            dataModel = None
+            if self.globalRefMapper.has_key(name):
+                dataModel = self.globalRefMapper[name]
+
+            # 如模型不存在, 则新建, 否则做字段增量
+            if not dataModel:
+                dataModel = ClassInfo()
+                dataModel.name = name
+                dataModel.superClazz = 'NSObject'
+                dataModel.imports.append('#import <Foundation/Foundation.h>')
+                classes.append(dataModel)
+                self.refMapper[name] = dataModel
+                self.globalRefMapper[name] = dataModel
 
             if len(model.subModels) > 0:
                 dataModel.inFileClass.extend(self.transClass(model.subModels))

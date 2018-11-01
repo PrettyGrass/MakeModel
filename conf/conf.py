@@ -18,8 +18,10 @@ class Conf:
         self.propMap = propMap
 
         # 嵌套对象的类名映射
-        # propMap['Config'] = 'WWD'
-        # propMap['Config.share_tpl'] = 'CoinInfoPage'
+        propMap['TagCategory'] = 'DFFF'
+        propMap['Config'] = 'DFFF'
+        propMap['Config.subdataT1'] = 'CoinInfoPage'
+        propMap['Config.subdataT2'] = 'CoinInfoPage'
 
         # api返回嵌套模型写成独立文件
         self.singleFile = []  # ['ConfigApiModel.App']
