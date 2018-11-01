@@ -19,5 +19,5 @@ if __name__ == '__main__':
     # swift.init()
     # swift.build()
     trans = TransDataModel2OCClass(ms)
-    trans.makrClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'ocmodel'))
+    trans.makeClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'ocmodel'))
 

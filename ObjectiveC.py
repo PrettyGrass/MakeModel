@@ -6,9 +6,11 @@
 from MakeClassFile import MakeClassFile
 from ClassInfo import *
 from APIModel import *
+from ParseModelJson import ParseModelJson
 from conf import OCConf
 import util
 import os
+import json
 
 
 class ObjectiveC(MakeClassFile):
@@ -253,10 +255,11 @@ class ObjectiveC(MakeClassFile):
 
 # api 对象转成类对象
 class TransAPIModel2OCClass:
-    def __init__(self, apiGroups):
+    def __init__(self, apiGroups, wkPath):
         self.apiGroups = apiGroups
         self.conf = OCConf()
-        self.allModelMapper = None
+        self.wkPath = wkPath
+        self.allModelMapper = self.allModels(apiGroups)
 
     def trans(self):
         clazzs = []
@@ -268,12 +271,35 @@ class TransAPIModel2OCClass:
 
         return clazzs
 
-    def makrClazzList(self, clazzs, outPath):
+    def makeClazzList(self, clazzs, outPath):
         for clazz in clazzs:
             objc = ObjectiveC(clazz, clazz.model, outPath)
             objc.run()
 
-    # 转换一组api
+    # 获取所有api的数据模型并创建
+    def allModels(self, apiGroups):
+        modelMapper = {}
+        for index in range(len(apiGroups)):
+            apiGroup = apiGroups[index]
+            for index in range(len(apiGroup.apis)):
+                api = apiGroup.apis[index]
+                if len(api.paths) == 0:
+                    continue
+                if api.responses and len(api.responses) > 0:
+                    pm = ParseModelJson(self.wkPath)
+                    ms = []
+                    jsonObj = json.loads(api.responses[0].get('body'))
+                    responseKey = util.firstUpper(api.getMethodName())
+                    ms.append(pm.parseContent(jsonObj, responseKey))
+                    trans = TransDataModel2OCClass(ms)
+                    cls = trans.trans()
+                    print 'API数据模型:', api.getMethodName(), cls
+                    modelMapper[responseKey.lower()] = cls[0]
+                    trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'ocmodel'))
+
+        return modelMapper
+
+    # 转换一组api 为class 类
     def transSingleGroup(self, apiGroup):
         if len(apiGroup.enName) == 0 or len(apiGroup.apis) == 0:
             return None
@@ -374,16 +400,19 @@ class TransAPIModel2OCClass:
 
             method.bodyLines.append('params.httpMethod = @"%s";' % (api.method))
 
+            # 请求响应数据类型
             if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodName().lower()):
                 respClass = self.allModelMapper.get(api.getMethodName().lower())
                 method.bodyLines.append(
                     '[oper.dataClasses setObject:NSClassFromString(@"%s") forKey:@"%s"];' % (
                         respClass.name, self.conf.dataPath))
-
+            # 请求路径
             if len(append) == 0:
                 method.bodyLines.append('params.path = @"%s";' % (path))
             else:
                 method.bodyLines.append('params.path = [NSString stringWithFormat:@"%s" %s];' % (path, append))
+
+            # 请求开始
             method.bodyLines.append('return [service start:oper];')
 
         return apiClazz
@@ -399,6 +428,7 @@ class TransDataModel2OCClass:
     def trans(self):
         return self.transClass(self.dataModels)
 
+    # 转换响应数据 为 class类
     def transClass(self, ms):
         classes = []
         for index in range(len(ms)):
@@ -438,6 +468,7 @@ class TransDataModel2OCClass:
                 elif field.subType:
                     prop.subTypes.append(field.subType)
 
+            # 属性
             for prop in dataModel.props:
                 subType = ''.join(prop.subTypes)
 
@@ -445,10 +476,10 @@ class TransDataModel2OCClass:
                     method.remark = '集合类型解析映射'
                     method.retType = 'nullable NSDictionary<NSString *, id> '
                     method.name = 'modelContainerPropertyGenericClass'
-
-                    type = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
+                    method.inner = True
+                    ptype = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
                     method.bodyLines.append('[mapper setObject:@"%s" forKey:@"%s"];' % (
-                        type, prop.name))
+                        ptype, prop.name))
 
             method.bodyLines.append('return mapper;')
 
@@ -464,7 +495,7 @@ class TransDataModel2OCClass:
 
         return None
 
-    def makrClazzList(self, clazzs, outPath):
+    def makeClazzList(self, clazzs, outPath):
         for clazz in clazzs:
             objc = ObjectiveC(clazz, clazz.model, outPath)
             objc.run()
