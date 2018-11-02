@@ -1,0 +1,458 @@
+{
+	"info": {
+		"_postman_id": "1e928a4e-fc0d-b74d-223d-baa810f7692d",
+		"name": "doupai",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "topic(主题)",
+			"item": [
+				{
+					"name": "获取分类标签",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var time=Math.round(new Date().getTime()/1000);",
+									"var apiKey='lu388X4QUFC0vSsknyh09BT8';",
+									"postman.setEnvironmentVariable(\"token\", CryptoJS.MD5(apiKey + time).toString()+','+time);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-doupai-sdk-version",
+								"value": "android_8.1.3_1.0_7.1"
+							},
+							{
+								"key": "x-doupai-api-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/1.0/tag/category",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"1.0",
+								"tag",
+								"category"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "5b67c41a5cde330001b65729"
+								}
+							]
+						},
+						"description": "\n"
+					},
+					"response": [
+						{
+							"name": "获取分类标签",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-doupai-sdk-version",
+										"value": "android_8.1.3_1.0_7.1"
+									},
+									{
+										"key": "x-doupai-api-token",
+										"value": "{{token}}"
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{host}}/1.0/tag/category",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"1.0",
+										"tag",
+										"category"
+									],
+									"query": [
+										{
+											"key": "menuId",
+											"value": "5b67c41a5cde330001b65729"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Mon, 22 Oct 2018 08:15:40 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1107"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache,no-store"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "pid",
+									"value": "2701d642923a-doupai-dp-api-test-test-dp-api-20181019-202919-1@37"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"453-5ReBaTnY6AfuNdbfn82JjCgRHGM\""
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "doupai:sess=; path=/; expires=Mon, 22 Oct 2018 09:15:40 GMT; httponly"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "doupai:sess.sig=rEmFRvNvV9xdCzegIb_KnmrpuQk; path=/; expires=Mon, 22 Oct 2018 09:15:40 GMT; httponly"
+								},
+								{
+									"key": "X-Orange-Upstream-Latency",
+									"value": "6"
+								},
+								{
+									"key": "X-Orange-Proxy-Latency",
+									"value": "0"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": 0,\n    \"data\": [\n        {\n            \"type\": \"topic\",\n            \"tags\": [\n                {\n                    \"id\": \"5b67b2155cde330001b656ac\",\n                    \"name\": \"广告牌\",\n                    \"type\": \"topic\"\n                },\n                {\n                    \"id\": \"5b6919e65cde330001b65dd6\",\n                    \"name\": \"双11\",\n                    \"type\": \"topic\"\n                },\n                {\n                    \"id\": \"5b67b1f65cde330001b656a8\",\n                    \"name\": \"西方\",\n                    \"type\": \"topic\"\n                },\n                {\n                    \"id\": \"5b67b2305cde330001b656ae\",\n                    \"name\": \"电视\",\n                    \"type\": \"topic\"\n                }\n            ],\n            \"isIntro\": 1,\n            \"name\": \"推荐\",\n            \"id\": \"5b67b17b5cde330001b65692\"\n        },\n        {\n            \"type\": \"topic\",\n            \"tags\": [\n                {\n                    \"id\": \"5b67b1d65cde330001b656a4\",\n                    \"name\": \"中秋节\",\n                    \"type\": \"topic\"\n                }\n            ],\n            \"isIntro\": 0,\n            \"name\": \"节日\",\n            \"id\": \"5b67b1975cde330001b65695\"\n        },\n        {\n            \"type\": \"topic\",\n            \"tags\": [\n                {\n                    \"id\": \"5b67b1f65cde330001b656a8\",\n                    \"name\": \"西方\",\n                    \"type\": \"topic\"\n                },\n                {\n                    \"id\": \"5b67b2005cde330001b656aa\",\n                    \"name\": \"东方\",\n                    \"type\": \"topic\"\n                }\n            ],\n            \"isIntro\": 0,\n            \"name\": \"婚庆\",\n            \"id\": \"5b67b1a65cde330001b6569b\"\n        },\n        {\n            \"type\": \"topic\",\n            \"tags\": [\n                {\n                    \"id\": \"5b67b2155cde330001b656ac\",\n                    \"name\": \"广告牌\",\n                    \"type\": \"topic\"\n                },\n                {\n                    \"id\": \"5b67b2305cde330001b656ae\",\n                    \"name\": \"电视\",\n                    \"type\": \"topic\"\n                }\n            ],\n            \"isIntro\": 0,\n            \"name\": \"推广\",\n            \"id\": \"5b67b1af5cde330001b6569f\"\n        },\n        {\n            \"type\": \"topic\",\n            \"tags\": [\n                {\n                    \"id\": \"5b6919e65cde330001b65dd6\",\n                    \"name\": \"双11\",\n                    \"type\": \"topic\"\n                }\n            ],\n            \"isIntro\": 0,\n            \"name\": \"活动\",\n            \"id\": \"5b68f62d5cde330001b65c58\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "config",
+			"item": [
+				{
+					"name": "获取客户端配置",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var time=Math.round(new Date().getTime()/1000);",
+									"var apiKey='lu388X4QUFC0vSsknyh09BT8';",
+									"postman.setEnvironmentVariable(\"token\", CryptoJS.MD5(apiKey + time).toString()+','+time);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-doupai-sdk-version",
+								"value": "android_8.1.3_1.0_7.1.0"
+							},
+							{
+								"key": "x-doupai-api-token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/1.0/config",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"1.0",
+								"config"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "获取客户端配置",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-APP-SDK-VERSION",
+										"value": "ios_8.0_7.0_2.1.0",
+										"disabled": false
+									},
+									{
+										"key": "X-APP-API-TOKEN",
+										"value": "{{token}}",
+										"disabled": false
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{host}}/config",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"config"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*",
+									"name": "Access-Control-Allow-Origin",
+									"description": ""
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache,no-store",
+									"name": "Cache-Control",
+									"description": ""
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive",
+									"name": "Connection",
+									"description": ""
+								},
+								{
+									"key": "Content-Length",
+									"value": "9016",
+									"name": "Content-Length",
+									"description": ""
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type",
+									"description": ""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 17 Jul 2018 06:39:08 GMT",
+									"name": "Date",
+									"description": ""
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2338-jcystE8Cfodr7UJIU/NDHA\"",
+									"name": "ETag",
+									"description": ""
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache",
+									"name": "Pragma",
+									"description": ""
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "avos:sess=; path=/; expires=Tue, 17 Jul 2018 07:39:08 GMT; httponly",
+									"name": "Set-Cookie",
+									"description": ""
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "avos:sess.sig=Ug-IDHOT2-rMJwqRNoIull8D3RY; path=/; expires=Tue, 17 Jul 2018 07:39:08 GMT; httponly",
+									"name": "Set-Cookie",
+									"description": ""
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "CONTAINERID=; Expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/",
+									"name": "Set-Cookie",
+									"description": ""
+								},
+								{
+									"key": "pid",
+									"value": "cb060526e16a-qutui-api-test-test-api-20180717-142527-1@10",
+									"name": "pid",
+									"description": ""
+								}
+							],
+							"cookie": [
+								{
+									"expires": "Tue Jul 17 2018 15:39:08 GMT+0800 (CST)",
+									"httpOnly": true,
+									"domain": "test-app-api.qutui360.com",
+									"path": "/",
+									"secure": false,
+									"value": "",
+									"key": "avos:sess"
+								},
+								{
+									"expires": "Tue Jul 17 2018 15:39:08 GMT+0800 (CST)",
+									"httpOnly": true,
+									"domain": "test-app-api.qutui360.com",
+									"path": "/",
+									"secure": false,
+									"value": "Ug-IDHOT2-rMJwqRNoIull8D3RY",
+									"key": "avos:sess.sig"
+								}
+							],
+							"body": "{\"error\":0,\"data\":{\"weexPaths\":[{\"page\":\"home\",\"requiredClientMinVersion\":\"2.1.0\",\"currentVersion\":\"2.1.0\",\"requiredMinVersion\":\"2.1.0\",\"url\":\"http://res-ws.qutui360.com/2d40474c9187c09178bd58517242665a1f49c295\",\"hash\":\"2d40474c9187c09178bd58517242665a1f49c295\"}],\"isShowGifInTopicPoster\":1,\"pay_help_url\":\"http://test-app-h5.qutui360.com/article/59f2e600e5125e0001fcbf96.html\",\"voice_banner_ad\":\"1\",\"ops_url\":\"https://www.baidu.com/\",\"topic_list_ad\":\"1\",\"page_coin_url\":\"http://test-fx-h5.qutui360.com/member.html?debug=true#/coin\",\"supplier_center_url\":\"https://test-app-shop.qutui360.com/#/supplier\",\"software_list_url\":\"https://test-app-shop.qutui360.com/#/shop/software\",\"user_agreement_url\":\"https://www.baidu.com/\",\"vip_page\":{\"hash\":\"FiCMDAkc7HmnRYn8bnyx04MT22sD\",\"file\":\"http://res-ws.qutui360.com/FiCMDAkc7HmnRYn8bnyx04MT22sD\"},\"wx_video_pub_tips\":\"小贴士：微信朋友圈可以支持本地上传小视频啦~（请升级到最新版本的微信，打开朋友圈，点击右上角的照相按钮，选址相册即可可选择本地上传该视频啦~）ios\"}}"
+						},
+						{
+							"name": "config",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-APP-SDK-VERSION",
+										"value": "ios_8.0_7.0_2.1.0",
+										"enabled": true,
+										"disabled": false
+									},
+									{
+										"key": "X-APP-API-TOKEN",
+										"value": "{{token}}",
+										"enabled": true,
+										"disabled": false
+									}
+								],
+								"body": {},
+								"url": {
+									"raw": "{{host}}/config",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"config"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*",
+									"name": "Access-Control-Allow-Origin",
+									"description": ""
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache,no-store",
+									"name": "Cache-Control",
+									"description": ""
+								},
+								{
+									"key": "Connection",
+									"value": "close",
+									"name": "Connection",
+									"description": ""
+								},
+								{
+									"key": "Content-Length",
+									"value": "9016",
+									"name": "Content-Length",
+									"description": ""
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8",
+									"name": "Content-Type",
+									"description": ""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Jul 2018 01:55:57 GMT",
+									"name": "Date",
+									"description": ""
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2338-jcystE8Cfodr7UJIU/NDHA\"",
+									"name": "ETag",
+									"description": ""
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache",
+									"name": "Pragma",
+									"description": ""
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "avos:sess=; path=/; expires=Fri, 13 Jul 2018 02:55:57 GMT; httponly",
+									"name": "Set-Cookie",
+									"description": ""
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "avos:sess.sig=Ug-IDHOT2-rMJwqRNoIull8D3RY; path=/; expires=Fri, 13 Jul 2018 02:55:57 GMT; httponly",
+									"name": "Set-Cookie",
+									"description": ""
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "CONTAINERID=; Expires=Thu, 01-Jan-1970 00:00:01 GMT; path=/",
+									"name": "Set-Cookie",
+									"description": ""
+								},
+								{
+									"key": "pid",
+									"value": "229b3ed6ebd0-qutui-api-test-test-api-20180712-095333-1@13",
+									"name": "pid",
+									"description": ""
+								}
+							],
+							"cookie": [
+								{
+									"expires": "Fri Jul 13 2018 02:55:57 GMT+0800 (CST)",
+									"httpOnly": true,
+									"domain": "test-app-api.qutui360.com",
+									"path": "/",
+									"secure": false,
+									"value": "",
+									"key": "avos:sess"
+								},
+								{
+									"expires": "Fri Jul 13 2018 02:55:57 GMT+0800 (CST)",
+									"httpOnly": true,
+									"domain": "test-app-api.qutui360.com",
+									"path": "/",
+									"secure": false,
+									"value": "Ug-IDHOT2-rMJwqRNoIull8D3RY",
+									"key": "avos:sess.sig"
+								}
+							],
+							"body": "{\"error\":0,\"data\":{\"weexPaths\":[{\"page\":\"home\",\"requiredClientMinVersion\":\"2.1.0\",\"currentVersion\":\"2.1.0\",\"requiredMinVersion\":\"2.1.0\",\"url\":\"http://res-ws.qutui360.com/2d40474c9187c09178bd58517242665a1f49c295\",\"hash\":\"2d40474c9187c09178bd58517242665a1f49c295\"}],\"isShowGifInTopicPoster\":1,\"pay_help_url\":\"http://test-app-h5.qutui360.com/article/59f2e600e5125e0001fcbf96.html\",\"voice_banner_ad\":\"1\",\"ops_url\":\"https://www.baidu.com/\",\"topic_list_ad\":\"1\",\"page_coin_url\":\"http://test-fx-h5.qutui360.com/member.html?debug=true#/coin\",\"supplier_center_url\":\"https://test-app-shop.qutui360.com/#/supplier\",\"software_list_url\":\"https://test-app-shop.qutui360.com/#/shop/software\",\"user_agreement_url\":\"https://www.baidu.com/\",\"vip_page\":{\"hash\":\"FiCMDAkc7HmnRYn8bnyx04MT22sD\",\"file\":\"http://res-ws.qutui360.com/FiCMDAkc7HmnRYn8bnyx04MT22sD\"},\"wx_video_pub_tips\":\"小贴士：微信朋友圈可以支持本地上传小视频啦~（请升级到最新版本的微信，打开朋友圈，点击右上角的照相按钮，选址相册即可可选择本地上传该视频啦~）ios\"}}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

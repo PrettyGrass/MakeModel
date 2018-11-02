@@ -34,6 +34,22 @@ class ClassInfo(BaseInfo):
 
         return False
 
+    # 存在函数
+    def hasMethod(self, name, type):
+        for m in self.methods:
+            if m.name == name and m.type == type:
+                return m
+
+        return None
+
+    # 存在属性
+    def hasProp(self, name):
+        for m in self.props:
+            if m.name == name:
+                return m
+
+        return None
+
 
 class MethodInfo(BaseInfo):
     def __init__(self):

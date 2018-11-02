@@ -6,9 +6,11 @@
 from MakeClassFile import MakeClassFile
 from ClassInfo import *
 from APIModel import *
+from ParseModelJson import ParseModelJson
 from conf import OCConf
 import util
 import os
+import json
 
 
 class ObjectiveC(MakeClassFile):
@@ -253,10 +255,11 @@ class ObjectiveC(MakeClassFile):
 
 # api 对象转成类对象
 class TransAPIModel2OCClass:
-    def __init__(self, apiGroups):
+    def __init__(self, apiGroups, wkPath):
         self.apiGroups = apiGroups
         self.conf = OCConf()
-        self.allModelMapper = None
+        self.wkPath = wkPath
+        self.allModelMapper = self.allModels(apiGroups)
 
     def trans(self):
         clazzs = []
@@ -268,12 +271,42 @@ class TransAPIModel2OCClass:
 
         return clazzs
 
-    def makrClazzList(self, clazzs, outPath):
+    def makeClazzList(self, clazzs, outPath):
         for clazz in clazzs:
             objc = ObjectiveC(clazz, clazz.model, outPath)
             objc.run()
 
-    # 转换一组api
+    # 获取所有api的数据模型并创建
+    def allModels(self, apiGroups):
+        modelMapper = {}
+        refMappers = {}
+        for index in range(len(apiGroups)):
+            apiGroup = apiGroups[index]
+            for index in range(len(apiGroup.apis)):
+                api = apiGroup.apis[index]
+                if len(api.paths) == 0 or not api.responses or len(api.responses) == 0:
+                    continue
+                for response in api.responses:
+
+                    pm = ParseModelJson(self.wkPath)
+                    ms = []
+                    jsonObj = json.loads(response.get('body'))
+                    responseKey = util.firstUpper(api.getMethodName())
+                    ms.append(pm.parseContent(jsonObj, responseKey))
+                    trans = TransDataModel2OCClass(ms, refMappers)
+                    cls = trans.trans()
+                    if len(cls) > 0:
+                        print 'API数据模型:', api.getMethodName(), cls
+                        modelMapper[responseKey.lower()] = cls[0]
+                        # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'ocmodel'))
+
+        # 数据模型关系建立完成之后创建文件
+        for model in modelMapper.values():
+            trans.makeClazzList([model], os.path.join(self.wkPath, 'Product', 'ocmodel'))
+
+        return modelMapper
+
+    # 转换一组api 为class 类
     def transSingleGroup(self, apiGroup):
         if len(apiGroup.enName) == 0 or len(apiGroup.apis) == 0:
             return None
@@ -374,16 +407,19 @@ class TransAPIModel2OCClass:
 
             method.bodyLines.append('params.httpMethod = @"%s";' % (api.method))
 
+            # 请求响应数据类型
             if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodName().lower()):
                 respClass = self.allModelMapper.get(api.getMethodName().lower())
                 method.bodyLines.append(
                     '[oper.dataClasses setObject:NSClassFromString(@"%s") forKey:@"%s"];' % (
                         respClass.name, self.conf.dataPath))
-
+            # 请求路径
             if len(append) == 0:
                 method.bodyLines.append('params.path = @"%s";' % (path))
             else:
                 method.bodyLines.append('params.path = [NSString stringWithFormat:@"%s" %s];' % (path, append))
+
+            # 请求开始
             method.bodyLines.append('return [service start:oper];')
 
         return apiClazz
@@ -391,42 +427,59 @@ class TransAPIModel2OCClass:
 
 # 模型 对象转成类对象
 class TransDataModel2OCClass:
-    def __init__(self, ms):
+    def __init__(self, ms, globalRefMapper):
         self.dataModels = ms
         self.conf = OCConf()
         self.refMapper = {}
+        self.globalRefMapper = globalRefMapper
 
     def trans(self):
         return self.transClass(self.dataModels)
 
+    # 转换响应数据 为 class类
     def transClass(self, ms):
         classes = []
         for index in range(len(ms)):
             model = ms[index]
-            dataModel = ClassInfo()
-            dataModel.name = '%s%sModel' % (self.conf.apiBaseClassPreFix, model.name)
-            dataModel.superClazz = 'NSObject'
-            dataModel.imports.append('#import <Foundation/Foundation.h>')
-            classes.append(dataModel)
-            self.refMapper[model.name] = dataModel
+            name = '%s%sModel' % (self.conf.apiBaseClassPreFix, model.name)
+
+            dataModel = None
+            if self.globalRefMapper.has_key(name):
+                dataModel = self.globalRefMapper[name]
+
+            # 如模型不存在, 则新建, 否则做字段增量
+            if not dataModel:
+                dataModel = ClassInfo()
+                dataModel.name = name
+                dataModel.superClazz = 'NSObject'
+                dataModel.imports.append('#import <Foundation/Foundation.h>')
+                classes.append(dataModel)
+                self.refMapper[name] = dataModel
+                self.globalRefMapper[name] = dataModel
 
             if len(model.subModels) > 0:
                 dataModel.inFileClass.extend(self.transClass(model.subModels))
 
-            # 查找集合类型的自定义数据类型嵌套 只支持一层嵌套
-            method = MethodInfo()
-            method.bodyLines.append('NSMutableDictionary *mapper = [NSMutableDictionary dictionary];')
-
+            transferProps = []
             # 根据字段创建属性
             for field in model.fields:
 
-                if field.name in self.conf.protectProp:
-                    print '字段受保护:%s.%s' % (model.name, field.name)
+                # 字段转义
+                fname = field.name
+                if self.conf.transferProp.has_key(fname):
+                    print '字段需转义:%s.%s' % (model.name, fname)
+
+                    tname = self.conf.transferProp.get(fname)
+                    transferProps.append('@"%s": @"%s"' % (tname, fname))
+                    fname = tname
+
+                # 重复字段
+                if dataModel.hasProp(fname):
                     continue
 
                 prop = PropInfo()
                 dataModel.props.append(prop)
-                prop.name = field.name
+                prop.name = fname
                 if self.getType(field.type):
                     prop.type = self.getType(field.type)
                 else:
@@ -438,22 +491,62 @@ class TransDataModel2OCClass:
                 elif field.subType:
                     prop.subTypes.append(field.subType)
 
+            # 转义属性
+            transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
+            transferDiffProps = []
+            if len(transferProps) > 0 and transm:
+                for p in transferProps:
+                    if transm.bodyLines[0].find(p) < 0:
+                        transferDiffProps.append(p)
+            else:
+                transferDiffProps = transferProps
+
+            if len(transferDiffProps) > 0:
+                mask = '@"__mask__": @"__mask__"'
+                transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
+                if not transm:
+                    transm = MethodInfo()
+                    transm.remark = '转义属性'
+                    transm.retType = 'nullable NSDictionary<NSString *, id> '
+                    transm.name = 'modelCustomPropertyMapper'
+                    transm.inner = True
+                    transm.type = 1
+                    transm.bodyLines.append('NSDictionary *mapper = @{%s};' % (mask))
+                    transm.bodyLines.append('return mapper;')
+                    dataModel.methods.append(transm)
+
+                transm.bodyLines[0] = transm.bodyLines[0].replace('};', (',%s};' % ',\n'.join(transferDiffProps)))
+                transm.bodyLines[0] = transm.bodyLines[0].replace('%s,' % mask, '')
+
+            # 属性
+            # 查找集合类型的自定义数据类型嵌套 只支持一层嵌套
+            method = dataModel.hasMethod('modelContainerPropertyGenericClass', 1)
+            if not method:
+                method = MethodInfo()
+                method.bodyLines.append('NSMutableDictionary *mapper = [NSMutableDictionary dictionary];')
+                method.bodyLines.append('return mapper;')
+                method.remark = '集合类型解析映射'
+                method.retType = 'nullable NSDictionary<NSString *, id> '
+                method.name = 'modelContainerPropertyGenericClass'
+                method.inner = True
+                method.type = 1
+
             for prop in dataModel.props:
                 subType = ''.join(prop.subTypes)
-
+                # 集合一类的有子类型的才需要映射
                 if len(subType) > 0:
-                    method.remark = '集合类型解析映射'
-                    method.retType = 'nullable NSDictionary<NSString *, id> '
-                    method.name = 'modelContainerPropertyGenericClass'
+                    ptype = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
+                    line = '[mapper setObject:@"%s" forKey:@"%s"];' % (
+                        ptype, prop.name)
 
-                    type = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
-                    method.bodyLines.append('[mapper setObject:@"%s" forKey:@"%s"];' % (
-                        type, prop.name))
+                    # 去重复行, 映射不需要重复
+                    if line in method.bodyLines:
+                        method.bodyLines.remove(line)
 
-            method.bodyLines.append('return mapper;')
-
-            if len(method.name):
-                dataModel.methods.append(method)
+                    method.bodyLines.insert(1, line)
+                    # 没有添加过该方法则添加
+                    if not dataModel.hasMethod('modelContainerPropertyGenericClass', 1):
+                        dataModel.methods.append(method)
 
         return classes
 
@@ -464,7 +557,7 @@ class TransDataModel2OCClass:
 
         return None
 
-    def makrClazzList(self, clazzs, outPath):
+    def makeClazzList(self, clazzs, outPath):
         for clazz in clazzs:
             objc = ObjectiveC(clazz, clazz.model, outPath)
             objc.run()
