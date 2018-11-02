@@ -17,7 +17,7 @@
 								"type": "text/javascript",
 								"exec": [
 									"var time=Math.round(new Date().getTime()/1000);",
-									"var apiKey='lu388X4QUFC0vSsknyh09BT8';",
+									"var apiKey='xxx';",
 									"postman.setEnvironmentVariable(\"token\", CryptoJS.MD5(apiKey + time).toString()+','+time);"
 								]
 							}
@@ -78,7 +78,7 @@
 								"type": "text/javascript",
 								"exec": [
 									"var time=Math.round(new Date().getTime()/1000);",
-									"var apiKey='lu388X4QUFC0vSsknyh09BT8';",
+									"var apiKey='xxx';",
 									"postman.setEnvironmentVariable(\"token\", CryptoJS.MD5(apiKey + time).toString()+','+time);"
 								]
 							}
