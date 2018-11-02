@@ -54,9 +54,11 @@ class ParseApiJson():
     # 分离英文名
     def diffENName(self, fullName):
         innerNames = []
+
         def innerMath(math):
             innerNames.append(math.group())
             return math.group()
+
         re.sub(r'[A-Za-z0-9]{1,}', innerMath, fullName)
         return ''.join(innerNames)
 
@@ -149,6 +151,8 @@ class ParseApiJson():
 
         if mode == 'raw':
             paramsJson = body.get(mode)
+            if paramsJson == '':
+                paramsJson = '{}'
             params = json.loads(paramsJson)
 
             # TODO 目前只处理了单层json数据, 嵌套的没有处理
