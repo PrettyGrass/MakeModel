@@ -13,7 +13,7 @@ class OCConf(Conf):
 
         self.apiBaseClass = 'NSObject'
         self.apiBaseClassPreFix = 'DP'
-        self.apiImport = ['#import <Foundation/Foundation.h>', '#import <DTNetwork/DTNetwork.h>']
+        self.apiImport = ['#import <Foundation/Foundation.h>', '#import <DTNetwork/DTNetworkSample.h>']
         self.apiInnerImport = []
         self.apiFuncReturnType = 'DTOperationID'
 

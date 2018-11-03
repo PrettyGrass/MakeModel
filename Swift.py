@@ -59,12 +59,13 @@ class Swift(MakeClassFile):
             print '写入协议文件:', outFile
 
             implInterface.append(interfaceFile)
+            self.clazz.impls.append(interfaceFile)
 
         lines = []
         self.createBeginRemark(lines)
         self.createImplImport(lines)
         self.createClassRemark(lines)
-        self.createImplBegin(lines, implInterface)
+        self.createImplBegin(lines)
         self.createImplBody(lines)
         self.createImplEnd(lines)
 
@@ -153,9 +154,10 @@ class Swift(MakeClassFile):
         lines.append('}')
 
     # 创建实现
-    def createImplBegin(self, lines, implProtocol=None):
-        if implProtocol and len(implProtocol) > 0:
-            implProtocol = ', %s' % ','.join(implProtocol)
+    def createImplBegin(self, lines):
+        implProtocol = None
+        if len(self.clazz.impls) > 0:
+            implProtocol = ', %s' % ','.join(self.clazz.impls)
         else:
             implProtocol = ''
 
@@ -193,11 +195,16 @@ class Swift(MakeClassFile):
 
     # 创建属性
     def createProp(self, lines, prop):
+
+        defVal = '?'
+        if self.conf.baseType.has_key(prop.type) and self.conf.baseType.get(prop.type).has_key('default'):
+            defVal = ' = %s' % self.conf.baseType.get(prop.type)['default']
+
         lines.append(
-            '%s var %s :%s?' % (self.conf.getPropMask(prop.type),
-                            prop.name,
-                            self.conf.getPropType(prop.type,
-                                                  prop.subTypes)))
+            '%s var %s :%s%s' % (self.conf.getPropMask(prop.type),
+                                 prop.name,
+                                 self.conf.getPropType(prop.type, prop.subTypes),
+                                 defVal))
 
     # 创建方法
     def createFuncBegin(self, lines, func):
@@ -272,7 +279,9 @@ class TransAPIModel2SwiftClass:
                     ms = []
                     jsonObj = json.loads(response.get('body'))
                     responseKey = util.firstUpper(api.getMethodName())
-                    ms.append(pm.parseContent(jsonObj, responseKey))
+                    model = pm.parseContent(jsonObj, responseKey)
+                    model.remark = '%s响应模型' % api.name
+                    ms.append(model)
                     trans = TransDataModel2OCClass(ms, refMappers)
                     cls = trans.trans()
                     if len(cls) > 0:
@@ -429,7 +438,9 @@ class TransDataModel2OCClass:
             # 如模型不存在, 则新建, 否则做字段增量
             if not dataModel:
                 dataModel = ClassInfo()
+                dataModel.impls.extend(self.conf.importModule)
                 dataModel.name = name
+                dataModel.remark = model.remark
                 dataModel.superClazz = 'NSObject'
                 dataModel.imports.append('import Foundation')
                 classes.append(dataModel)
@@ -445,12 +456,12 @@ class TransDataModel2OCClass:
 
                 # 字段转义
                 fname = field.name
-                # if self.conf.transferProp.has_key(fname):
-                #     print '字段需转义:%s.%s' % (model.name, fname)
-                #
-                #     tname = self.conf.transferProp.get(fname)
-                #     transferProps.append('@"%s": @"%s"' % (tname, fname))
-                #     fname = tname
+                if self.conf.transferProp.has_key(fname):
+                    print '字段需转义:%s.%s' % (model.name, fname)
+
+                    tname = self.conf.transferProp.get(fname)
+                    transferProps.append('"%s": "%s"' % (tname, fname))
+                    fname = tname
 
                 # 重复字段
                 if dataModel.hasProp(fname):
@@ -483,21 +494,21 @@ class TransDataModel2OCClass:
             else:
                 transferDiffProps = transferProps
 
+            mask = '"__mask__": "__mask__"'
             if len(transferDiffProps) > 0:
-                mask = '@"__mask__": @"__mask__"'
                 transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
                 if not transm:
                     transm = MethodInfo()
                     transm.remark = '转义属性'
-                    transm.retType = '[String : AnyObject]'
+                    transm.retType = '[String : Any]?'
                     transm.name = 'modelCustomPropertyMapper'
                     transm.inner = True
                     transm.type = 1
-                    transm.bodyLines.append('let mapper = @{%s};' % (mask))
-                    transm.bodyLines.append('return mapper;')
+                    transm.bodyLines.append('let mapper = [%s]' % (mask))
+                    transm.bodyLines.append('return mapper as [String : Any]')
                     dataModel.methods.append(transm)
 
-                transm.bodyLines[0] = transm.bodyLines[0].replace('};', (',%s};' % ',\n'.join(transferDiffProps)))
+                transm.bodyLines[0] = transm.bodyLines[0].replace(']', (',%s]' % ',\n'.join(transferDiffProps)))
                 transm.bodyLines[0] = transm.bodyLines[0].replace('%s,' % mask, '')
 
             # 属性
@@ -505,10 +516,10 @@ class TransDataModel2OCClass:
             method = dataModel.hasMethod('modelContainerPropertyGenericClass', 1)
             if not method:
                 method = MethodInfo()
-                method.bodyLines.append('var mapper = [String : AnyObject]()')
-                method.bodyLines.append('return mapper')
+                method.bodyLines.append('let mapper = [%s]' % (mask))
+                method.bodyLines.append('return mapper as [String : Any]')
                 method.remark = '集合类型解析映射'
-                method.retType = '[String : AnyObject]'
+                method.retType = '[String : Any]'
                 method.name = 'modelContainerPropertyGenericClass'
                 method.inner = True
                 method.type = 1
@@ -517,15 +528,17 @@ class TransDataModel2OCClass:
                 subType = ''.join(prop.subTypes)
                 # 集合一类的有子类型的才需要映射
                 if len(subType) > 0:
-                    # ptype = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
-                    # line = '[mapper setObject:@"%s" forKey:@"%s"];' % (
-                    #     ptype, prop.name)
-                    #
-                    # # 去重复行, 映射不需要重复
-                    # if line in method.bodyLines:
-                    #     method.bodyLines.remove(line)
-                    #
-                    # method.bodyLines.insert(1, line)
+                    ptype = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
+                    line = '"%s": %s.self' % (
+                        prop.name, ptype)
+
+                    oldLine = method.bodyLines[0]
+                    if oldLine.find(line) < 0:
+                        # 不存在则添加
+                        oldLine = oldLine.replace(']', (',%s]' % line))
+                        oldLine = oldLine.replace('%s,' % mask, '')
+
+                    method.bodyLines[0] = oldLine
                     # 没有添加过该方法则添加
                     if not dataModel.hasMethod('modelContainerPropertyGenericClass', 1):
                         dataModel.methods.append(method)

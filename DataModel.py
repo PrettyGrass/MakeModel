@@ -13,6 +13,7 @@ class ModelInfo:
         self.name = ''      # 模型名
         self.fields = []    # FieldInfo
         self.subModels = [] # 子模型
+        self.remark = ''
 
     def getRefClassType(self, ref):
         for model in self.subModels:

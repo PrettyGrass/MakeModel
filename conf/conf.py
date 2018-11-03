@@ -19,7 +19,8 @@ class Conf:
 
         # 嵌套对象的类名映射
         propMap['TagCategory'] = 'DFFF'
-        propMap['Config'] = 'DFFF'
+        propMap['PutV1UsersMe'] = 'User'
+        propMap['V1UsersMe'] = 'User'
         propMap['Config.subdataT1'] = 'CoinInfoPage'
         propMap['Config.subdataT2'] = 'CoinInfoPage'
 
