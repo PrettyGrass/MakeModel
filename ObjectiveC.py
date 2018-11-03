@@ -339,9 +339,9 @@ class TransAPIModel2OCClass:
         method.remark = ''
         method.name = 'load'
         method.bodyLines.append(
-            '[[TyphoonDefineMapper shared] regWithProvider:self service:@protocol(%sProtocol)];' % apiClazz.name)
+            '[[DTDependContainerMapper shared] regWithProvider:self service:@protocol(%sProtocol)];' % apiClazz.name)
         apiClazz.methods.append(method)
-        apiClazz.innerImports.append('#import <TyphoonExtra/TyphoonExtra.h>')
+        apiClazz.innerImports.append('#import <DTDependContainer/DTDependContainer.h>')
 
         for index in range(len(apiGroup.apis)):
             api = apiGroup.apis[index]
