@@ -3,6 +3,7 @@
 # ylin 2018.6.26
 
 from ObjectiveC import *
+from Swift import *
 from ParseApiJson import *
 import os
 
@@ -23,3 +24,6 @@ if __name__ == '__main__':
 
     trans = TransAPIModel2OCClass(ms, wkPath)
     trans.makeClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'ocapi'))
+
+    trans = TransAPIModel2SwiftClass(ms, wkPath)
+    trans.makeClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'swiftapi'))
