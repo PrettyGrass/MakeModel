@@ -436,12 +436,15 @@ class TransDataModel2OCClass:
     def trans(self):
         return self.transClass(self.dataModels)
 
+    def getClassName(self, name):
+        return '%s%sModel' % (self.conf.apiBaseClassPreFix, name)
+
     # 转换响应数据 为 class类
     def transClass(self, ms):
         classes = []
         for index in range(len(ms)):
             model = ms[index]
-            name = '%s%sModel' % (self.conf.apiBaseClassPreFix, model.name)
+            name = self.getClassName(model.name)
 
             dataModel = None
             if self.globalRefMapper.has_key(name):
@@ -482,6 +485,8 @@ class TransDataModel2OCClass:
                 prop.name = fname
                 if self.getType(field.type):
                     prop.type = self.getType(field.type)
+                elif not self.conf.isBaseType(field.type):
+                    prop.type = self.getClassName(field.type)
                 else:
                     prop.type = field.type
 
@@ -489,7 +494,7 @@ class TransDataModel2OCClass:
                     prop.subTypes.append(self.getType(field.subType))
 
                 elif field.subType:
-                    prop.subTypes.append(field.subType)
+                    prop.subTypes.append(self.getClassName(field.subType))
 
             # 转义属性
             transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)

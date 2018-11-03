@@ -58,6 +58,10 @@ class OCConf(Conf):
             mask = '(nonatomic, assign)'
         return mask
 
+    # 是否基础类型
+    def isBaseType(self, type):
+        return self.baseType.has_key(type)
+
     # 获取属性类型
     def getPropType(self, type, subTypes=None):
 
