@@ -443,6 +443,9 @@ class TransDataModel2OCClass:
                 dataModel.remark = model.remark
                 dataModel.superClazz = 'NSObject'
                 dataModel.imports.append('import Foundation')
+                if self.conf.useYYModel:
+                    dataModel.imports.append('import YYModel')
+                    
                 classes.append(dataModel)
                 self.refMapper[name] = dataModel
                 self.globalRefMapper[name] = dataModel
