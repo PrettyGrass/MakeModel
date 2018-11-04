@@ -258,9 +258,10 @@ class TransAPIModel2SwiftClass:
 
         # 生成注入类
         entryPoint = ClassInfo()
-        entryPoint.superClazz = 'Any'
+        entryPoint.superClazz = 'NSObject'
         entryPoint.name = 'HttpApiEntry'
         entryPoint.remark = 'api服务注入入口类'
+        entryPoint.imports.append('import DTDependContainer')
 
         method = MethodInfo()
         method.retType = 'void'
@@ -309,11 +310,11 @@ class TransAPIModel2SwiftClass:
                     if len(cls) > 0:
                         print 'API数据模型:', api.getMethodName(), cls
                         modelMapper[responseKey.lower()] = cls[0]
-                        # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'ocmodel'))
+                        # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'SwiftModel'))
 
         # 数据模型关系建立完成之后创建文件
         for model in modelMapper.values():
-            trans.makeClazzList([model], os.path.join(self.wkPath, 'Product', 'swiftmodel'))
+            trans.makeClazzList([model], os.path.join(self.wkPath, 'Product', 'SwiftModel'))
 
         return modelMapper
 

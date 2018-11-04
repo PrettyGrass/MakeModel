@@ -272,7 +272,7 @@ class TransAPIModel2OCClass:
         # 生成注入类
         entryPoint = ClassInfo()
         entryPoint.superClazz = 'NSObject'
-        entryPoint.name = 'HttpApiEntry'
+        entryPoint.name = 'DPHttpApiEntry'
         entryPoint.remark = 'api服务注入入口类'
         entryPoint.innerImports.append('#import <DTDependContainer/DTDependContainer.h>')
 
@@ -327,11 +327,11 @@ class TransAPIModel2OCClass:
                     if len(cls) > 0:
                         print 'API数据模型:', api.getMethodName(), cls
                         modelMapper[responseKey.lower()] = cls[0]
-                        # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'ocmodel'))
+                        # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'OCModel'))
 
         # 数据模型关系建立完成之后创建文件
         for model in modelMapper.values():
-            trans.makeClazzList([model], os.path.join(self.wkPath, 'Product', 'ocmodel'))
+            trans.makeClazzList([model], os.path.join(self.wkPath, 'Product', 'OCModel'))
 
         return modelMapper
 
@@ -392,15 +392,15 @@ class TransAPIModel2OCClass:
             # 回调函数
             success = ParamsInfo()
             success.name = 'success'
-            success.paramType = 'void (^)(DTSampleOperation <%s>*oper)' % respClassName
+            success.paramType = 'void (^)(DTSampleOperation <%s>* _Nonnull oper)' % respClassName
 
             failure = ParamsInfo()
             failure.name = 'failure'
-            failure.paramType = 'void (^)(DTSampleOperation <%s>*oper)' % respClassName
+            failure.paramType = 'void (^)(DTSampleOperation <%s>* _Nonnull oper)' % respClassName
 
             complete = ParamsInfo()
             complete.name = 'complete'
-            complete.paramType = 'void (^)(DTSampleOperation <%s>*oper)' % respClassName
+            complete.paramType = 'void (^)(DTSampleOperation <%s>* _Nonnull oper)' % respClassName
 
             # 回调参数
             calls = [
@@ -522,6 +522,10 @@ class TransDataModel2OCClass:
                     prop.subTypes.append(subType)
                     # 子类型class引入
                     rootClass.imports.append('@class %s;' % subType)
+
+                if not self.conf.isBaseType(field.type):
+                    # 子类型class引入
+                    rootClass.imports.append('@class %s;' % prop.type)
 
             # 转义属性
             transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
