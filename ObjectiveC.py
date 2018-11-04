@@ -53,7 +53,7 @@ class ObjectiveC(MakeClassFile):
                 inner.createInterfaceEnd(interfaceLines)
 
             self.createEndRemark(interfaceLines)
-            outFile = os.path.join(self.outPath, interfaceFile + '.h')
+            outFile = os.path.join(self.outPath, 'protocol', interfaceFile + '.h')
             util.writeLinesFile(interfaceLines, outFile)
             os.system('clang-format -i %s\n' % outFile)
             print '写入协议文件:', outFile
@@ -269,6 +269,33 @@ class TransAPIModel2OCClass:
             if clazz:
                 clazzs.append(clazz)
 
+        # 生成注入类
+        entryPoint = ClassInfo()
+        entryPoint.superClazz = 'NSObject'
+        entryPoint.name = 'HttpApiEntry'
+        entryPoint.remark = 'api服务注入入口类'
+        entryPoint.innerImports.append('#import <DTDependContainer/DTDependContainer.h>')
+
+        method = MethodInfo()
+        method.retType = 'void'
+        method.type = 1
+        method.abs = False
+        method.inner = False
+        method.remark = 'api服务注入入口'
+        method.name = 'regAllApi'
+        entryPoint.methods.append(method)
+
+        for index in range(len(clazzs)):
+            apiClazz = clazzs[index]
+            entryPoint.imports.append('#import "%s.h"' % apiClazz.name)
+            method.bodyLines.append(
+                '''[[DTDependContainerMapper shared]
+                    regWithProvider:%s.class
+                    service:@protocol(%sProtocol)];''' % (
+                    apiClazz.name, apiClazz.name))
+
+        clazzs.append(entryPoint)
+
         return clazzs
 
     def makeClazzList(self, clazzs, outPath):
@@ -331,19 +358,6 @@ class TransAPIModel2OCClass:
                                                             responeClass:nil];
             DTRequestParams *params = oper.params;
             '''
-
-        # inject
-        method = MethodInfo()
-        method.retType = 'void'
-        method.type = 1
-        method.inner = True
-        method.abs = False
-        method.remark = ''
-        method.name = 'load'
-        method.bodyLines.append(
-            '[[DTDependContainerMapper shared] regWithProvider:self service:@protocol(%sProtocol)];' % apiClazz.name)
-        apiClazz.methods.append(method)
-        apiClazz.innerImports.append('#import <DTDependContainer/DTDependContainer.h>')
 
         for index in range(len(apiGroup.apis)):
             api = apiGroup.apis[index]

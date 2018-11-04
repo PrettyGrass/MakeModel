@@ -17,7 +17,7 @@ class SwiftConf(Conf):
         self.baseType['float'] = {'name': 'Float', 'default': 0.0}
         self.baseType['double'] = {'name': 'Double', 'default': 0.0}
         self.baseType['long'] = {'name': 'Int', 'default': 0}
-        self.baseType['void'] = {'name': '[Void]'}
+        self.baseType['void'] = {'name': 'Void'}
         self.baseType['list'] = {'name': '[subtype]', 'default': '[]'}
 
         self.apiImport = ['import Foundation', 'import DTDependContainer', 'import DTNetwork', 'import DPIntlModel']

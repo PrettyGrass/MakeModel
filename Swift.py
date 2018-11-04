@@ -53,7 +53,7 @@ class Swift(MakeClassFile):
                 inner.createInterfaceEnd(interfaceLines)
 
             self.createEndRemark(interfaceLines)
-            outFile = os.path.join(self.outPath, interfaceFile + '.swift')
+            outFile = os.path.join(self.outPath, 'protocol', interfaceFile + '.swift')
             util.writeLinesFile(interfaceLines, outFile)
             os.system('cd %s && swiftformat . \n' % self.outPath)
             print '写入协议文件:', outFile
@@ -256,6 +256,28 @@ class TransAPIModel2SwiftClass:
             if clazz:
                 clazzs.append(clazz)
 
+        # 生成注入类
+        entryPoint = ClassInfo()
+        entryPoint.superClazz = 'Any'
+        entryPoint.name = 'HttpApiEntry'
+        entryPoint.remark = 'api服务注入入口类'
+
+        method = MethodInfo()
+        method.retType = 'void'
+        method.type = 1
+        method.abs = False
+        method.inner = False
+        method.remark = 'api服务注入入口'
+        method.name = 'regAllApi'
+        entryPoint.methods.append(method)
+
+        for index in range(len(clazzs)):
+            apiClazz = clazzs[index]
+            method.bodyLines.append(
+                'DTDependContainerMapper.shared().reg(withProvider: %s.self, service: %sProtocol.self)' % (
+                    apiClazz.name, apiClazz.name))
+
+        clazzs.append(entryPoint)
         return clazzs
 
     def makeClazzList(self, clazzs, outPath):
@@ -445,7 +467,7 @@ class TransDataModel2OCClass:
                 dataModel.imports.append('import Foundation')
                 if self.conf.useYYModel:
                     dataModel.imports.append('import YYModel')
-                    
+
                 classes.append(dataModel)
                 self.refMapper[name] = dataModel
                 self.globalRefMapper[name] = dataModel
