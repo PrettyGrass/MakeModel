@@ -14,6 +14,7 @@ from conf import *
 class Params:
     def __init__(self):
         self.confPath = ''
+        self.confDir = ''
         self.confJson = None
         self.coreJson = None
 
@@ -35,10 +36,13 @@ class Params:
         if not os.path.exists(self.confPath):
             return None
 
+        self.confDir = os.path.abspath(os.path.dirname(self.confPath) + os.path.sep + ".")
+
         confJson = util.readJsonFile(self.confPath)
         if confJson.has_key('core'):
             self.coreJson = confJson.get('core')
-            self.apiJsonPath = self.coreJson.get('apiJsonPath').encode('utf-8')
+            self.coreJson['confDir'] = self.confDir
+            self.apiJsonPath = self.toabs(self.coreJson.get('apiJsonPath').encode('utf-8'))
             self.coreConf = Conf()
             self.coreConf.fromJson(self.coreJson)
 
@@ -63,6 +67,16 @@ class Params:
 
         return self
 
+    # 是否是绝对路径
+    def isabs(self, path):
+        return path[:1] == '/'
+
+    # 转换成绝对路径
+    def toabs(self, path):
+        if self.isabs(path):
+            return path
+        return os.path.abspath(os.path.join(self.confDir, path))
+
 
 # 获取命令行参数
 def getParams():
@@ -79,7 +93,7 @@ def getParams():
                 '''
         elif pName == '-c':
             params.confPath = pValue
-    params.confPath = '/Users/ylin/.wk_space/MakeModel/conf/sample.config.json'
+    # 测试: params.confPath = '/Users/ylin/.wk_space/MakeModel/conf/sample.config.json'
     return params.parse()
 
 
@@ -92,7 +106,7 @@ if __name__ == '__main__':
 
     wkPath = params.apiJsonPath  # 当前的目录
     wkPath = os.path.abspath(wkPath)
-    print 'wk:', wkPath, params.ocConf.mark
+    print 'wk:', wkPath
 
     pm = ParseApiJson(wkPath, params.coreConf)
     ms = pm.apiGroups()
@@ -103,8 +117,10 @@ if __name__ == '__main__':
     # ocApi.init()
     # ocApi.build()
 
-    trans = TransAPIModel2OCClass(ms, params.ocConf)
-    trans.makeClazzList(trans.trans())
+    if params.enableOC:
+        trans = TransAPIModel2OCClass(ms, params.ocConf)
+        trans.makeClazzList(trans.trans())
 
-    trans = TransAPIModel2SwiftClass(ms, params.swiftConf)
-    trans.makeClazzList(trans.trans())
+    if params.enableSwift:
+        trans = TransAPIModel2SwiftClass(ms, params.swiftConf)
+        trans.makeClazzList(trans.trans())

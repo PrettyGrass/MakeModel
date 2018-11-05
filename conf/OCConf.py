@@ -91,7 +91,7 @@ class OCConf(Conf):
             self.apiInnerImport = json['apiInnerImport']
 
         if json.has_key('apiBaseClassPreFix'):
-            self.apiInnerImport = json['apiBaseClassPreFix']
+            self.apiBaseClassPreFix = json['apiBaseClassPreFix']
 
         if json.has_key('modelBaseClass'):
             self.modelBaseClass = json['modelBaseClass']

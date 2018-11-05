@@ -2,11 +2,12 @@
 # -*- coding: UTF-8 -*-
 # ylin 2018.6.26
 
-import time
+import time, os
 
 
 class Conf:
     def __init__(self):
+        self.confDir = ''  # 配置文件路径
         self.author = 'ylin'
         self.date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.mark = '此文件由脚本自动生成, 手动修改文件内容, 将会被覆盖, 如需修改, 可在派生类进行!'
@@ -41,6 +42,17 @@ class Conf:
         # 忽略字段
         self.ignore = []  # ['ConfigApiModel.share_tpl.app.xxx']
 
+    # 是否是绝对路径
+    def isabs(self, path):
+        return path[:1] == '/'
+
+    # 转换成绝对路径
+    def toabs(self, path):
+        if self.isabs(path):
+            return path
+
+        return os.path.abspath(os.path.join(self.confDir, path))
+
     def fromJson(self, json):
         if json.has_key('propMap'):
             propMap = json['propMap']
@@ -48,11 +60,14 @@ class Conf:
                 val = propMap[key]
                 self.propMap[key] = val
 
+        if json.has_key('confDir'):
+            self.confDir = json['confDir']
+
         if json.has_key('apiModelPath'):
-            self.apiModelPath = json['apiModelPath']
+            self.apiModelPath = self.toabs(json['apiModelPath'])
 
         if json.has_key('apiOutPath'):
-            self.apiOutPath = json['apiOutPath']
+            self.apiOutPath = self.toabs(json['apiOutPath'])
 
         if json.has_key('author'):
             self.author = json['author']
