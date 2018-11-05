@@ -1,0 +1,92 @@
+{
+  "core": {
+    "apiJsonPath": "/Users/ylin/Desktop/测试自动生成/",
+    "dataPath": "data",
+    "ignorePath": "v1",
+    "propMap": {
+      "PutUsersMe": "User",
+      "UsersMe": "User",
+      "Config.subdataT1": "CoinInfoPage"
+    }
+  },
+  "swift": {
+    "apiOutPath": "/Users/ylin/Desktop/测试自动生成/swiftApi",
+    "apiModelPath": "/Users/ylin/Desktop/测试自动生成/swiftModel",
+    "apiBaseClass": "NSObject",
+    "modelBaseClass": "NSObject",
+    "baseType": {
+      "string": {
+        "name": "String",
+        "default": "\"\""
+      },
+      "int": {
+        "name": "Int",
+        "default": "0"
+      },
+      "float": {
+        "name": "Float",
+        "default": "0.0"
+      },
+      "double": {
+        "name": "Double",
+        "default": "0.0"
+      },
+      "long": {
+        "name": "Int",
+        "default": "0"
+      },
+      "list": {
+        "name": "[subtype]",
+        "default": "[]"
+      },
+      "void": {
+        "name": "Void"
+      }
+    },
+    "apiImport": [
+      "import Foundation",
+      "import DTDependContainer",
+      "import DTNetwork",
+      "import DPIntlModel"
+    ],
+    "importModule": [
+      "YYModel"
+    ],
+    "useHandyJSON": false,
+    "useObjectMapper": false,
+    "useYYModel": true,
+    "transferProp": {
+      "copy": "ccopy",
+      "hash": "hashVal",
+      "description": "desc",
+      "id": "Id",
+      "copy": "ccopy"
+    }
+  },
+  "oc": {
+    "apiOutPath": "/Users/ylin/Desktop/测试自动生成/ocApi",
+    "apiModelPath": "/Users/ylin/Desktop/测试自动生成/ocModel",
+    "apiBaseClass": "NSObject",
+    "modelBaseClass": "NSObject",
+    "apiBaseClassPreFix": "DP",
+    "apiImport": ["#import <Foundation/Foundation.h>", "#import <DTNetwork/DTNetworkSample.h>"],
+    "apiInnerImport": [],
+    "apiFuncReturnType": "DTOperationID",
+    "baseType": {
+      "string": "NSString * ",
+      "int": "NSInteger ",
+      "float": "float ",
+      "double": "double ",
+      "long": "long ",
+      "list": "NSArray *",
+      "void": "void"
+    },
+    "transferProp": {
+      "copy": "ccopy",
+      "hash": "hashVal",
+      "description": "desc",
+      "id": "Id",
+      "copy": "ccopy"
+    }
+  }
+}

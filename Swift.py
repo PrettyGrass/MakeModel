@@ -15,9 +15,9 @@ import json
 
 class Swift(MakeClassFile):
     # 构造方法
-    def __init__(self, clazz, model, outPath):
+    def __init__(self, clazz, model, conf, outPath):
         MakeClassFile.__init__(self, clazz, model)
-        self.conf = SwiftConf()
+        self.conf = conf
         self.outPath = outPath
 
     # 开始
@@ -46,7 +46,7 @@ class Swift(MakeClassFile):
 
             # 内部类接口
             for innerClass in innerClasses:
-                inner = Swift(innerClass, None, None)
+                inner = Swift(innerClass, None, self.conf, None)
                 inner.createClassRemark(interfaceLines)
                 inner.createInterfaceBegin(interfaceLines, isProtocol=True)
                 inner.createProtocolInterfaceBody(interfaceLines)
@@ -71,7 +71,7 @@ class Swift(MakeClassFile):
 
         # 内部类实现
         for innerClass in innerClasses:
-            inner = Swift(innerClass, None, None)
+            inner = Swift(innerClass, None, self.conf, None)
             inner.createClassRemark(lines)
             inner.createImplBegin(lines)
             inner.createImplBody(lines)
@@ -242,10 +242,9 @@ class Swift(MakeClassFile):
 
 # api 对象转成类对象
 class TransAPIModel2SwiftClass:
-    def __init__(self, apiGroups, wkPath):
+    def __init__(self, apiGroups, conf):
         self.apiGroups = apiGroups
-        self.conf = SwiftConf()
-        self.wkPath = wkPath
+        self.conf = conf
         self.allModelMapper = self.allModels(apiGroups)
 
     def trans(self):
@@ -281,9 +280,9 @@ class TransAPIModel2SwiftClass:
         clazzs.append(entryPoint)
         return clazzs
 
-    def makeClazzList(self, clazzs, outPath):
+    def makeClazzList(self, clazzs):
         for clazz in clazzs:
-            objc = Swift(clazz, clazz.model, outPath)
+            objc = Swift(clazz, clazz.model, self.conf, self.conf.apiOutPath)
             objc.run()
 
     # 获取所有api的数据模型并创建
@@ -298,14 +297,14 @@ class TransAPIModel2SwiftClass:
                     continue
                 for response in api.responses:
 
-                    pm = ParseModelJson(self.wkPath)
+                    pm = ParseModelJson('')
                     ms = []
                     jsonObj = json.loads(response.get('body'))
                     responseKey = util.firstUpper(api.getMethodSign())
                     model = pm.parseContent(jsonObj, responseKey)
                     model.remark = '%s响应模型' % api.name
                     ms.append(model)
-                    trans = TransDataModel2OCClass(ms, refMappers)
+                    trans = TransDataModel2OCClass(ms, self.conf, refMappers)
                     cls = trans.trans()
                     if len(cls) > 0:
                         print 'API数据模型:', api.getMethodName(), cls
@@ -314,7 +313,7 @@ class TransAPIModel2SwiftClass:
 
         # 数据模型关系建立完成之后创建文件
         for model in modelMapper.values():
-            trans.makeClazzList([model], os.path.join(self.wkPath, 'Product', 'SwiftModel'))
+            trans.makeClazzList([model], self.conf.apiModelPath)
 
         return modelMapper
 
@@ -428,9 +427,9 @@ class TransAPIModel2SwiftClass:
 
 # 模型 对象转成类对象
 class TransDataModel2OCClass:
-    def __init__(self, ms, globalRefMapper):
+    def __init__(self, ms, conf, globalRefMapper):
         self.dataModels = ms
-        self.conf = SwiftConf()
+        self.conf = conf
         self.refMapper = {}
         self.globalRefMapper = globalRefMapper
 
@@ -573,7 +572,7 @@ class TransDataModel2OCClass:
 
     def makeClazzList(self, clazzs, outPath):
         for clazz in clazzs:
-            objc = Swift(clazz, clazz.model, outPath)
+            objc = Swift(clazz, clazz.model, self.conf, outPath)
             objc.run()
 
 

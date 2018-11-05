@@ -38,7 +38,6 @@ class SwiftConf(Conf):
         self.transferProp['hash'] = 'hashVal'
         self.transferProp['description'] = 'desc'
         self.transferProp['id'] = 'Id'
-        self.transferProp['openInDouPai'] = 'dde'
 
     # 获取属性修饰
     def getPropMask(self, type):
@@ -63,3 +62,6 @@ class SwiftConf(Conf):
             typeStr = typeStr.replace('subtype', self.getPropType(subTypes[0]))
 
         return typeStr
+
+    def fromJson(self, json):
+        Conf.fromJson(self, json)

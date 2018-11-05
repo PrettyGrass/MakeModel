@@ -10,6 +10,8 @@ class Conf:
         self.author = 'ylin'
         self.date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         self.mark = '此文件由脚本自动生成, 手动修改文件内容, 将会被覆盖, 如需修改, 可在派生类进行!'
+        self.apiOutPath = ''
+        self.apiModelPath = ''
 
         # 只处理返回的额json的data字段, 最外层结构一样, 是通用的
         self.dataPath = 'data'
@@ -20,15 +22,15 @@ class Conf:
         self.propMap = propMap
 
         # 嵌套对象的类名映射
-        propMap['TagCategory'] = 'DFFF'
-
-        propMap['PutV1UsersMe'] = 'User'
-        propMap['V1UsersMe'] = 'User'
-        propMap['V1PassportsFacebook'] = 'User'
-        propMap['V1PassportsGoogle'] = 'User'
-
-        propMap['Config.subdataT1'] = 'CoinInfoPage'
-        propMap['Config.subdataT2'] = 'CoinInfoPage'
+        # propMap['TagCategory'] = 'DFFF'
+        #
+        # propMap['PutV1UsersMe'] = 'User'
+        # propMap['V1UsersMe'] = 'User'
+        # propMap['V1PassportsFacebook'] = 'User'
+        # propMap['V1PassportsGoogle'] = 'User'
+        #
+        # propMap['Config.subdataT1'] = 'CoinInfoPage'
+        # propMap['Config.subdataT2'] = 'CoinInfoPage'
 
         # api返回嵌套模型写成独立文件
         self.singleFile = []  # ['ConfigApiModel.App']
@@ -38,3 +40,28 @@ class Conf:
 
         # 忽略字段
         self.ignore = []  # ['ConfigApiModel.share_tpl.app.xxx']
+
+    def fromJson(self, json):
+        if json.has_key('propMap'):
+            propMap = json['propMap']
+            for key in propMap.keys():
+                val = propMap[key]
+                self.propMap[key] = val
+
+        if json.has_key('apiModelPath'):
+            self.apiModelPath = json['apiModelPath']
+
+        if json.has_key('apiOutPath'):
+            self.apiOutPath = json['apiOutPath']
+
+        if json.has_key('author'):
+            self.author = json['author']
+
+        if json.has_key('mark'):
+            self.mark = json['mark']
+
+        if json.has_key('dataPath'):
+            self.dataPath = json['dataPath']
+
+        if json.has_key('ignorePath'):
+            self.ignorePath = json['ignorePath']

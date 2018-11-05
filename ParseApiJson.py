@@ -11,10 +11,10 @@ from conf import Conf
 
 # 解析api数据
 class ParseApiJson():
-    def __init__(self, wkPath):
+    def __init__(self, wkPath, conf):
         self.wkPath = wkPath
-        self.modelPath = os.path.join(wkPath, 'Api')
-        self.conf = Conf()
+        self.modelPath = os.path.join(wkPath)
+        self.conf = conf
 
     def apiGroups(self):
         apiGroups = []

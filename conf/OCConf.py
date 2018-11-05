@@ -8,7 +8,6 @@ from conf import Conf
 class OCConf(Conf):
     def __init__(self):
         Conf.__init__(self)
-
         self.dataPath = 'data'
 
         self.apiBaseClass = 'NSObject'
@@ -25,11 +24,6 @@ class OCConf(Conf):
         self.baseType['long'] = 'long '
         self.baseType['void'] = 'void'
         self.baseType['list'] = 'NSArray *'
-
-        self.importModule = []
-        self.importModule.append('ObjectMapper')
-
-        self.protectProp = ['copy', 'hash', 'description', 'id']
 
         # 转义字段
         self.transferProp = dict()
@@ -83,3 +77,6 @@ class OCConf(Conf):
             typeStr = typeStr + ' * '
 
         return typeStr
+
+    def fromJson(self, json):
+        Conf.fromJson(self, json)
