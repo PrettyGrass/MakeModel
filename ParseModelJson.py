@@ -43,13 +43,12 @@ class ParseModelJson():
             path = paths[index]
             content = content.get(path)
 
-        self.createModelProps(content, clazz, clazz, keyPath)
+            self.createModelProps(content, clazz, clazz, keyPath)
 
         return clazz
 
     def createModelProps(self, modelJson, rootClass, currentClass, keyPath):
         props = []
-        fields = []
         if isinstance(modelJson, list):
             if len(modelJson) == 0:
                 modelJson.append(dict())

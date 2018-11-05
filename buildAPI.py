@@ -23,7 +23,7 @@ if __name__ == '__main__':
     # ocApi.build()
 
     trans = TransAPIModel2OCClass(ms, wkPath)
-    trans.makeClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'ocapi'))
+    trans.makeClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'OCApi'))
 
     trans = TransAPIModel2SwiftClass(ms, wkPath)
-    trans.makeClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'swiftapi'))
+    trans.makeClazzList(trans.trans(), os.path.join(wkPath, 'Product', 'SwiftApi'))

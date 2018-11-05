@@ -12,28 +12,38 @@ class SwiftConf(Conf):
 
         self.baseType = dict()
 
-        self.baseType['string'] = 'String'
-        self.baseType['int'] = 'Int'
-        self.baseType['float'] = 'Float'
-        self.baseType['double'] = 'Double'
-        self.baseType['long'] = 'Long'
-        self.baseType['void'] = 'Void'
-        self.baseType['list'] = '[subtype]'
-
+        self.baseType['string'] = {'name': 'String', 'default': '""'}
+        self.baseType['int'] = {'name': 'Int', 'default': 0}
+        self.baseType['float'] = {'name': 'Float', 'default': 0.0}
+        self.baseType['double'] = {'name': 'Double', 'default': 0.0}
+        self.baseType['long'] = {'name': 'Int', 'default': 0}
+        self.baseType['void'] = {'name': 'Void'}
+        self.baseType['list'] = {'name': '[subtype]', 'default': '[]'}
 
         self.apiImport = ['import Foundation', 'import DTDependContainer', 'import DTNetwork', 'import DPIntlModel']
         self.importModule = []
-        self.useHandyJSON = True
+        self.useHandyJSON = False
         self.useObjectMapper = False
+        self.useYYModel = True
         if self.useHandyJSON:
             self.importModule.append('HandyJSON')
         if self.useObjectMapper:
             self.importModule.append('ObjectMapper')
+        if self.useYYModel:
+            self.importModule.append('YYModel')
+
+        # 转义字段
+        self.transferProp = dict()
+        self.transferProp['copy'] = 'ccopy'
+        self.transferProp['hash'] = 'hashVal'
+        self.transferProp['description'] = 'desc'
+        self.transferProp['id'] = 'Id'
+        self.transferProp['openInDouPai'] = 'dde'
 
     # 获取属性修饰
     def getPropMask(self, type):
         originType = ''
-        mask = '@objc dynamic'
+        mask = '@objc public'
         return mask
 
     # 是否基础类型
@@ -46,7 +56,7 @@ class SwiftConf(Conf):
         needAddPoint = True
         typeStr = type
         if self.baseType.has_key(type):
-            typeStr = self.baseType.get(type)
+            typeStr = self.baseType.get(type)['name']
             needAddPoint = False
 
         if type == 'list' and len(subTypes) > 0:

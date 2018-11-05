@@ -15,6 +15,7 @@ class ClassInfo(BaseInfo):
         self.remark = '类注释'  # 方法注释
 
         self.superClazz = None  # 父类名
+        self.impls = []  # 实现接口名
         self.name = ''  # 类名
         self.methods = []  # 方法列表
         self.props = []  # 属性
