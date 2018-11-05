@@ -92,6 +92,18 @@ class ParseApiJson():
             paths = url.get('path')
             api.params.extend(self.parseRestfulParams(paths))
             api.path = '/'.join(paths)
+
+            ignorePaths = self.conf.ignorePath.split('.')
+            length = len(ignorePaths)
+            for index in range(length):
+                oIndex = length - 1 - index
+                # 要忽略的path
+                p = ignorePaths[oIndex]
+                # 要忽略的path
+                p1 = paths[oIndex]
+                if p == p1:
+                    del paths[oIndex]
+
             api.paths = paths
 
             # 解析响应

@@ -13,6 +13,8 @@ class Conf:
 
         # 只处理返回的额json的data字段, 最外层结构一样, 是通用的
         self.dataPath = 'data'
+        # 生成api时忽略的路径
+        self.ignorePath = 'v1'
 
         propMap = dict()
         self.propMap = propMap
