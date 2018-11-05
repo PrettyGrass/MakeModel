@@ -72,6 +72,9 @@ class Conf:
         if json.has_key('author'):
             self.author = json['author']
 
+        if json.has_key('date'):
+            self.date = json['date']
+
         if json.has_key('mark'):
             self.mark = json['mark']
 
