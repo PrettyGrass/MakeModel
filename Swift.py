@@ -297,7 +297,7 @@ class TransAPIModel2SwiftClass:
                     continue
                 for response in api.responses:
 
-                    pm = ParseModelJson('')
+                    pm = ParseModelJson(self.conf, '')
                     ms = []
                     jsonObj = json.loads(response.get('body'))
                     responseKey = util.firstUpper(api.getMethodSign())

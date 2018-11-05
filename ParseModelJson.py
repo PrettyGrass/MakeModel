@@ -10,10 +10,10 @@ from DataModel import *
 
 
 class ParseModelJson():
-    def __init__(self, wkPath):
+    def __init__(self, conf, wkPath):
         self.wkPath = wkPath
         self.modelPath = os.path.join(wkPath, 'Model')
-        self.conf = Conf()
+        self.conf = conf
 
     def getModels(self):
         models = []

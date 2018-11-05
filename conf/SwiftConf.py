@@ -8,8 +8,10 @@ from conf import Conf
 class SwiftConf(Conf):
     def __init__(self):
         Conf.__init__(self)
-        self.dataPath = 'data'
 
+        self.apiBaseClassPreFix = 'DP'
+        self.modelBaseClass = 'NSObject'
+        self.apiImport = []
         self.baseType = dict()
 
         self.baseType['string'] = {'name': 'String', 'default': '""'}
@@ -34,10 +36,10 @@ class SwiftConf(Conf):
 
         # 转义字段
         self.transferProp = dict()
-        self.transferProp['copy'] = 'ccopy'
-        self.transferProp['hash'] = 'hashVal'
-        self.transferProp['description'] = 'desc'
-        self.transferProp['id'] = 'Id'
+        # self.transferProp['copy'] = 'ccopy'
+        # self.transferProp['hash'] = 'hashVal'
+        # self.transferProp['description'] = 'desc'
+        # self.transferProp['id'] = 'Id'
 
     # 获取属性修饰
     def getPropMask(self, type):
@@ -65,3 +67,29 @@ class SwiftConf(Conf):
 
     def fromJson(self, json):
         Conf.fromJson(self, json)
+        if json.has_key('transferProp'):
+            transferProp = json['transferProp']
+            for key in transferProp.keys():
+                val = transferProp[key]
+                self.transferProp[key] = val
+
+        if json.has_key('apiImport'):
+            self.apiImport = json['apiImport']
+
+        if json.has_key('apiBaseClassPreFix'):
+            self.apiBaseClassPreFix = json['apiBaseClassPreFix']
+
+        if json.has_key('modelBaseClass'):
+            self.modelBaseClass = json['modelBaseClass']
+
+        if json.has_key('importModule'):
+            self.importModule = json['importModule']
+
+        if json.has_key('useYYModel'):
+            self.useYYModel = json['useYYModel']
+
+        if json.has_key('useHandyJSON'):
+            self.useHandyJSON = json['useHandyJSON']
+
+        if json.has_key('useObjectMapper'):
+            self.useObjectMapper = json['useObjectMapper']

@@ -8,7 +8,6 @@ from conf import Conf
 class OCConf(Conf):
     def __init__(self):
         Conf.__init__(self)
-        self.dataPath = 'data'
 
         self.apiBaseClass = 'NSObject'
         self.apiBaseClassPreFix = 'DP'
@@ -27,10 +26,10 @@ class OCConf(Conf):
 
         # 转义字段
         self.transferProp = dict()
-        self.transferProp['copy'] = 'ccopy'
-        self.transferProp['hash'] = 'hashVal'
-        self.transferProp['description'] = 'desc'
-        self.transferProp['id'] = 'Id'
+        # self.transferProp['copy'] = 'ccopy'
+        # self.transferProp['hash'] = 'hashVal'
+        # self.transferProp['description'] = 'desc'
+        # self.transferProp['id'] = 'Id'
 
     # 获取属性修饰
     def getPropMask(self, type):
@@ -80,3 +79,19 @@ class OCConf(Conf):
 
     def fromJson(self, json):
         Conf.fromJson(self, json)
+        if json.has_key('transferProp'):
+            transferProp = json['transferProp']
+            for key in transferProp.keys():
+                val = transferProp[key]
+                self.transferProp[key] = val
+        if json.has_key('apiImport'):
+            self.apiImport = json['apiImport']
+
+        if json.has_key('apiInnerImport'):
+            self.apiInnerImport = json['apiInnerImport']
+
+        if json.has_key('apiBaseClassPreFix'):
+            self.apiInnerImport = json['apiBaseClassPreFix']
+
+        if json.has_key('modelBaseClass'):
+            self.modelBaseClass = json['modelBaseClass']

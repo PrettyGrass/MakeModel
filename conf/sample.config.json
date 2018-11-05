@@ -5,8 +5,8 @@
     "ignorePath": "v1",
     "propMap": {
       "PutUsersMe": "User",
-      "UsersMe": "User",
-      "Config.subdataT1": "CoinInfoPage"
+      "UsersMe": "V1User",
+      "Configs": "Config"
     }
   },
   "swift": {
@@ -14,6 +14,7 @@
     "apiModelPath": "/Users/ylin/Desktop/测试自动生成/swiftModel",
     "apiBaseClass": "NSObject",
     "modelBaseClass": "NSObject",
+    "apiBaseClassPreFix": "DP",
     "baseType": {
       "string": {
         "name": "String",
