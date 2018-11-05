@@ -118,9 +118,23 @@ if __name__ == '__main__':
     # ocApi.build()
 
     if params.enableOC:
+
+        print '清理 oc'
+        if os.path.exists(params.ocConf.apiModelPath):
+            os.system('rm -r %s' % params.ocConf.apiModelPath)
+        if os.path.exists(params.ocConf.apiOutPath):
+            os.system('rm -r %s' % params.ocConf.apiOutPath)
+
         trans = TransAPIModel2OCClass(ms, params.ocConf)
         trans.makeClazzList(trans.trans())
 
     if params.enableSwift:
+
+        print '清理 swift'
+        if os.path.exists(params.swiftConf.apiModelPath):
+            os.system('rm -r %s' % params.swiftConf.apiModelPath)
+        if os.path.exists(params.swiftConf.apiOutPath):
+            os.system('rm -r %s' % params.swiftConf.apiOutPath)
+
         trans = TransAPIModel2SwiftClass(ms, params.swiftConf)
         trans.makeClazzList(trans.trans())
