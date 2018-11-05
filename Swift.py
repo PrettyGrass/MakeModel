@@ -301,7 +301,7 @@ class TransAPIModel2SwiftClass:
                     pm = ParseModelJson(self.wkPath)
                     ms = []
                     jsonObj = json.loads(response.get('body'))
-                    responseKey = util.firstUpper(api.getMethodName())
+                    responseKey = util.firstUpper(api.getMethodSign())
                     model = pm.parseContent(jsonObj, responseKey)
                     model.remark = '%s响应模型' % api.name
                     ms.append(model)
@@ -341,18 +341,6 @@ class TransAPIModel2SwiftClass:
         let params = oper.params
             '''
 
-        # inject
-        # method = MethodInfo()
-        # method.retType = 'void'
-        # method.type = 1
-        # method.inner = True
-        # method.abs = False
-        # method.remark = ''
-        # method.name = 'load'
-        # method.bodyLines.append(
-        #     '[[DTDependContainerMapper shared] regWithProvider:self service:@protocol(%sProtocol)];' % apiClazz.name)
-        # apiClazz.methods.append(method)
-
         for index in range(len(apiGroup.apis)):
             api = apiGroup.apis[index]
             if len(api.paths) == 0:
@@ -361,7 +349,16 @@ class TransAPIModel2SwiftClass:
             if api.responses and len(api.responses) > 0:
                 print '用于生成模型的 responses:', api.getMethodName()
 
-            respClass = self.allModelMapper.get(api.getMethodName().lower())
+            respClass = None
+            respClassName = 'AnyObject'
+            methodSign = api.getMethodSign().lower()
+            if len(self.conf.dataPath) and self.allModelMapper.has_key(methodSign):
+                respClass = self.allModelMapper.get(methodSign)
+                respClassName = respClass.name
+
+            if 'AnyObject' == respClassName:
+                pass
+
             method = MethodInfo()
             method.retType = 'int'
             method.type = 0
@@ -377,10 +374,6 @@ class TransAPIModel2SwiftClass:
                 prop.name = param.name
                 prop.type = param.paramType
                 method.params.append(prop)
-
-            respClassName = 'AnyObject'
-            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodName().lower()):
-                respClassName = respClass.name
 
             # 回调函数
             success = ParamsInfo()
@@ -421,7 +414,7 @@ class TransAPIModel2SwiftClass:
             method.bodyLines.append('params?.httpMethod = "%s"' % (api.method))
 
             # 请求响应数据类型
-            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodName().lower()):
+            if len(self.conf.dataPath) and respClass:
                 method.bodyLines.append(
                     'oper.dataClasses.setValue(%s.self, forKey: "%s")' % (
                         respClass.name, self.conf.dataPath))

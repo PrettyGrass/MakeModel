@@ -318,7 +318,7 @@ class TransAPIModel2OCClass:
                     pm = ParseModelJson(self.wkPath)
                     ms = []
                     jsonObj = json.loads(response.get('body'))
-                    responseKey = util.firstUpper(api.getMethodName())
+                    responseKey = util.firstUpper(api.getMethodSign())
                     model = pm.parseContent(jsonObj, responseKey)
                     model.remark = '%s响应模型' % api.name
                     ms.append(model)
@@ -326,7 +326,7 @@ class TransAPIModel2OCClass:
                     cls = trans.trans()
                     if len(cls) > 0:
                         print 'API数据模型:', api.getMethodName(), cls
-                        modelMapper[responseKey.lower()] = cls[0]
+                        modelMapper[api.getMethodSign().lower()] = cls[0]
                         # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'OCModel'))
 
         # 数据模型关系建立完成之后创建文件
@@ -364,7 +364,7 @@ class TransAPIModel2OCClass:
             if len(api.paths) == 0:
                 continue
 
-            respClass = self.allModelMapper.get(api.getMethodName().lower())
+            respClass = self.allModelMapper.get(api.getMethodSign().lower())
             if api.responses and len(api.responses) > 0:
                 print '用于生成模型的 responses:', api.getMethodName()
 
@@ -385,7 +385,7 @@ class TransAPIModel2OCClass:
                 method.params.append(prop)
 
             respClassName = 'id'
-            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodName().lower()):
+            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodSign().lower()):
                 respClassName = '%s *' % respClass.name
                 apiClazz.imports.append('@class %s;' % respClass.name)
 
@@ -430,7 +430,7 @@ class TransAPIModel2OCClass:
             method.bodyLines.append('params.httpMethod = @"%s";' % (api.method))
 
             # 请求响应数据类型
-            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodName().lower()):
+            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodSign().lower()):
                 method.bodyLines.append(
                     '[oper.dataClasses setObject:NSClassFromString(@"%s") forKey:@"%s"];' % (
                         respClass.name, self.conf.dataPath))

@@ -23,6 +23,7 @@ class APIInfo:
 
         self.classMethod = MethodInfo()
 
+    # 此方法返回的函数名不唯一
     def getMethodName(self):
         funcName = ''
         use = False
@@ -45,6 +46,17 @@ class APIInfo:
                 use = True
 
         return funcName
+
+    # 此方法返回方法签名 可确保同一个api组唯一
+    def getMethodSign(self):
+
+        params = []
+        for p in self.params:
+            if p.type == 'restful':
+                params.append(util.firstUpper(p.name))
+
+        sign = '%s%s' % (self.getMethodName(), ''.join(params))
+        return sign
 
 
 # 接口组
