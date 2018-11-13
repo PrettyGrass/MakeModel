@@ -4,13 +4,17 @@
     "dataPath": "data",
     "ignorePath": "v1",
     "propMap": {
+      "DeleteTopicsFavorites": "EmptyData",
       "PutUsersMe": "User",
-      "UsersMe": "V1User",
+      "UsersMe": "User",
+      "TopicsCategorys": "TopicsCategory",
+      "TopicsCategorysCategorysId": "TopicsCategoryList",
+      "MusicsCategorysCategorysId": "MusicsCategoryList",
       "Configs": "Config"
     }
   },
   "swift": {
-    "apiOutPath": "/Users/ylin/Desktop/测试自动生成/swiftApi",
+    "apiOutPath": "../..",
     "apiModelPath": "/Users/ylin/Desktop/测试自动生成/swiftModel",
     "apiBaseClass": "NSObject",
     "modelBaseClass": "NSObject",

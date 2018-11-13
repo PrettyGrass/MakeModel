@@ -88,8 +88,11 @@ class ParseModelJson():
                     innerClass = ModelInfo()
                     innerClass.name = self.getMapPath(keyP, key)
                     self.createModelProps(val, rootClass, innerClass, keyP)
-                    rootClass.subModels.append(innerClass)
-                    subType = innerClass.name
+                    if len(innerClass.fields) > 0:
+                        rootClass.subModels.append(innerClass)
+                        subType = innerClass.name
+                    else:
+                        subType = 'object'
 
                 elif util.getValueTypeString(itemVal) == 'list':
                     # 集合下面是集合 此种情况暂时未遇见

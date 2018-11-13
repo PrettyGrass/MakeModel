@@ -49,6 +49,11 @@ class SwiftConf(Conf):
 
     # 是否基础类型
     def isBaseType(self, type):
+        for key in self.baseType.keys():
+            val = self.baseType[key]
+            if key == type or val['name'] == type:
+                return True
+
         return self.baseType.has_key(type)
 
     # 获取属性类型

@@ -45,6 +45,8 @@ class OCConf(Conf):
 
         elif originType.find('*') > 0:
             mask = '(nonatomic, strong)'
+        elif originType.find('id') >= 0:
+            mask = '(nonatomic, strong)'
         elif not isBase:
             mask = '(nonatomic, strong)'
         else:
@@ -53,6 +55,11 @@ class OCConf(Conf):
 
     # 是否基础类型
     def isBaseType(self, type):
+        for key in self.baseType.keys():
+            val = self.baseType[key]
+            if key == type or val.replace(' ', '') == type.replace(' ', ''):
+                return True
+
         return self.baseType.has_key(type)
 
     # 获取属性类型
@@ -64,7 +71,7 @@ class OCConf(Conf):
             typeStr = self.baseType.get(type)
             needAddPoint = False
 
-        if needAddPoint and type.find('^') > 0:
+        if needAddPoint and type.find('^') > 0 or type.find('id') >= 0:
             needAddPoint = False
 
         if type == 'list' and len(subTypes) > 0:
