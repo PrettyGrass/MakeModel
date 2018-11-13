@@ -499,6 +499,8 @@ class TransDataModel2OCClass:
                 # 字段子类型
                 if self.getType(field.subType):
                     prop.subTypes.append(self.getType(field.subType))
+                elif self.conf.isBaseType(field.subType):
+                    prop.subTypes.append(self.conf.getPropType(field.subType))
                 elif field.subType:
                     prop.subTypes.append(self.getClassName(field.subType))
 

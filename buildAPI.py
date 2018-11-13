@@ -58,7 +58,7 @@ class Params:
 
         if confJson.has_key('oc'):
             oc = confJson.get('oc')
-            self.enableSwift = True
+            self.enableOC = True
             self.ocApiOutPath = oc['apiOutPath']
             self.ocModelOutPath = oc['apiModelPath']
             self.ocConf = OCConf()

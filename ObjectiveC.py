@@ -516,6 +516,9 @@ class TransDataModel2OCClass:
                 if self.getType(field.subType):
                     prop.subTypes.append(self.getType(field.subType))
 
+                elif self.conf.isBaseType(field.subType):
+                    prop.subTypes.append(self.conf.getPropType(field.subType).replace('*', ''))
+
                 elif field.subType:
                     subType = self.getClassName(field.subType)
                     prop.subTypes.append(subType)
