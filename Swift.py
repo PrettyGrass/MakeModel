@@ -547,7 +547,7 @@ class TransDataModel2OCClass:
             for prop in dataModel.props:
                 subType = ''.join(prop.subTypes)
                 # 集合一类的有子类型的才需要映射
-                if len(subType) > 0:
+                if len(subType) > 0 and (not self.conf.isBaseType(subType)):
                     ptype = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
                     line = '"%s": %s.self' % (
                         prop.name, ptype)
