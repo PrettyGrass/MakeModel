@@ -100,6 +100,9 @@ def getValueTypeString(value):
         tString = 'dict'
     elif valueType == types.ListType:
         tString = 'list'
+    elif valueType == types.BooleanType:
+        tString = 'bool'
+
     return tString
 
 

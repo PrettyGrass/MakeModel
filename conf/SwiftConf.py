@@ -73,6 +73,12 @@ class SwiftConf(Conf):
                 val = transferProp[key]
                 self.transferProp[key] = val
 
+        if json.has_key('baseType'):
+            baseType = json['baseType']
+            for key in baseType.keys():
+                val = baseType[key]
+                self.baseType[key] = val
+
         if json.has_key('apiImport'):
             self.apiImport = json['apiImport']
 
