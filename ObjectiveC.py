@@ -454,13 +454,13 @@ class TransDataModel2OCClass:
         self.globalRefMapper = globalRefMapper
 
     def trans(self):
-        return self.transClass(self.dataModels)
+        return self.transClass(self.dataModels, None, True)
 
     def getClassName(self, name):
         return '%s%sModel' % (self.conf.apiBaseClassPreFix, name)
 
     # 转换响应数据 为 class类
-    def transClass(self, ms, rootClass=None):
+    def transClass(self, ms, rootClass=None, root=False):
         classes = []
         for index in range(len(ms)):
             model = ms[index]
@@ -480,6 +480,11 @@ class TransDataModel2OCClass:
                 classes.append(dataModel)
                 self.refMapper[name] = dataModel
                 self.globalRefMapper[name] = dataModel
+
+            elif root:
+                # 最外层数据的情况, 需要把最外层模型名传回, 做映射
+                classes.append(dataModel)
+
             if not rootClass:
                 rootClass = dataModel
 

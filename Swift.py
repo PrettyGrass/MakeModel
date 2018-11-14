@@ -304,7 +304,7 @@ class TransAPIModel2SwiftClass:
                     model = pm.parseContent(jsonObj, responseKey)
                     model.remark = '%s响应模型' % api.name
                     ms.append(model)
-                    trans = TransDataModel2OCClass(ms, self.conf, refMappers)
+                    trans = TransDataModel2SwiftClass(ms, self.conf, refMappers)
                     cls = trans.trans()
                     if len(cls) > 0:
                         print 'API数据模型:', api.getMethodName(), cls
@@ -342,6 +342,8 @@ class TransAPIModel2SwiftClass:
 
         for index in range(len(apiGroup.apis)):
             api = apiGroup.apis[index]
+            if api.getMethodName() == 'musicsIntro':
+                pass
             if len(api.paths) == 0:
                 continue
 
@@ -426,7 +428,7 @@ class TransAPIModel2SwiftClass:
 
 
 # 模型 对象转成类对象
-class TransDataModel2OCClass:
+class TransDataModel2SwiftClass:
     def __init__(self, ms, conf, globalRefMapper):
         self.dataModels = ms
         self.conf = conf
@@ -434,13 +436,13 @@ class TransDataModel2OCClass:
         self.globalRefMapper = globalRefMapper
 
     def trans(self):
-        return self.transClass(self.dataModels)
+        return self.transClass(self.dataModels, True)
 
     def getClassName(self, name):
         return '%sModel' % (name)
 
     # 转换响应数据 为 class类
-    def transClass(self, ms):
+    def transClass(self, ms, root=False):
         classes = []
         for index in range(len(ms)):
             model = ms[index]
@@ -464,6 +466,10 @@ class TransDataModel2OCClass:
                 classes.append(dataModel)
                 self.refMapper[name] = dataModel
                 self.globalRefMapper[name] = dataModel
+
+            elif root:
+                # 最外层数据的情况, 需要把最外层模型名传回, 做映射
+                classes.append(dataModel)
 
             if len(model.subModels) > 0:
                 dataModel.inFileClass.extend(self.transClass(model.subModels))
