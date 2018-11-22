@@ -44,7 +44,7 @@ class SwiftConf(Conf):
     # 获取属性修饰
     def getPropMask(self, type):
         originType = ''
-        mask = '@objc public'
+        mask = '@objc open'
         return mask
 
     # 是否基础类型

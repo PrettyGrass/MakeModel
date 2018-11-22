@@ -126,7 +126,7 @@ class Swift(MakeClassFile):
         if isProtocol:
             lines.append('@objc public protocol %sProtocol :NSObjectProtocol {' % (self.clazz.name))
         else:
-            lines.append('@objc public class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
+            lines.append('@objc open class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建接口
     def createProtocolInterfaceBody(self, lines):
@@ -161,7 +161,7 @@ class Swift(MakeClassFile):
         else:
             implProtocol = ''
 
-        lines.append('@objc public class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
+        lines.append('@objc open class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建实现
     def createImplBody(self, lines):
