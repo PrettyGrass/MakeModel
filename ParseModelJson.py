@@ -74,37 +74,49 @@ class ParseModelJson():
                 innerClass = ModelInfo()
                 innerClass.name = self.getMapPath(keyP, key)
                 self.createModelProps(val, rootClass, innerClass, keyP)
-                rootClass.subModels.append(innerClass)
-                type = innerClass.name
-                refType = innerClass.name
+                # rootClass.subModels.append(innerClass)
+                if len(innerClass.fields) > 0:
+                    rootClass.subModels.append(innerClass)
+                    subType = innerClass.name
+                    type = innerClass.name
+                    refType = innerClass.name
+                else:
+                    subType = 'dict'
+                    type = subType
+                    refType = subType
+
+
 
             elif type == 'list':
                 # 列表类型
                 if len(val) == 0:
-                    val.append(dict())
-                itemVal = val[0]
-                if util.getValueTypeString(itemVal) == 'dict':
-                    # 数组下面的对象
-                    innerClass = ModelInfo()
-                    innerClass.name = self.getMapPath(keyP, key)
-                    self.createModelProps(val, rootClass, innerClass, keyP)
-                    if len(innerClass.fields) > 0:
-                        rootClass.subModels.append(innerClass)
-                        subType = innerClass.name
-                    else:
-                        subType = 'object'
-
-                elif util.getValueTypeString(itemVal) == 'list':
-                    # 集合下面是集合 此种情况暂时未遇见
-                    assert '奇葩的数据结构, 去杀了api'
+                    # 空数组处理
+                    subType = 'object'
                 else:
-                    # 集合下面是非对象类型
-                    subType = util.getValueTypeString(itemVal)
+                    itemVal = val[0]
+                    if util.getValueTypeString(itemVal) == 'dict':
+                        # 数组下面的对象
+                        innerClass = ModelInfo()
+                        innerClass.name = self.getMapPath(keyP, key)
+                        self.createModelProps(val, rootClass, innerClass, keyP)
+                        if len(innerClass.fields) > 0:
+                            rootClass.subModels.append(innerClass)
+                            subType = innerClass.name
+                        else:
+                            subType = 'dict'
+
+                    elif util.getValueTypeString(itemVal) == 'list':
+                        # 集合下面是集合 此种情况暂时未遇见
+                        assert '奇葩的数据结构, 去杀了api'
+                    else:
+                        # 集合下面是非对象类型
+                        subType = util.getValueTypeString(itemVal)
 
             prop.subType = subType
             prop.type = type
             prop.ref = refType
             props.append(prop)
+
         currentClass.fields.extend(props)
 
     def getMapPath(self, keyPath, key):
