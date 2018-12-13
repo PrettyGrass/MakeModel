@@ -235,7 +235,12 @@ class Swift(MakeClassFile):
         for index in range(len(method.params)):
             param = method.params[index]
             name = param.name
-            ps.append('%s:%s' % (name, self.conf.getPropType(param.type, param.subTypes)))
+
+            ptype = self.conf.getPropType(param.type, param.subTypes)
+            # 集合类型参数 默认
+            ptype = ptype.replace('[subtype]', '[Any]')
+            ps.append('%s:%s' % (name, ptype))
+
         sign = '%s(%s)' % (sign, ',\n'.join(ps))
         return sign
 
