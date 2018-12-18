@@ -426,6 +426,8 @@ class TransAPIModel2SwiftClass:
                         respClass.name, self.conf.dataPath))
             # 请求路径
             method.bodyLines.append('params?.path = "%s"' % (path))
+            # json表单
+            method.bodyLines.append('params?.isJsonForm = true')
             # 请求开始
             method.bodyLines.append('return service.start(oper: oper)')
 

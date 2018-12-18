@@ -442,6 +442,8 @@ class TransAPIModel2OCClass:
             else:
                 method.bodyLines.append('params.path = [NSString stringWithFormat:@"%s" %s];' % (path, append))
 
+            # json表单
+            method.bodyLines.append('params.isJsonForm = true;')
             # 请求开始
             method.bodyLines.append('return [service start:oper];')
 
