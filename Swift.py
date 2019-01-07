@@ -334,21 +334,8 @@ class TransAPIModel2SwiftClass:
         apiClazz.superClazz = 'NSObject'
         apiClazz.imports.extend(self.conf.apiImport)
 
-        # 创建操作实例
-        line = '''
-        let service = HttpService.shared
-        let oper = service.buildSampleOperation(operClass: DTSampleOperation<AnyObject>.self,
-                                                responeClass: DTHttpSampleResponse<AnyObject>.self,
-                                                success: success,
-                                                failure: failure,
-                                                complete: complete)
-        let params = oper.params
-            '''
-
         for index in range(len(apiGroup.apis)):
             api = apiGroup.apis[index]
-            if api.getMethodName() == 'musicsIntro':
-                pass
             if len(api.paths) == 0:
                 continue
 
@@ -384,16 +371,26 @@ class TransAPIModel2SwiftClass:
             # 回调函数
             success = ParamsInfo()
             success.name = 'success'
-            success.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
+            success.paramType = '@escaping ((DTOperation<DTHttpSampleResponse<%s>>) -> Void)' % respClassName
 
             failure = ParamsInfo()
             failure.name = 'failure'
-            failure.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
+            failure.paramType = '@escaping ((DTOperation<DTHttpSampleResponse<%s>>) -> Void)' % respClassName
 
             complete = ParamsInfo()
             complete.name = 'complete'
-            complete.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
+            complete.paramType = '@escaping ((DTOperation<DTHttpSampleResponse<%s>>) -> Void)' % respClassName
 
+            # 创建操作实例
+            line = '''
+                    let service = HttpService.shared
+                    let oper = service.build(operClass: DTOperation<DTHttpSampleResponse<%s>>.self,
+                                                            responeClass: DTHttpSampleResponse<%s>.self,
+                                                            success: success,
+                                                            failure: failure,
+                                                            complete: complete)
+                    let params = oper.params
+                        ''' % (respClassName, respClassName)
             # 回调参数
             calls = [
                 success,
@@ -415,9 +412,9 @@ class TransAPIModel2SwiftClass:
                 if param.type == 'restful':
                     path = path.replace(':' + param.name, '\(%s)' % (param.name))
                 else:
-                    method.bodyLines.append('params?.addHttpParam(%s, forKey: "%s")' % (param.name, param.name))
+                    method.bodyLines.append('params.addHttpParam(%s, forKey: "%s")' % (param.name, param.name))
 
-            method.bodyLines.append('params?.httpMethod = "%s"' % (api.method))
+            method.bodyLines.append('params.httpMethod = "%s"' % (api.method))
 
             # 请求响应数据类型
             if len(self.conf.dataPath) and respClass:
@@ -425,9 +422,9 @@ class TransAPIModel2SwiftClass:
                     'oper.dataClasses.setValue(%s.self, forKey: "%s")' % (
                         respClass.name, self.conf.dataPath))
             # 请求路径
-            method.bodyLines.append('params?.path = "%s"' % (path))
+            method.bodyLines.append('params.path = "%s"' % (path))
             # json表单
-            method.bodyLines.append('params?.isJsonForm = true')
+            method.bodyLines.append('params.isJsonForm = true')
             # 请求开始
             method.bodyLines.append('return service.start(oper: oper)')
 
