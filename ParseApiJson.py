@@ -18,7 +18,7 @@ class ParseApiJson():
 
     def apiGroups(self):
         apiGroups = []
-        print 'PostMan API文件路径', self.modelPath
+        print('PostMan API文件路径 %s' % self.modelPath)
         path = os.listdir(self.modelPath)
         for p in path:
             file = os.path.join(self.modelPath, p)
@@ -108,8 +108,8 @@ class ParseApiJson():
 
             # 解析响应
             responses = item.get('response')
-            api.responses = responses
-
+            api.responses = self.appendProp(responses, api.paths)
+            
             p = ''
             for n in api.params:
                 p += ' %s:%s' % (n.type, n.name)
@@ -117,6 +117,37 @@ class ParseApiJson():
             print '     ', api.name, api.protocol, api.host, api.path, api.method, p
 
         return apis
+
+    def appendProp(self, responses, apiPath):
+
+        apiPath = [ util.firstUpper(item) for item in apiPath ]            
+        apiPath = ''.join(apiPath)
+        propAppend = self.conf.propAppend
+        for response in responses:
+            if not propAppend.has_key(apiPath):
+                continue
+            appendJson = propAppend.get(apiPath)
+            jsonObj = json.loads(response.get('body'))
+            jsonData = jsonObj.get(self.conf.dataPath)
+            
+            self.append(jsonData, appendJson)
+            response['body'] = json.dumps(jsonObj)
+
+        return responses
+
+    def append(self, jsonData, appendJson):
+        for key in appendJson.keys():
+            addValue = appendJson.get(key)
+            oldValue = None
+            if jsonData.has_key(key):
+                oldValue = jsonData.get(key)
+            
+            if dict == type(oldValue):
+                self.append(oldValue, addValue)
+            elif list == type(oldValue):
+                self.append(oldValue[0], addValue)
+            else:
+                jsonData[key] = addValue
 
     # 解析restful参数
     def parseRestfulParams(self, paths):

@@ -18,7 +18,7 @@ class Conf:
         self.dataPath = 'data'
         # 生成api时忽略的路径
         self.ignorePath = 'v1'
-
+    
         propMap = dict()
         self.propMap = propMap
 
@@ -41,6 +41,9 @@ class Conf:
 
         # 忽略字段
         self.ignore = []  # ['ConfigApiModel.share_tpl.app.xxx']
+
+        self.propAppend = dict()
+        
 
     # 是否是绝对路径
     def isabs(self, path):
@@ -83,3 +86,6 @@ class Conf:
 
         if json.has_key('ignorePath'):
             self.ignorePath = json['ignorePath']
+        
+        if json.has_key('propAppend'):
+            self.propAppend = json['propAppend']
