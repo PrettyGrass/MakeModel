@@ -7,16 +7,13 @@ from MakeClassFile import MakeClassFile
 from ClassInfo import *
 from APIModel import *
 from ParseModelJson import ParseModelJson
-from conf import OCConf
+from conf import DartConf
 import util
 import os
 import json
 
 
-
-
-
-class ObjectiveC(MakeClassFile):
+class Dart(MakeClassFile):
     # 构造方法
     def __init__(self, clazz, model, conf, outPath):
         MakeClassFile.__init__(self, clazz, model)
@@ -31,8 +28,8 @@ class ObjectiveC(MakeClassFile):
         innerClasses.extend(self.clazz.innerClass)
         innerClasses.extend(self.clazz.inFileClass)
         importClass = [c.name for c in innerClasses]
-        if len(importClass):
-            self.clazz.imports.append('@class %s;' % (', '.join(importClass)))
+        # if len(importClass):
+        #     self.clazz.imports.append('@class %s;' % (', '.join(importClass)))
 
         # 抽象接口
         hasInterface = self.clazz.hasInterface()
@@ -49,43 +46,21 @@ class ObjectiveC(MakeClassFile):
 
             # 内部类接口
             for innerClass in innerClasses:
-                inner = ObjectiveC(innerClass, None, None)
+                inner = Dart(innerClass, None, self.conf, None)
                 inner.createClassRemark(interfaceLines)
                 inner.createInterfaceBegin(interfaceLines, isProtocol=True)
                 inner.createProtocolInterfaceBody(interfaceLines)
                 inner.createInterfaceEnd(interfaceLines)
 
             self.createEndRemark(interfaceLines)
-            outFile = os.path.join(self.outPath, 'protocol', interfaceFile + '.h')
+            outFile = os.path.join(self.outPath, 'protocol', interfaceFile + '.swift')
             util.writeLinesFile(interfaceLines, outFile)
-            os.system('clang-format -i %s\n' % outFile)
+            os.system('cd %s && swiftformat . \n' % self.outPath)
             print('写入协议文件:', outFile)
 
-            self.clazz.imports.append('#import "%s.h"' % (interfaceFile))
             implInterface.append(interfaceFile)
+            self.clazz.impls.append(interfaceFile)
 
-        lines = []
-        self.createBeginRemark(lines)
-        self.createInterfaceImport(lines)
-        self.createClassRemark(lines)
-        self.createInterfaceBegin(lines, implProtocol=implInterface)
-        self.createInterfaceBody(lines)
-        self.createInterfaceEnd(lines)
-
-        # 内部类接口
-        for innerClass in innerClasses:
-            inner = ObjectiveC(innerClass, None, self.conf, None)
-            inner.createClassRemark(lines)
-            inner.createInterfaceBegin(lines)
-            inner.createInterfaceBody(lines)
-            inner.createInterfaceEnd(lines)
-
-        self.createEndRemark(lines)
-
-        outFile = os.path.join(self.outPath, self.clazz.name + '.h')
-        util.writeLinesFile(lines, outFile)
-        os.system('clang-format -i %s\n' % outFile)
-        print('写入文件:', outFile)
         lines = []
         self.createBeginRemark(lines)
         self.createImplImport(lines)
@@ -96,7 +71,7 @@ class ObjectiveC(MakeClassFile):
 
         # 内部类实现
         for innerClass in innerClasses:
-            inner = ObjectiveC(innerClass, None, self.conf, None)
+            inner = Dart(innerClass, None, self.conf, None)
             inner.createClassRemark(lines)
             inner.createImplBegin(lines)
             inner.createImplBody(lines)
@@ -104,9 +79,9 @@ class ObjectiveC(MakeClassFile):
 
         self.createEndRemark(lines)
 
-        outFile = os.path.join(self.outPath, self.clazz.name + '.m')
+        outFile = os.path.join(self.outPath, self.clazz.name + '.swift')
         util.writeLinesFile(lines, outFile)
-        os.system('clang-format -i %s\n' % outFile)
+        os.system('cd %s && swiftformat . \n' % self.outPath)
         print('写入文件:', outFile)
 
     # 创建头部注释
@@ -120,12 +95,12 @@ class ObjectiveC(MakeClassFile):
 
     # 创建头部注释
     def createInterfaceImport(self, lines):
-        lines.extend(set(self.clazz.imports))
+        lines.extend(self.clazz.imports)
 
     # 创建头部注释
     def createImplImport(self, lines):
-        lines.append('#import "%s.h"' % (self.clazz.name))
-        lines.extend(self.clazz.innerImports)
+        # lines.append('#import "%s.h"' % (self.clazz.name))
+        lines.extend(self.clazz.imports)
 
     # 创建头部注释
     def createEndRemark(self, lines):
@@ -149,19 +124,9 @@ class ObjectiveC(MakeClassFile):
             implProtocol = '<%s>' % implProtocol
 
         if isProtocol:
-            lines.append('@protocol %sProtocol <NSObject>' % (self.clazz.name))
+            lines.append('@objc public protocol %sProtocol :NSObjectProtocol {' % (self.clazz.name))
         else:
-            lines.append('@interface %s : %s%s' % (self.clazz.name, self.clazz.superClazz, implProtocol))
-
-    # 创建接口
-    def createInterfaceBody(self, lines):
-        for prop in self.clazz.props:
-            self.createProp(lines, prop)
-
-        for method in self.clazz.methods:
-            if (method.inner or method.abs):
-                continue
-            self.createInterfaceFunc(lines, method, True)
+            lines.append('@objc open class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建接口
     def createProtocolInterfaceBody(self, lines):
@@ -173,26 +138,41 @@ class ObjectiveC(MakeClassFile):
                 self.createInterfaceFunc(lines, method, True)
 
     # 创建接口
-    def createInterfaceFunc(self, lines, method, needEnd=False):
+    def createInterfaceFunc(self, lines, method, isProtocol=False):
 
-        end = ''
-        if needEnd:
-            end = ';'
+        mask = ''
+        if not isProtocol:
+            mask = 'public'
+
         lines.append('/// %s' % (method.remark))
         lines.append(
-            '%s (%s)%s%s' % (
-                self._getFuncType(method), self.conf.getPropType(method.retType), self._getFuncSign(method), end))
+            '%s %s func %s -> %s' % (
+                self._getFuncType(method), mask, self._getFuncSign(method), self.conf.getPropType(method.retType)))
 
     # 创建接口
     def createInterfaceEnd(self, lines):
-        lines.append('@end')
+        lines.append('}')
 
     # 创建实现
     def createImplBegin(self, lines):
-        lines.append('@implementation %s' % (self.clazz.name))
+        implProtocol = None
+        if len(self.clazz.impls) > 0:
+            implProtocol = ', %s' % ','.join(self.clazz.impls)
+        else:
+            implProtocol = ''
+
+        lines.append('@objc open class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建实现
     def createImplBody(self, lines):
+
+        for prop in self.clazz.props:
+            self.createProp(lines, prop)
+
+        # for method in self.clazz.methods:
+        #     if (method.inner or method.abs):
+        #         continue
+        #     self.createInterfaceFunc(lines, method, True)
 
         for method in self.clazz.methods:
             self.createImplFuncBegin(lines, method)
@@ -211,13 +191,20 @@ class ObjectiveC(MakeClassFile):
 
     # 创建实现
     def createImplEnd(self, lines):
-        lines.append('@end')
+        lines.append('}')
 
     # 创建属性
     def createProp(self, lines, prop):
+
+        defVal = '?'
+        if self.conf.baseType.has_key(prop.type) and self.conf.baseType.get(prop.type).has_key('default'):
+            defVal = ' = %s' % self.conf.baseType.get(prop.type)['default']
+
         lines.append(
-            '@property %s %s %s;' % (
-                self.conf.getPropMask(prop.type), self.conf.getPropType(prop.type, prop.subTypes), prop.name))
+            '%s var %s :%s%s' % (self.conf.getPropMask(prop.type),
+                                 prop.name,
+                                 self.conf.getPropType(prop.type, prop.subTypes),
+                                 defVal))
 
     # 创建方法
     def createFuncBegin(self, lines, func):
@@ -233,31 +220,33 @@ class ObjectiveC(MakeClassFile):
 
     def _getFuncType(self, method):
         if method.type == 0:
-            return '-'
-        return '+'
+            return ''
+        return ' static '
 
     def _getFuncSign(self, method):
         sign = method.name
 
         # oc swift 混编标准 sWith
-        if len(method.params) > 0:
-            sign = '%sWith' % (sign)
+        # if len(method.params) > 0:
+        #     sign = '%sWith' % (sign)
 
         firstUpper = True
+        ps = []
         for index in range(len(method.params)):
             param = method.params[index]
             name = param.name
-            if firstUpper:
-                name = util.firstUpper(name)
-                firstUpper = False
 
-            sign = '%s%s:(%s)%s ' % (sign, name, self.conf.getPropType(param.type, param.subTypes), param.name,)
+            ptype = self.conf.getPropType(param.type, param.subTypes)
+            # 集合类型参数 默认
+            ptype = ptype.replace('[subtype]', '[Any]')
+            ps.append('%s:%s' % (name, ptype))
 
+        sign = '%s(%s)' % (sign, ',\n'.join(ps))
         return sign
 
 
 # api 对象转成类对象
-class TransAPIModel2OCClass:
+class TransAPIModel2DartClass:
     def __init__(self, apiGroups, conf):
         self.apiGroups = apiGroups
         self.conf = conf
@@ -274,9 +263,9 @@ class TransAPIModel2OCClass:
         # 生成注入类
         entryPoint = ClassInfo()
         entryPoint.superClazz = 'NSObject'
-        entryPoint.name = 'DPHttpApiEntry'
+        entryPoint.name = 'HttpApiEntry'
         entryPoint.remark = 'api服务注入入口类'
-        entryPoint.innerImports.append('#import <DTDependContainer/DTDependContainer.h>')
+        entryPoint.imports.append('import DTDependContainer')
 
         method = MethodInfo()
         method.retType = 'void'
@@ -289,20 +278,16 @@ class TransAPIModel2OCClass:
 
         for index in range(len(clazzs)):
             apiClazz = clazzs[index]
-            entryPoint.imports.append('#import "%s.h"' % apiClazz.name)
             method.bodyLines.append(
-                '''[[DTDependContainerMapper shared]
-                    regWithProvider:%s.class
-                    service:@protocol(%sProtocol)];''' % (
+                'DTDependContainerMapper.shared().reg(withProvider: %s.self, service: %sProtocol.self)' % (
                     apiClazz.name, apiClazz.name))
 
         clazzs.append(entryPoint)
-
         return clazzs
 
     def makeClazzList(self, clazzs):
         for clazz in clazzs:
-            objc = ObjectiveC(clazz, clazz.model, self.conf, self.conf.apiOutPath)
+            objc = Dart(clazz, clazz.model, self.conf, self.conf.apiOutPath)
             objc.run()
 
     # 获取所有api的数据模型并创建
@@ -324,16 +309,16 @@ class TransAPIModel2OCClass:
                     model = pm.parseContent(jsonObj, responseKey)
                     model.remark = '%s响应模型' % api.name
                     ms.append(model)
-                    trans = TransDataModel2OCClass(ms, self.conf, refMappers)
+                    trans = TransDataModel2DartClass(ms, self.conf, refMappers)
                     cls = trans.trans()
                     if len(cls) > 0:
                         print('API数据模型:', api.getMethodName(), cls)
-                        modelMapper[api.getMethodSign().lower()] = cls[0]
-                        # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'OCModel'))
+                        modelMapper[responseKey.lower()] = cls[0]
+                        # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'DartModel'))
 
         # 数据模型关系建立完成之后创建文件
         for model in modelMapper.values():
-            trans.makeClazzList([model])
+            trans.makeClazzList([model], self.conf.apiModelPath)
 
         return modelMapper
 
@@ -343,32 +328,42 @@ class TransAPIModel2OCClass:
             return None
 
         apiClazz = ClassInfo()
-        apiClazz.name = '%s%sAPI' % (self.conf.apiBaseClassPreFix, apiGroup.enName)
+        apiClazz.name = '%s%sAPI' % ('', apiGroup.enName)
         apiClazz.remark = apiGroup.name
         apiClazz.fileHeaderRemark = apiGroup.name
         apiClazz.superClazz = 'NSObject'
         apiClazz.imports.extend(self.conf.apiImport)
-        apiClazz.innerImports.extend(self.conf.apiInnerImport)
 
         # 创建操作实例
         line = '''
-            DTHttpService *service = [DTHttpService shareInstanse];
-            DTSampleOperation *oper = [service buildOperationWithSuccess:success
-                                                                 failure:failure
-                                                                complete:complete
-                                                               operClass:DTSampleOperation.class
-                                                            responeClass:nil];
-            DTRequestParams *params = oper.params;
+        let service = HttpService.shared
+        let oper = service.buildSampleOperation(operClass: DTSampleOperation<AnyObject>.self,
+                                                responeClass: DTHttpSampleResponse<AnyObject>.self,
+                                                success: success,
+                                                failure: failure,
+                                                complete: complete)
+        let params = oper.params
             '''
 
         for index in range(len(apiGroup.apis)):
             api = apiGroup.apis[index]
+            if api.getMethodName() == 'musicsIntro':
+                pass
             if len(api.paths) == 0:
                 continue
 
-            respClass = self.allModelMapper.get(api.getMethodSign().lower())
             if api.responses and len(api.responses) > 0:
                 print('用于生成模型的 responses:', api.getMethodName())
+
+            respClass = None
+            respClassName = 'AnyObject'
+            methodSign = api.getMethodSign().lower()
+            if len(self.conf.dataPath) and self.allModelMapper.has_key(methodSign):
+                respClass = self.allModelMapper.get(methodSign)
+                respClassName = respClass.name
+
+            if 'AnyObject' == respClassName:
+                pass
 
             method = MethodInfo()
             method.retType = 'int'
@@ -386,23 +381,18 @@ class TransAPIModel2OCClass:
                 prop.type = param.paramType
                 method.params.append(prop)
 
-            respClassName = 'id'
-            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodSign().lower()):
-                respClassName = '%s *' % respClass.name
-                apiClazz.imports.append('@class %s;' % respClass.name)
-
             # 回调函数
             success = ParamsInfo()
             success.name = 'success'
-            success.paramType = 'void (^)(DTSampleOperation <%s>* _Nonnull oper)' % respClassName
+            success.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
 
             failure = ParamsInfo()
             failure.name = 'failure'
-            failure.paramType = 'void (^)(DTSampleOperation <%s>* _Nonnull oper)' % respClassName
+            failure.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
 
             complete = ParamsInfo()
             complete.name = 'complete'
-            complete.paramType = 'void (^)(DTSampleOperation <%s>* _Nonnull oper)' % respClassName
+            complete.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
 
             # 回调参数
             calls = [
@@ -420,38 +410,32 @@ class TransAPIModel2OCClass:
             # 方法实现
             method.bodyLines.append(line)
             path = api.path
-            append = ''
             for apiParamIndex in range(len(api.params)):
                 param = api.params[apiParamIndex]
                 if param.type == 'restful':
-                    path = path.replace(':' + param.name, '%@')
-                    append += ', %s' % (param.name)
+                    path = path.replace(':' + param.name, '\(%s)' % (param.name))
                 else:
-                    method.bodyLines.append('[params addHttpParam:%s forKey:@"%s"];' % (param.name, param.name))
+                    method.bodyLines.append('params?.addHttpParam(%s, forKey: "%s")' % (param.name, param.name))
 
-            method.bodyLines.append('params.httpMethod = @"%s";' % (api.method))
+            method.bodyLines.append('params?.httpMethod = "%s"' % (api.method))
 
             # 请求响应数据类型
-            if len(self.conf.dataPath) and self.allModelMapper.has_key(api.getMethodSign().lower()):
+            if len(self.conf.dataPath) and respClass:
                 method.bodyLines.append(
-                    '[oper.dataClasses setObject:NSClassFromString(@"%s") forKey:@"%s"];' % (
+                    'oper.dataClasses.setValue(%s.self, forKey: "%s")' % (
                         respClass.name, self.conf.dataPath))
             # 请求路径
-            if len(append) == 0:
-                method.bodyLines.append('params.path = @"%s";' % (path))
-            else:
-                method.bodyLines.append('params.path = [NSString stringWithFormat:@"%s" %s];' % (path, append))
-
+            method.bodyLines.append('params?.path = "%s"' % (path))
             # json表单
-            method.bodyLines.append('params.isJsonForm = true;')
+            method.bodyLines.append('params?.isJsonForm = true')
             # 请求开始
-            method.bodyLines.append('return [service start:oper];')
+            method.bodyLines.append('return service.start(oper: oper)')
 
         return apiClazz
 
 
 # 模型 对象转成类对象
-class TransDataModel2OCClass:
+class TransDataModel2DartClass:
     def __init__(self, ms, conf, globalRefMapper):
         self.dataModels = ms
         self.conf = conf
@@ -459,13 +443,13 @@ class TransDataModel2OCClass:
         self.globalRefMapper = globalRefMapper
 
     def trans(self):
-        return self.transClass(self.dataModels, None, True)
+        return self.transClass(self.dataModels, True)
 
     def getClassName(self, name):
-        return '%s%sModel' % (self.conf.apiBaseClassPreFix, name)
+        return '%sModel' % (name)
 
     # 转换响应数据 为 class类
-    def transClass(self, ms, rootClass=None, root=False):
+    def transClass(self, ms, root=False):
         classes = []
         for index in range(len(ms)):
             model = ms[index]
@@ -478,10 +462,14 @@ class TransDataModel2OCClass:
             # 如模型不存在, 则新建, 否则做字段增量
             if not dataModel:
                 dataModel = ClassInfo()
+                dataModel.impls.extend(self.conf.importModule)
                 dataModel.name = name
                 dataModel.remark = model.remark
                 dataModel.superClazz = 'NSObject'
-                dataModel.imports.append('#import <Foundation/Foundation.h>')
+                dataModel.imports.append('import Foundation')
+                if self.conf.useYYModel:
+                    dataModel.imports.append('import YYModel')
+
                 classes.append(dataModel)
                 self.refMapper[name] = dataModel
                 self.globalRefMapper[name] = dataModel
@@ -490,11 +478,8 @@ class TransDataModel2OCClass:
                 # 最外层数据的情况, 需要把最外层模型名传回, 做映射
                 classes.append(dataModel)
 
-            if not rootClass:
-                rootClass = dataModel
-
             if len(model.subModels) > 0:
-                dataModel.inFileClass.extend(self.transClass(model.subModels, dataModel))
+                dataModel.inFileClass.extend(self.transClass(model.subModels))
 
             transferProps = []
             # 根据字段创建属性
@@ -503,10 +488,10 @@ class TransDataModel2OCClass:
                 # 字段转义
                 fname = field.name
                 if self.conf.transferProp.has_key(fname):
-                    print('字段需转义:%s.%s' % (model.name, fname))
+                    print('字段需转义:%s.%s', model.name, fname)
 
                     tname = self.conf.transferProp.get(fname)
-                    transferProps.append('@"%s": @"%s"' % (tname, fname))
+                    transferProps.append('"%s": "%s"' % (tname, fname))
                     fname = tname
 
                 # 重复字段
@@ -516,6 +501,7 @@ class TransDataModel2OCClass:
                 prop = PropInfo()
                 dataModel.props.append(prop)
                 prop.name = fname
+                # 字段类型
                 if self.getType(field.type):
                     prop.type = self.getType(field.type)
                 elif not self.conf.isBaseType(field.type):
@@ -523,21 +509,13 @@ class TransDataModel2OCClass:
                 else:
                     prop.type = field.type
 
+                # 字段子类型
                 if self.getType(field.subType):
                     prop.subTypes.append(self.getType(field.subType))
-
                 elif self.conf.isBaseType(field.subType):
-                    prop.subTypes.append(self.conf.getPropType(field.subType).replace('*', ''))
-
+                    prop.subTypes.append(self.conf.getPropType(field.subType))
                 elif field.subType:
-                    subType = self.getClassName(field.subType)
-                    prop.subTypes.append(subType)
-                    # 子类型class引入
-                    rootClass.imports.append('@class %s;' % subType)
-
-                if not self.conf.isBaseType(field.type):
-                    # 子类型class引入
-                    rootClass.imports.append('@class %s;' % prop.type)
+                    prop.subTypes.append(self.getClassName(field.subType))
 
             # 转义属性
             transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
@@ -549,21 +527,21 @@ class TransDataModel2OCClass:
             else:
                 transferDiffProps = transferProps
 
+            mask = '"__mask__": "__mask__"'
             if len(transferDiffProps) > 0:
-                mask = '@"__mask__": @"__mask__"'
                 transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
                 if not transm:
                     transm = MethodInfo()
                     transm.remark = '转义属性'
-                    transm.retType = 'nullable NSDictionary<NSString *, id> '
+                    transm.retType = '[String : Any]?'
                     transm.name = 'modelCustomPropertyMapper'
                     transm.inner = True
                     transm.type = 1
-                    transm.bodyLines.append('NSDictionary *mapper = @{%s};' % (mask))
-                    transm.bodyLines.append('return mapper;')
+                    transm.bodyLines.append('let mapper = [%s]' % (mask))
+                    transm.bodyLines.append('return mapper as [String : Any]')
                     dataModel.methods.append(transm)
 
-                transm.bodyLines[0] = transm.bodyLines[0].replace('};', (',%s};' % ',\n'.join(transferDiffProps)))
+                transm.bodyLines[0] = transm.bodyLines[0].replace(']', (',%s]' % ',\n'.join(transferDiffProps)))
                 transm.bodyLines[0] = transm.bodyLines[0].replace('%s,' % mask, '')
 
             # 属性
@@ -571,10 +549,10 @@ class TransDataModel2OCClass:
             method = dataModel.hasMethod('modelContainerPropertyGenericClass', 1)
             if not method:
                 method = MethodInfo()
-                method.bodyLines.append('NSMutableDictionary *mapper = [NSMutableDictionary dictionary];')
-                method.bodyLines.append('return mapper;')
+                method.bodyLines.append('let mapper = [%s]' % (mask))
+                method.bodyLines.append('return mapper as [String : Any]')
                 method.remark = '集合类型解析映射'
-                method.retType = 'nullable NSDictionary<NSString *, id> '
+                method.retType = '[String : Any]'
                 method.name = 'modelContainerPropertyGenericClass'
                 method.inner = True
                 method.type = 1
@@ -584,14 +562,16 @@ class TransDataModel2OCClass:
                 # 集合一类的有子类型的才需要映射
                 if len(subType) > 0 and (not self.conf.isBaseType(subType)):
                     ptype = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
-                    line = '[mapper setObject:@"%s" forKey:@"%s"];' % (
-                        ptype, prop.name)
+                    line = '"%s": %s.self' % (
+                        prop.name, ptype)
 
-                    # 去重复行, 映射不需要重复
-                    if line in method.bodyLines:
-                        method.bodyLines.remove(line)
+                    oldLine = method.bodyLines[0]
+                    if oldLine.find(line) < 0:
+                        # 不存在则添加
+                        oldLine = oldLine.replace(']', (',%s]' % line))
+                        oldLine = oldLine.replace('%s,' % mask, '')
 
-                    method.bodyLines.insert(1, line)
+                    method.bodyLines[0] = oldLine
                     # 没有添加过该方法则添加
                     if not dataModel.hasMethod('modelContainerPropertyGenericClass', 1):
                         dataModel.methods.append(method)
@@ -605,9 +585,9 @@ class TransDataModel2OCClass:
 
         return None
 
-    def makeClazzList(self, clazzs):
+    def makeClazzList(self, clazzs, outPath):
         for clazz in clazzs:
-            objc = ObjectiveC(clazz, clazz.model, self.conf, self.conf.apiModelPath)
+            objc = Dart(clazz, clazz.model, self.conf, outPath)
             objc.run()
 
 
@@ -627,6 +607,6 @@ if __name__ == '__main__':
         clazz.props.append(p)
 
     model = APIGroupInfo()
-    objc = ObjectiveC(clazz, model)
+    objc = Dart(clazz, model)
 
     objc.run()

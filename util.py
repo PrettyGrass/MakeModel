@@ -152,15 +152,15 @@ def underlinesToCamel(x):
 
 
 def transStr(file_path, cmToUs_or_usToCm):
-    print cmToUs_or_usToCm
+    print(cmToUs_or_usToCm)
     f = open(file_path, 'r')
     if cmToUs_or_usToCm == '1':
-        print "驼峰转下划线"
+        print("驼峰转下划线")
         for line in f.readlines():
-            print camelToUnderlines(line.strip())
+            print(camelToUnderlines(line.strip()))
     elif cmToUs_or_usToCm == '0':
-        print "下划线转大驼峰"
+        print("下划线转大驼峰")
         for line in f.readlines():
-            print underlinesToCamel(line.strip())
+            print(underlinesToCamel(line.strip()))
 
     f.close()

@@ -18,7 +18,7 @@ class ParseApiJson():
 
     def apiGroups(self):
         apiGroups = []
-        print('PostMan API文件路径 %s' % self.modelPath)
+        print('PostMan API文件路径', self.modelPath)
         path = os.listdir(self.modelPath)
         for p in path:
             file = os.path.join(self.modelPath, p)
@@ -45,7 +45,7 @@ class ParseApiJson():
             apiGroup.name = fullName
             apiGroup.enName = util.firstUpper(self.diffENName(fullName))
 
-            print 'api组:', apiGroup.name, apiGroup.enName
+            print('api组:', apiGroup.name, apiGroup.enName)
             apis = item.get('item', [])
             apiGroup.apis.extend(self.parseApis(apis))
 
@@ -75,7 +75,7 @@ class ParseApiJson():
             url = request.get('url')
 
             if None == url:
-                print '--无效的请求:--', api.name, request
+                print('--无效的请求:--', api.name, request)
                 continue
 
             api.method = request.get('method')
@@ -114,7 +114,7 @@ class ParseApiJson():
             for n in api.params:
                 p += ' %s:%s' % (n.type, n.name)
 
-            print '     ', api.name, api.protocol, api.host, api.path, api.method, p
+            print('     ', api.name, api.protocol, api.host, api.path, api.method, p)
 
         return apis
 

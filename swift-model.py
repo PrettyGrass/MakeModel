@@ -22,15 +22,15 @@ class Swift():
         self.currentClass = None
 
     def build(self):
-        print 'build swift'
+        print('build swift')
         self.createModels(self.models)
 
     def clear(self):
-        print 'clear swift'
+        print('clear swift')
         os.system('rm \"%s/*\"' % self.outPath)
 
     def init(self):
-        print 'init swift'
+        print('init swift')
         self.clear()
 
     def createModels(self, models):
@@ -76,7 +76,7 @@ class Swift():
         swiftName = model.name + '.swift'
         outFile = os.path.join(self.outPath, swiftName)
         util.writeLinesFile(lines, outFile)
-        print '创建:', swiftName
+        print('创建:', swiftName)
         os.system('cd %s; swiftlint autocorrect\n' % self.outPath)
 
     def createHeader(self, modelJson, name):

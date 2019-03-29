@@ -19,15 +19,15 @@ class OC(MakeClassFile):
         self.currentClass = None
 
     def build(self):
-        print 'build OC'
+        print('build OC')
         self.createModels(self.models)
 
     def clear(self):
-        print 'clear OC'
+        print('clear OC')
         os.system('rm \"%s/*\"' % self.outPath)
 
     def init(self):
-        print 'init OC'
+        print('init OC')
         self.clear()
 
     def createModels(self, models):
@@ -73,7 +73,7 @@ class OC(MakeClassFile):
         swiftName = model.name + '.swift'
         outFile = os.path.join(self.outPath, swiftName)
         util.writeLinesFile(lines, outFile)
-        print '创建:', swiftName
+        print('创建:', swiftName)
         os.system('cd %s; swiftlint autocorrect\n' % self.outPath)
 
     def createHeader(self, modelJson, name):
