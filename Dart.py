@@ -53,7 +53,7 @@ class Dart(MakeClassFile):
                 inner.createInterfaceEnd(interfaceLines)
 
             self.createEndRemark(interfaceLines)
-            outFile = os.path.join(self.outPath, 'protocol', interfaceFile + '.swift')
+            outFile = os.path.join(self.outPath, 'protocol', interfaceFile + '.dart')
             util.writeLinesFile(interfaceLines, outFile)
             os.system('cd %s && swiftformat . \n' % self.outPath)
             print('写入协议文件:', outFile)
@@ -79,9 +79,9 @@ class Dart(MakeClassFile):
 
         self.createEndRemark(lines)
 
-        outFile = os.path.join(self.outPath, self.clazz.name + '.swift')
+        outFile = os.path.join(self.outPath, self.clazz.name + '.dart')
         util.writeLinesFile(lines, outFile)
-        os.system('cd %s && swiftformat . \n' % self.outPath)
+        # os.system('cd %s && swiftformat . \n' % self.outPath)
         print('写入文件:', outFile)
 
     # 创建头部注释
@@ -124,9 +124,9 @@ class Dart(MakeClassFile):
             implProtocol = '<%s>' % implProtocol
 
         if isProtocol:
-            lines.append('@objc public protocol %sProtocol :NSObjectProtocol {' % (self.clazz.name))
+            lines.append('abstract class %sProtocol {' % (self.clazz.name))
         else:
-            lines.append('@objc open class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
+            lines.append('class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建接口
     def createProtocolInterfaceBody(self, lines):
@@ -161,7 +161,7 @@ class Dart(MakeClassFile):
         else:
             implProtocol = ''
 
-        lines.append('@objc open class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
+        lines.append('class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建实现
     def createImplBody(self, lines):
@@ -201,9 +201,9 @@ class Dart(MakeClassFile):
             defVal = ' = %s' % self.conf.baseType.get(prop.type)['default']
 
         lines.append(
-            '%s var %s :%s%s' % (self.conf.getPropMask(prop.type),
-                                 prop.name,
+            '%s %s %s%s;' % (self.conf.getPropMask(prop.type),
                                  self.conf.getPropType(prop.type, prop.subTypes),
+                                 prop.name,
                                  defVal))
 
     # 创建方法
