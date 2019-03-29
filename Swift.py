@@ -56,7 +56,7 @@ class Swift(MakeClassFile):
             outFile = os.path.join(self.outPath, 'protocol', interfaceFile + '.swift')
             util.writeLinesFile(interfaceLines, outFile)
             os.system('cd %s && swiftformat . \n' % self.outPath)
-            print '写入协议文件:', outFile
+            print('写入协议文件:', outFile)
 
             implInterface.append(interfaceFile)
             self.clazz.impls.append(interfaceFile)
@@ -82,7 +82,7 @@ class Swift(MakeClassFile):
         outFile = os.path.join(self.outPath, self.clazz.name + '.swift')
         util.writeLinesFile(lines, outFile)
         os.system('cd %s && swiftformat . \n' % self.outPath)
-        print '写入文件:', outFile
+        print('写入文件:', outFile)
 
     # 创建头部注释
     def createBeginRemark(self, lines):
@@ -312,7 +312,7 @@ class TransAPIModel2SwiftClass:
                     trans = TransDataModel2SwiftClass(ms, self.conf, refMappers)
                     cls = trans.trans()
                     if len(cls) > 0:
-                        print 'API数据模型:', api.getMethodName(), cls
+                        print('API数据模型:', api.getMethodName(), cls)
                         modelMapper[responseKey.lower()] = cls[0]
                         # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'SwiftModel'))
 
@@ -353,7 +353,7 @@ class TransAPIModel2SwiftClass:
                 continue
 
             if api.responses and len(api.responses) > 0:
-                print '用于生成模型的 responses:', api.getMethodName()
+                print('用于生成模型的 responses:', api.getMethodName())
 
             respClass = None
             respClassName = 'AnyObject'

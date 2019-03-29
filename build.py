@@ -10,7 +10,7 @@ from ObjectiveC import *
 if __name__ == '__main__':
     wkPath = os.path.dirname('.')  # 当前的目录
     wkPath = os.path.abspath(wkPath)
-    print 'wk:', wkPath
+    print('wk:', wkPath)
 
     pm = ParseModelJson(wkPath)
     ms = pm.getModels()

@@ -4,6 +4,7 @@
 
 from ObjectiveC import *
 from Swift import *
+from Dart import *
 from ParseApiJson import *
 import os
 import util
@@ -31,6 +32,11 @@ class Params:
         self.ocConf = None
         self.ocApiOutPath = ""
         self.ocModelOutPath = ""
+
+        self.enableDart = False
+        self.dartConf = None
+        self.dartApiOutPath = ""
+        self.dartModelOutPath = ""
 
     def parse(self):
         if not os.path.exists(self.confPath):
@@ -65,6 +71,15 @@ class Params:
             self.ocConf.fromJson(self.coreJson)
             self.ocConf.fromJson(oc)
 
+        if confJson.has_key('dart'):
+            oc = confJson.get('dart')
+            self.enableDart = True
+            self.dartApiOutPath = oc['apiOutPath']
+            self.dartModelOutPath = oc['apiModelPath']
+            self.dartConf = DartConf()
+            self.dartConf.fromJson(self.coreJson)
+            self.dartConf.fromJson(oc)
+
         return self
 
     # 是否是绝对路径
@@ -80,7 +95,7 @@ class Params:
 
 # 获取命令行参数
 def getParams():
-    print "脚本名:", sys.argv[0]
+    print('脚本名:', sys.argv[0])
     pName = ''
     params = Params()
     for i in range(1, len(sys.argv)):
@@ -88,9 +103,9 @@ def getParams():
         if pValue.find('-') == 0:
             pName = sys.argv[i]
             if pName == '-h':
-                print '''
+                print('''
                 -c 配置文件
-                '''
+                ''')
         elif pName == '-c':
             params.confPath = pValue
     # 测试: params.confPath = '/Users/ylin/.wk_space/MakeModel/conf/sample.config.json'
@@ -101,17 +116,17 @@ if __name__ == '__main__':
 
     params = getParams()
     if not params:
-        print '配置文件异常'
+        print('配置文件异常')
         exit(-1)
 
     wkPath = params.apiJsonPath  # 当前的目录
     wkPath = os.path.abspath(wkPath)
-    print 'wk:', wkPath
+    print('wk:', wkPath)
 
     pm = ParseApiJson(wkPath, params.coreConf)
     ms = pm.apiGroups()
 
-    print 'api组:', len(ms)
+    print('api组:', len(ms))
     # 老的
     # ocApi = OCApi(wkPath, ms)
     # ocApi.init()
@@ -119,7 +134,7 @@ if __name__ == '__main__':
 
     if params.enableOC:
 
-        print '清理 oc'
+        print('清理 oc')
         if os.path.exists(params.ocConf.apiModelPath):
             os.system('rm -r %s' % params.ocConf.apiModelPath)
         if os.path.exists(params.ocConf.apiOutPath):
@@ -130,11 +145,22 @@ if __name__ == '__main__':
 
     if params.enableSwift:
 
-        print '清理 swift'
+        print('清理 swift')
         if os.path.exists(params.swiftConf.apiModelPath):
             os.system('rm -r %s' % params.swiftConf.apiModelPath)
         if os.path.exists(params.swiftConf.apiOutPath):
             os.system('rm -r %s' % params.swiftConf.apiOutPath)
 
         trans = TransAPIModel2SwiftClass(ms, params.swiftConf)
+        trans.makeClazzList(trans.trans())
+
+    if params.enableDart:
+
+        print('清理 Dart')
+        if os.path.exists(params.dartConf.apiModelPath):
+            os.system('rm -r %s' % params.dartConf.apiModelPath)
+        if os.path.exists(params.dartConf.apiOutPath):
+            os.system('rm -r %s' % params.dartConf.apiOutPath)
+
+        trans = TransAPIModel2DartClass(ms, params.dartConf)
         trans.makeClazzList(trans.trans())

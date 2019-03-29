@@ -11,4 +11,4 @@ class MakeClassFile():
 
     # 开始
     def run(self):
-        print '需要自己实现对应的生成过程'
+        print('需要自己实现对应的生成过程')

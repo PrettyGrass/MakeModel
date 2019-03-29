@@ -21,15 +21,15 @@ class OCApi():
         self.createdImplFunctions = []
 
     def build(self):
-        print 'build OC'
+        print('build OC')
         self.createApis(self.apiGroups)
 
     def clear(self):
-        print 'clear OC'
+        print('clear OC')
         os.system('rm \"%s/*\"' % self.outPath)
 
     def init(self):
-        print 'init OC'
+        print('init OC')
         self.clear()
 
     def createApis(self, apiGroups):
@@ -40,7 +40,7 @@ class OCApi():
                 continue
 
             # 头文件
-            print 'api', group.name
+            print('api', group.name)
             funcTable = []
             headerName = group.getFileName(self.selfConf.apiBaseClassPreFix) + '.h'
             lines = self.createHeaderFile(group, funcTable)
@@ -93,7 +93,7 @@ class OCApi():
     def writeFile(self, fileName, lines):
         outFile = os.path.join(self.outPath, fileName)
         util.writeLinesFile(lines, outFile)
-        print '创建:', fileName
+        print('创建:', fileName)
         os.system('clang-format -i %s\n' % outFile)
 
     def createHeader(self, name, group=None):

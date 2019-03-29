@@ -17,7 +17,7 @@ class ParseModelJson():
 
     def getModels(self):
         models = []
-        print '模型路径', self.modelPath
+        print('模型路径', self.modelPath)
         path = os.listdir(self.modelPath)
         for p in path:
             file = os.path.join(self.modelPath, p)
@@ -54,12 +54,15 @@ class ParseModelJson():
                 modelJson.append(dict())
             modelJson = modelJson[0]
 
+        if len(modelJson) == 0:
+            return
+
         for key, val in modelJson.items():
 
             keyP = (keyPath + '.%s' % key)
             # 忽略
             if keyP in self.conf.ignore:
-                print '忽略:', keyP
+                print('忽略:', keyP)
                 continue
 
             prop = FieldInfo()
