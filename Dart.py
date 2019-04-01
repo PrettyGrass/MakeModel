@@ -55,7 +55,7 @@ class Dart(MakeClassFile):
             self.createEndRemark(interfaceLines)
             outFile = os.path.join(self.outPath, 'protocol', interfaceFile + '.dart')
             util.writeLinesFile(interfaceLines, outFile)
-            os.system('cd %s && swiftformat . \n' % self.outPath)
+            os.system('flutter format %s \n' % outFile)
             print('写入协议文件:', outFile)
 
             implInterface.append(interfaceFile)
@@ -81,7 +81,7 @@ class Dart(MakeClassFile):
 
         outFile = os.path.join(self.outPath, self.clazz.name + '.dart')
         util.writeLinesFile(lines, outFile)
-        # os.system('cd %s && swiftformat . \n' % self.outPath)
+        os.system('flutter format %s \n' % outFile)
         print('写入文件:', outFile)
 
     # 创建头部注释
@@ -158,8 +158,8 @@ class Dart(MakeClassFile):
                     self._getFuncType(method), self.clazz.name, mask, self._getFuncSign(method)))
         elif method.type == 1:
             lines.append(
-                '%s %s %s' % (
-                    self._getFuncType(method), mask, self._getFuncSign(method)))
+                '%s %s %s %s' % (
+                    self._getFuncType(method),self.conf.getPropType(method.retType), mask, self._getFuncSign(method)))
 
         else:
             lines.append(
@@ -310,9 +310,10 @@ class TransAPIModel2DartClass:
         for index in range(len(clazzs)):
             apiClazz = clazzs[index]
             entryPoint.imports.append('import \'protocol/%sProtocol.dart\';' % apiClazz.name)
+            entryPoint.imports.append('export \'protocol/%sProtocol.dart\';' % apiClazz.name)
             entryPoint.imports.append('import \'%s.dart\';' % apiClazz.name)
             method.bodyLines.append(
-                'Container.appInstance.registerDependency<%sProtocol>((builder) { return %s(); });' % (
+                'DependencyContainer.appInstance.registerDependency<%sProtocol>((builder) { return %s(); });' % (
                     apiClazz.name, apiClazz.name))
 
         clazzs.append(entryPoint)
@@ -354,6 +355,52 @@ class TransAPIModel2DartClass:
         importClass.name = 'ModelEntry'
         for model in modelMapper.values():
             importClass.imports.append('export \'%s.dart\';' % model.name)
+            importClass.imports.append('import \'%s.dart\';' % model.name)
+
+        # 创建静态解析函数
+        parse = MethodInfo()
+        importClass.methods.append(parse)
+        parse.name = 'mapper'
+        parse.retType = 'dynamic'
+        parse.type = 1
+
+        typeVal = PropInfo()
+        typeVal.type = 'string'
+        typeVal.name = 'type'
+        parse.params.append(typeVal)
+
+        jsonP = PropInfo()
+        jsonP.type = 'Map<String, dynamic>'
+        jsonP.name = 'json'
+        parse.params.append(jsonP)
+
+        parse.bodyLines.append('switch (type){')
+        for model in refMappers.values():
+            parse.bodyLines.append('case \'%s\':' % model.name)
+            parse.bodyLines.append('return %s.fromJson(json);' % model.name)
+            parse.bodyLines.append('break;')
+
+        parse.bodyLines.append('}')
+
+        parse.bodyLines.append('/**')
+        parse.bodyLines.append('parseResponseData(data, Type targetType, obj) {')
+        parse.bodyLines.append('HttpResponse response;')
+        parse.bodyLines.append('String type = targetType.toString();')
+        parse.bodyLines.append('switch (type) {')
+        for model in refMappers.values():
+
+            parse.bodyLines.append('''
+            case 'HttpResponse<%s>':
+            var resp = HttpResponse<%s>();
+            response = resp;
+            resp.data = ModelEntry.mapper('%s', data['data']);
+            break;
+            ''' % (model.name, model.name, model.name))
+
+        parse.bodyLines.append('}')
+        parse.bodyLines.append('return response;')
+        parse.bodyLines.append('}')
+        parse.bodyLines.append('*/')
 
         # 数据模型关系建立完成之后创建文件
         for model in modelMapper.values():
@@ -442,7 +489,7 @@ class TransAPIModel2DartClass:
                 param = api.params[apiParamIndex]
                 if param.type == 'restful':
                     path = path.replace(':' + param.name, '%s' % (param.name))
-                else:
+                elif len(param.name):
                     method.bodyLines.append('params[\'%s\'] = %s;' % (param.name, param.name))
 
             line = 'return HttpClient.client.request<HttpResponse<%s>>(\'%s\', \'%s\',params: params, success: success, bizFail: bizFail, reqFail: reqFail);' % (
@@ -508,6 +555,9 @@ class TransDataModel2DartClass:
 
                 # 字段转义
                 fname = field.name
+                if fname[0] == '_':
+                    continue
+
                 if self.conf.transferProp.has_key(fname):
                     print('字段需转义:%s.%s', model.name, fname)
 
@@ -577,7 +627,7 @@ class TransDataModel2DartClass:
 
             # 属性
             # 查找集合类型的自定义数据类型嵌套 只支持一层嵌套
-            method = dataModel.hasMethod('toJson', 1)
+            method = dataModel.hasMethod('toJson', 0)
             if not method:
                 method = MethodInfo()
                 method.bodyLines.append('return _$%sToJson(this);' % dataModel.name)
@@ -586,7 +636,7 @@ class TransDataModel2DartClass:
                 method.name = 'toJson'
                 method.inner = True
                 method.type = 0
-            if not dataModel.hasMethod('toJson', 1):
+            if not dataModel.hasMethod('toJson', 0):
                 dataModel.methods.append(method)
 
         return classes
