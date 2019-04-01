@@ -44,6 +44,12 @@ class APIInfo:
                 p = p.replace('.', '_')
                 funcName += p
                 use = True
+            else:
+                p = p.replace('.', '_').replace(':', '')
+                p = util.firstUpper(p)
+                funcName += p
+                use = True
+
 
         return funcName
 

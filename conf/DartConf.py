@@ -10,7 +10,8 @@ class DartConf(Conf):
         Conf.__init__(self)
 
         self.apiBaseClassPreFix = 'DP'
-        self.modelBaseClass = 'NSObject'
+        self.modelBaseClass = 'Object'
+        self.apiBaseClass = 'Object'
         self.apiImport = []
         self.baseType = dict()
 
@@ -26,7 +27,7 @@ class DartConf(Conf):
         self.importModule = []
         self.useHandyJSON = False
         self.useObjectMapper = False
-        self.useYYModel = True
+        self.useYYModel = False
         if self.useHandyJSON:
             self.importModule.append('HandyJSON')
         if self.useObjectMapper:
@@ -88,6 +89,9 @@ class DartConf(Conf):
 
         if json.has_key('apiBaseClassPreFix'):
             self.apiBaseClassPreFix = json['apiBaseClassPreFix']
+
+        if json.has_key('apiBaseClass'):
+            self.apiBaseClass = json['apiBaseClass']
 
         if json.has_key('modelBaseClass'):
             self.modelBaseClass = json['modelBaseClass']

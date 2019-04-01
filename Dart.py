@@ -38,7 +38,7 @@ class Dart(MakeClassFile):
         if hasInterface:
             interfaceLines = []
             self.createBeginRemark(interfaceLines)
-            self.createInterfaceImport(interfaceLines)
+            self.createInterfaceImport(interfaceLines, isProtocol=True)
             self.createClassRemark(interfaceLines)
             self.createInterfaceBegin(interfaceLines, isProtocol=True)
             self.createProtocolInterfaceBody(interfaceLines)
@@ -94,12 +94,15 @@ class Dart(MakeClassFile):
         \n''' % (self.clazz.name, self.clazz.fileHeaderRemark, self.conf.author, self.conf.date, self.conf.mark))
 
     # 创建头部注释
-    def createInterfaceImport(self, lines):
-        lines.extend(self.clazz.imports)
+    def createInterfaceImport(self, lines, isProtocol=False):
+        for line in self.clazz.imports:
+            if isProtocol and 'Protocol.dart' in line:
+                continue
+            lines.append(line)
+        # lines.extend(self.clazz.imports)
 
     # 创建头部注释
     def createImplImport(self, lines):
-        # lines.append('#import "%s.h"' % (self.clazz.name))
         lines.extend(self.clazz.imports)
 
     # 创建头部注释
@@ -126,7 +129,7 @@ class Dart(MakeClassFile):
         if isProtocol:
             lines.append('abstract class %sProtocol {' % (self.clazz.name))
         else:
-            lines.append('class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
+            lines.append('class %s extends %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建接口
     def createProtocolInterfaceBody(self, lines):
@@ -141,13 +144,28 @@ class Dart(MakeClassFile):
     def createInterfaceFunc(self, lines, method, isProtocol=False):
 
         mask = ''
-        if not isProtocol:
-            mask = 'public'
+        # if not isProtocol:
+        #     mask = 'public'
+        end = ''
+        if isProtocol:
+            end = ';'
 
         lines.append('/// %s' % (method.remark))
-        lines.append(
-            '%s %s func %s -> %s' % (
-                self._getFuncType(method), mask, self._getFuncSign(method), self.conf.getPropType(method.retType)))
+
+        if method.type == 2:
+            lines.append(
+                '%s %s.%s %s' % (
+                    self._getFuncType(method), self.clazz.name, mask, self._getFuncSign(method)))
+        elif method.type == 1:
+            lines.append(
+                '%s %s %s' % (
+                    self._getFuncType(method), mask, self._getFuncSign(method)))
+
+        else:
+            lines.append(
+                '%s %s %s %s%s' % (
+                    self._getFuncType(method), self.conf.getPropType(method.retType), mask, self._getFuncSign(method),
+                    end))
 
     # 创建接口
     def createInterfaceEnd(self, lines):
@@ -157,11 +175,12 @@ class Dart(MakeClassFile):
     def createImplBegin(self, lines):
         implProtocol = None
         if len(self.clazz.impls) > 0:
-            implProtocol = ', %s' % ','.join(self.clazz.impls)
+            implProtocol = 'implements %s' % ','.join(self.clazz.impls)
         else:
             implProtocol = ''
 
-        lines.append('class %s : %s%s {' % (self.clazz.name, self.clazz.superClazz, implProtocol))
+        lines.append('%s class %s extends %s %s {' % (
+            self.clazz.annotation, self.clazz.name, self.clazz.superClazz, implProtocol))
 
     # 创建实现
     def createImplBody(self, lines):
@@ -178,6 +197,14 @@ class Dart(MakeClassFile):
             self.createImplFuncBegin(lines, method)
             self.createImplFuncBody(lines, method)
             self.createImplFuncEnd(lines, method)
+
+        propList = []
+        for prop in self.clazz.props:
+            propList.append('this.%s' % prop.name)
+
+        if len(propList) > 0:
+            # 构造函数
+            lines.append('%s ({%s});' % (self.clazz.name, ', '.join(propList)))
 
     def createImplFuncBegin(self, lines, method):
         self.createInterfaceFunc(lines, method)
@@ -196,15 +223,15 @@ class Dart(MakeClassFile):
     # 创建属性
     def createProp(self, lines, prop):
 
-        defVal = '?'
+        defVal = ''
         if self.conf.baseType.has_key(prop.type) and self.conf.baseType.get(prop.type).has_key('default'):
             defVal = ' = %s' % self.conf.baseType.get(prop.type)['default']
 
         lines.append(
             '%s %s %s%s;' % (self.conf.getPropMask(prop.type),
-                                 self.conf.getPropType(prop.type, prop.subTypes),
-                                 prop.name,
-                                 defVal))
+                             self.conf.getPropType(prop.type, prop.subTypes),
+                             prop.name,
+                             defVal))
 
     # 创建方法
     def createFuncBegin(self, lines, func):
@@ -219,9 +246,12 @@ class Dart(MakeClassFile):
         pass
 
     def _getFuncType(self, method):
-        if method.type == 0:
+        if method.type == 2:
+            return ' factory '
+        elif method.type == 1:
+            return ' static '
+        else:
             return ''
-        return ' static '
 
     def _getFuncSign(self, method):
         sign = method.name
@@ -235,11 +265,12 @@ class Dart(MakeClassFile):
         for index in range(len(method.params)):
             param = method.params[index]
             name = param.name
-
+            if len(name) == 0:
+                continue
             ptype = self.conf.getPropType(param.type, param.subTypes)
             # 集合类型参数 默认
-            ptype = ptype.replace('[subtype]', '[Any]')
-            ps.append('%s:%s' % (name, ptype))
+            ptype = ptype.replace('<subtype>', '<dynamic>')
+            ps.append('%s %s' % (ptype, name))
 
         sign = '%s(%s)' % (sign, ',\n'.join(ps))
         return sign
@@ -262,10 +293,10 @@ class TransAPIModel2DartClass:
 
         # 生成注入类
         entryPoint = ClassInfo()
-        entryPoint.superClazz = 'NSObject'
+        entryPoint.superClazz = self.conf.modelBaseClass
         entryPoint.name = 'HttpApiEntry'
         entryPoint.remark = 'api服务注入入口类'
-        entryPoint.imports.append('import DTDependContainer')
+        entryPoint.imports.append('import \'package:dependency_container/dependency_container.dart\';')
 
         method = MethodInfo()
         method.retType = 'void'
@@ -278,8 +309,10 @@ class TransAPIModel2DartClass:
 
         for index in range(len(clazzs)):
             apiClazz = clazzs[index]
+            entryPoint.imports.append('import \'protocol/%sProtocol.dart\';' % apiClazz.name)
+            entryPoint.imports.append('import \'%s.dart\';' % apiClazz.name)
             method.bodyLines.append(
-                'DTDependContainerMapper.shared().reg(withProvider: %s.self, service: %sProtocol.self)' % (
+                'Container.appInstance.registerDependency<%sProtocol>((builder) { return %s(); });' % (
                     apiClazz.name, apiClazz.name))
 
         clazzs.append(entryPoint)
@@ -316,10 +349,18 @@ class TransAPIModel2DartClass:
                         modelMapper[responseKey.lower()] = cls[0]
                         # trans.makeClazzList(cls, os.path.join(self.wkPath, 'Product', 'DartModel'))
 
+        importClass = ClassInfo()
+        importClass.superClazz = self.conf.modelBaseClass
+        importClass.name = 'ModelEntry'
+        for model in modelMapper.values():
+            importClass.imports.append('export \'%s.dart\';' % model.name)
+
         # 数据模型关系建立完成之后创建文件
         for model in modelMapper.values():
+            model.imports.insert(0, 'import \'%s.dart\';' % importClass.name)
             trans.makeClazzList([model], self.conf.apiModelPath)
 
+        trans.makeClazzList([importClass], self.conf.apiModelPath)
         return modelMapper
 
     # 转换一组api 为class 类
@@ -331,24 +372,12 @@ class TransAPIModel2DartClass:
         apiClazz.name = '%s%sAPI' % ('', apiGroup.enName)
         apiClazz.remark = apiGroup.name
         apiClazz.fileHeaderRemark = apiGroup.name
-        apiClazz.superClazz = 'NSObject'
+        apiClazz.superClazz = self.conf.apiBaseClass
         apiClazz.imports.extend(self.conf.apiImport)
-
+        apiClazz.imports.append('import \'protocol/%sProtocol.dart\';' % apiClazz.name)
         # 创建操作实例
-        line = '''
-        let service = HttpService.shared
-        let oper = service.buildSampleOperation(operClass: DTSampleOperation<AnyObject>.self,
-                                                responeClass: DTHttpSampleResponse<AnyObject>.self,
-                                                success: success,
-                                                failure: failure,
-                                                complete: complete)
-        let params = oper.params
-            '''
-
         for index in range(len(apiGroup.apis)):
             api = apiGroup.apis[index]
-            if api.getMethodName() == 'musicsIntro':
-                pass
             if len(api.paths) == 0:
                 continue
 
@@ -356,17 +385,17 @@ class TransAPIModel2DartClass:
                 print('用于生成模型的 responses:', api.getMethodName())
 
             respClass = None
-            respClassName = 'AnyObject'
+            respClassName = 'dynamic'
             methodSign = api.getMethodSign().lower()
             if len(self.conf.dataPath) and self.allModelMapper.has_key(methodSign):
                 respClass = self.allModelMapper.get(methodSign)
                 respClassName = respClass.name
 
-            if 'AnyObject' == respClassName:
+            if 'dynamic' == respClassName:
                 pass
 
             method = MethodInfo()
-            method.retType = 'int'
+            method.retType = 'CancelToken'
             method.type = 0
             method.abs = True
             method.inner = True
@@ -384,15 +413,15 @@ class TransAPIModel2DartClass:
             # 回调函数
             success = ParamsInfo()
             success.name = 'success'
-            success.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
+            success.paramType = 'bool Function(HttpResponse<%s> data)' % respClassName
 
             failure = ParamsInfo()
-            failure.name = 'failure'
-            failure.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
+            failure.name = 'bizFail'
+            failure.paramType = 'bool Function(HttpResponse<%s> data)' % respClassName
 
             complete = ParamsInfo()
-            complete.name = 'complete'
-            complete.paramType = '@escaping ((DTSampleOperation<%s>) -> Void)' % respClassName
+            complete.name = 'reqFail'
+            complete.paramType = 'bool Function(HttpError data)'  # % respClassName
 
             # 回调参数
             calls = [
@@ -407,30 +436,19 @@ class TransAPIModel2DartClass:
                 prop.type = param.paramType
                 method.params.append(prop)
 
-            # 方法实现
-            method.bodyLines.append(line)
             path = api.path
+            method.bodyLines.append('Map<String, dynamic> params = {};')
             for apiParamIndex in range(len(api.params)):
                 param = api.params[apiParamIndex]
                 if param.type == 'restful':
-                    path = path.replace(':' + param.name, '\(%s)' % (param.name))
+                    path = path.replace(':' + param.name, '%s' % (param.name))
                 else:
-                    method.bodyLines.append('params?.addHttpParam(%s, forKey: "%s")' % (param.name, param.name))
+                    method.bodyLines.append('params[\'%s\'] = %s;' % (param.name, param.name))
 
-            method.bodyLines.append('params?.httpMethod = "%s"' % (api.method))
-
-            # 请求响应数据类型
-            if len(self.conf.dataPath) and respClass:
-                method.bodyLines.append(
-                    'oper.dataClasses.setValue(%s.self, forKey: "%s")' % (
-                        respClass.name, self.conf.dataPath))
-            # 请求路径
-            method.bodyLines.append('params?.path = "%s"' % (path))
-            # json表单
-            method.bodyLines.append('params?.isJsonForm = true')
-            # 请求开始
-            method.bodyLines.append('return service.start(oper: oper)')
-
+            line = 'return HttpClient.client.request<HttpResponse<%s>>(\'%s\', \'%s\',params: params, success: success, bizFail: bizFail, reqFail: reqFail);' % (
+                respClassName, path, api.method)
+            # 方法实现
+            method.bodyLines.append(line)
         return apiClazz
 
 
@@ -443,7 +461,8 @@ class TransDataModel2DartClass:
         self.globalRefMapper = globalRefMapper
 
     def trans(self):
-        return self.transClass(self.dataModels, True)
+        ds = self.transClass(self.dataModels, True)
+        return ds
 
     def getClassName(self, name):
         return '%sModel' % (name)
@@ -465,8 +484,10 @@ class TransDataModel2DartClass:
                 dataModel.impls.extend(self.conf.importModule)
                 dataModel.name = name
                 dataModel.remark = model.remark
-                dataModel.superClazz = 'NSObject'
-                dataModel.imports.append('import Foundation')
+                dataModel.annotation = '@JsonSerializable()'
+                dataModel.superClazz = self.conf.modelBaseClass
+                dataModel.imports.append('import \'package:json_annotation/json_annotation.dart\';')
+                dataModel.imports.append('part \'%s.g.dart\';' % dataModel.name)
                 if self.conf.useYYModel:
                     dataModel.imports.append('import YYModel')
 
@@ -517,8 +538,15 @@ class TransDataModel2DartClass:
                 elif field.subType:
                     prop.subTypes.append(self.getClassName(field.subType))
 
+            # 没有属性时默认添加一个
+            if len(dataModel.props) == 0:
+                prop = PropInfo()
+                prop.name = 'empty__'
+                prop.type = 'int'
+                dataModel.props.append(prop)
+
             # 转义属性
-            transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
+            transm = dataModel.hasMethod('fromJson', 2)
             transferDiffProps = []
             if len(transferProps) > 0 and transm:
                 for p in transferProps:
@@ -528,53 +556,38 @@ class TransDataModel2DartClass:
                 transferDiffProps = transferProps
 
             mask = '"__mask__": "__mask__"'
-            if len(transferDiffProps) > 0:
-                transm = dataModel.hasMethod('modelCustomPropertyMapper', 1)
-                if not transm:
-                    transm = MethodInfo()
-                    transm.remark = '转义属性'
-                    transm.retType = '[String : Any]?'
-                    transm.name = 'modelCustomPropertyMapper'
-                    transm.inner = True
-                    transm.type = 1
-                    transm.bodyLines.append('let mapper = [%s]' % (mask))
-                    transm.bodyLines.append('return mapper as [String : Any]')
-                    dataModel.methods.append(transm)
+            # if len(transferDiffProps) > 0:
+            transm = dataModel.hasMethod('fromJson', 2)
+            if not transm:
+                transm = MethodInfo()
+                transm.remark = '转义属性'
+                transm.retType = 'void'
+                transm.name = 'fromJson'
+                transm.inner = True
+                transm.type = 2
+                transm.bodyLines.append('return _$%sFromJson(json);' % dataModel.name)
+                p = PropInfo()
+                p.type = 'Map<String, dynamic>'
+                p.name = 'json'
+                transm.params.append(p)
+                dataModel.methods.append(transm)
 
-                transm.bodyLines[0] = transm.bodyLines[0].replace(']', (',%s]' % ',\n'.join(transferDiffProps)))
-                transm.bodyLines[0] = transm.bodyLines[0].replace('%s,' % mask, '')
+            transm.bodyLines[0] = transm.bodyLines[0].replace(']', (',%s]' % ',\n'.join(transferDiffProps)))
+            transm.bodyLines[0] = transm.bodyLines[0].replace('%s,' % mask, '')
 
             # 属性
             # 查找集合类型的自定义数据类型嵌套 只支持一层嵌套
-            method = dataModel.hasMethod('modelContainerPropertyGenericClass', 1)
+            method = dataModel.hasMethod('toJson', 1)
             if not method:
                 method = MethodInfo()
-                method.bodyLines.append('let mapper = [%s]' % (mask))
-                method.bodyLines.append('return mapper as [String : Any]')
+                method.bodyLines.append('return _$%sToJson(this);' % dataModel.name)
                 method.remark = '集合类型解析映射'
-                method.retType = '[String : Any]'
-                method.name = 'modelContainerPropertyGenericClass'
+                method.retType = 'Map<String, dynamic>'
+                method.name = 'toJson'
                 method.inner = True
-                method.type = 1
-
-            for prop in dataModel.props:
-                subType = ''.join(prop.subTypes)
-                # 集合一类的有子类型的才需要映射
-                if len(subType) > 0 and (not self.conf.isBaseType(subType)):
-                    ptype = self.conf.getPropType(subType).replace(' ', '').replace('*', '')
-                    line = '"%s": %s.self' % (
-                        prop.name, ptype)
-
-                    oldLine = method.bodyLines[0]
-                    if oldLine.find(line) < 0:
-                        # 不存在则添加
-                        oldLine = oldLine.replace(']', (',%s]' % line))
-                        oldLine = oldLine.replace('%s,' % mask, '')
-
-                    method.bodyLines[0] = oldLine
-                    # 没有添加过该方法则添加
-                    if not dataModel.hasMethod('modelContainerPropertyGenericClass', 1):
-                        dataModel.methods.append(method)
+                method.type = 0
+            if not dataModel.hasMethod('toJson', 1):
+                dataModel.methods.append(method)
 
         return classes
 

@@ -6,6 +6,7 @@
 class BaseInfo:
     def __init__(self):
         self.remark = '注释'  # 类注释
+        self.annotation = ''  # 类注解
 
 
 class ClassInfo(BaseInfo):
@@ -57,7 +58,7 @@ class MethodInfo(BaseInfo):
         BaseInfo.__init__(self)
 
         self.remark = '方法注释'  # 方法注释
-        self.type = 0  # 0实例方法 1类方法
+        self.type = 0  # 0实例方法 1类方法 2, 工厂方法
         self.abs = False  # 抽象方法, 需要生成独立接口文件
         self.inner = False  # 内部方法
         self.retType = 'void'  # 返回值类型
