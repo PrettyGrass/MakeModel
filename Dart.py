@@ -313,7 +313,7 @@ class TransAPIModel2DartClass:
             entryPoint.imports.append('export \'protocol/%sProtocol.dart\';' % apiClazz.name)
             entryPoint.imports.append('import \'%s.dart\';' % apiClazz.name)
             method.bodyLines.append(
-                'DependencyContainer.appInstance.registerDependency<%sProtocol>((builder) { return %s(); });' % (
+                'DependContainer.shared.reg<%sProtocol>((builder) { return %s(); });' % (
                     apiClazz.name, apiClazz.name))
 
         clazzs.append(entryPoint)
@@ -397,7 +397,19 @@ class TransAPIModel2DartClass:
             break;
             ''' % (model.name, model.name, model.name))
 
+        parse.bodyLines.append('''
+        default:
+        var resp = HttpResponse<dynamic>();
+        response = resp;
+        resp.data = data['data'];
+        break;
+        ''')
+
         parse.bodyLines.append('}')
+
+        parse.bodyLines.append('response.code = data[\'code\'];')
+        parse.bodyLines.append('response.message = data[\'message\'];')
+
         parse.bodyLines.append('return response;')
         parse.bodyLines.append('}')
         parse.bodyLines.append('*/')
