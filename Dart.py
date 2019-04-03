@@ -383,9 +383,21 @@ class TransAPIModel2DartClass:
         parse.bodyLines.append('}')
 
         parse.bodyLines.append('/**')
-        parse.bodyLines.append('parseResponseData(data, Type targetType, obj) {')
+        parse.bodyLines.append('parseResponseData(respData, Type targetType, obj) {')
         parse.bodyLines.append('HttpResponse response;')
         parse.bodyLines.append('String type = targetType.toString();')
+
+        parse.bodyLines.append('''
+                    var data = respData['data'];
+                    if (data.runtimeType == String) {
+                      if ((data as String).length > 0) {
+                        data = JsonCodec().decode(data);
+                      } else {
+                        data = {};
+                      }
+                    }
+                    ''')
+
         parse.bodyLines.append('switch (type) {')
         for model in refMappers.values():
 
@@ -393,7 +405,7 @@ class TransAPIModel2DartClass:
             case 'HttpResponse<%s>':
             var resp = HttpResponse<%s>();
             response = resp;
-            resp.data = ModelEntry.mapper('%s', data['data']);
+            resp.data = ModelEntry.mapper('%s', data);
             break;
             ''' % (model.name, model.name, model.name))
 
@@ -401,14 +413,14 @@ class TransAPIModel2DartClass:
         default:
         var resp = HttpResponse<dynamic>();
         response = resp;
-        resp.data = data['data'];
+        resp.data = data;
         break;
         ''')
 
         parse.bodyLines.append('}')
 
-        parse.bodyLines.append('response.code = data[\'code\'];')
-        parse.bodyLines.append('response.message = data[\'message\'];')
+        parse.bodyLines.append('response.code = respData[\'code\'];')
+        parse.bodyLines.append('response.message = respData[\'message\'];')
 
         parse.bodyLines.append('return response;')
         parse.bodyLines.append('}')
