@@ -86,7 +86,7 @@ class Dart(MakeClassFile):
 
     # 创建头部注释
     def createBeginRemark(self, lines):
-        lines.append('''/**\
+        lines.append('''/*\
         \n  %s: %s\
         \n\n  Created by %s on %s. \
         \n\n  %s\
@@ -113,7 +113,7 @@ class Dart(MakeClassFile):
     def createClassRemark(self, lines):
         lines.append('''\
         \n
-        \n/**\
+        \n/*\
         \n%s\
         \n*/''' % (self.clazz.remark))
 
