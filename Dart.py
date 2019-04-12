@@ -512,7 +512,7 @@ class TransAPIModel2DartClass:
             for apiParamIndex in range(len(api.params)):
                 param = api.params[apiParamIndex]
                 if param.type == 'restful':
-                    path = path.replace(':' + param.name, '%s' % (param.name))
+                    path = path.replace(':' + param.name, '${%s}' % (param.name))
                 elif len(param.name):
                     method.bodyLines.append('params[\'%s\'] = %s;' % (param.name, param.name))
 
