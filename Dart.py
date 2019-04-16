@@ -393,8 +393,11 @@ class TransAPIModel2DartClass:
                       if ((data as String).length > 0) {
                         data = JsonCodec().decode(data);
                       } else {
-                        data = {};
+                        data = new Map<String, dynamic>();
                       }
+                    }
+                    if (null == data) {
+                      data = new Map<String, dynamic>();
                     }
                     ''')
 
