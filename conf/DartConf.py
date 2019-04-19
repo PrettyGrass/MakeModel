@@ -14,6 +14,7 @@ class DartConf(Conf):
         self.apiBaseClass = 'Object'
         self.apiImport = []
         self.baseType = dict()
+        self.apiDomain = 'biz_api'
 
         self.baseType['string'] = {'name': 'String', 'default': '""'}
         self.baseType['int'] = {'name': 'Int', 'default': 0}
@@ -107,3 +108,6 @@ class DartConf(Conf):
 
         if json.has_key('useObjectMapper'):
             self.useObjectMapper = json['useObjectMapper']
+
+        if json.has_key('apiDomain'):
+            self.apiDomain = json['apiDomain']

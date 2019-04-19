@@ -228,7 +228,8 @@ class Dart(MakeClassFile):
             defVal = ' = %s' % self.conf.baseType.get(prop.type)['default']
 
         lines.append(
-            '%s %s %s%s;' % (self.conf.getPropMask(prop.type),
+            '%s %s %s %s%s;' % (prop.annotation,
+                                self.conf.getPropMask(prop.type),
                              self.conf.getPropType(prop.type, prop.subTypes),
                              prop.name,
                              defVal))
@@ -383,7 +384,7 @@ class TransAPIModel2DartClass:
         parse.bodyLines.append('}')
 
         parse.bodyLines.append('/**')
-        parse.bodyLines.append('parseResponseData(respData, Type targetType, obj) {')
+        parse.bodyLines.append('parseResponseData(domain,respData, Type targetType, obj) {')
         parse.bodyLines.append('HttpResponse response;')
         parse.bodyLines.append('String type = targetType.toString();')
 
@@ -519,8 +520,8 @@ class TransAPIModel2DartClass:
                 elif len(param.name):
                     method.bodyLines.append('params[\'%s\'] = %s;' % (param.name, param.name))
 
-            line = 'return HttpClient.client.request<HttpResponse<%s>>(\'%s\', \'%s\',params: params, success: success, bizFail: bizFail, reqFail: reqFail);' % (
-                respClassName, path, api.method)
+            line = 'return HttpClient.client.request<HttpResponse<%s>>(\'%s\', \'%s\',params: params, success: success, bizFail: bizFail, reqFail: reqFail, domain: \'%s\');' % (
+                respClassName, path, api.method, self.conf.apiDomain)
             # 方法实现
             method.bodyLines.append(line)
         return apiClazz
@@ -582,15 +583,15 @@ class TransDataModel2DartClass:
 
                 # 字段转义
                 fname = field.name
-                if fname[0] == '_':
-                    continue
 
+                isTransferProp = False
                 if self.conf.transferProp.has_key(fname):
                     print('字段需转义:%s.%s', model.name, fname)
 
                     tname = self.conf.transferProp.get(fname)
                     transferProps.append('"%s": "%s"' % (tname, fname))
                     fname = tname
+                    isTransferProp = True
 
                 # 重复字段
                 if dataModel.hasProp(fname):
@@ -599,6 +600,10 @@ class TransDataModel2DartClass:
                 prop = PropInfo()
                 dataModel.props.append(prop)
                 prop.name = fname
+                # 如果是转义过的字段 需要用注解声明
+                if isTransferProp:
+                    prop.annotation = '@JsonKey(name: \'%s\')' % field.name
+
                 # 字段类型
                 if self.getType(field.type):
                     prop.type = self.getType(field.type)
