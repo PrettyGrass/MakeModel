@@ -54,6 +54,9 @@ class ParseModelJson():
                 modelJson.append(dict())
             modelJson = modelJson[0]
 
+        if modelJson == None:
+            return
+
         if len(modelJson) == 0:
             return
 

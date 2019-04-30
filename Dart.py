@@ -99,7 +99,7 @@ class Dart(MakeClassFile):
             if isProtocol and 'Protocol.dart' in line:
                 continue
             lines.append(line)
-        # lines.extend(self.clazz.imports)
+            # lines.extend(self.clazz.imports)
 
     # 创建头部注释
     def createImplImport(self, lines):
@@ -159,7 +159,7 @@ class Dart(MakeClassFile):
         elif method.type == 1:
             lines.append(
                 '%s %s %s %s' % (
-                    self._getFuncType(method),self.conf.getPropType(method.retType), mask, self._getFuncSign(method)))
+                    self._getFuncType(method), self.conf.getPropType(method.retType), mask, self._getFuncSign(method)))
 
         else:
             lines.append(
@@ -230,9 +230,9 @@ class Dart(MakeClassFile):
         lines.append(
             '%s %s %s %s%s;' % (prop.annotation,
                                 self.conf.getPropMask(prop.type),
-                             self.conf.getPropType(prop.type, prop.subTypes),
-                             prop.name,
-                             defVal))
+                                self.conf.getPropType(prop.type, prop.subTypes),
+                                prop.name,
+                                defVal))
 
     # 创建方法
     def createFuncBegin(self, lines, func):
@@ -404,7 +404,6 @@ class TransAPIModel2DartClass:
 
         parse.bodyLines.append('switch (type) {')
         for model in refMappers.values():
-
             parse.bodyLines.append('''
             case 'HttpResponse<%s>':
             var resp = HttpResponse<%s>();
@@ -475,7 +474,12 @@ class TransAPIModel2DartClass:
             method.abs = True
             method.inner = True
             method.remark = api.name
-            method.name = api.getMethodName()
+
+            # 函数拼接请求方式
+            method_name = api.getMethodName(ignoreMethods = [])
+            # method_name = api.method.lower() + util.firstUpper(method_name)
+
+            method.name = method_name
             apiClazz.methods.append(method)
 
             for apiParamIndex in range(len(api.params)):

@@ -24,10 +24,10 @@ class APIInfo:
         self.classMethod = MethodInfo()
 
     # 此方法返回的函数名不唯一
-    def getMethodName(self):
+    def getMethodName(self, ignoreMethods = ['get', 'post']):
         funcName = ''
         use = False
-        if self.method.lower() not in ['get', 'post']:
+        if self.method.lower() not in ignoreMethods:
             funcName = self.method.lower()
             use = True
 
