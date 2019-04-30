@@ -341,6 +341,10 @@ class TransAPIModel2DartClass:
                     ms = []
                     jsonObj = json.loads(response.get('body'))
                     responseKey = util.firstUpper(api.getMethodSign())
+                    if self.conf.propMap.has_key(responseKey) and self.conf.propMap[responseKey] in self.conf.baseType.keys():
+                        # 响应模型指定为基础数据类型的, 不用生成类
+                        continue
+
                     model = pm.parseContent(jsonObj, responseKey)
                     model.remark = '%s响应模型' % api.name
                     ms.append(model)
