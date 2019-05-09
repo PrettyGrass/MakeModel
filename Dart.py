@@ -484,6 +484,10 @@ class TransAPIModel2DartClass:
             # method_name = api.method.lower() + util.firstUpper(method_name)
 
             method.name = method_name
+            # 如果有同名接口, 不在添加
+            if apiClazz.hasMethod(method_name, method.type):
+                continue
+
             apiClazz.methods.append(method)
 
             for apiParamIndex in range(len(api.params)):
